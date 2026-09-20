@@ -1,0 +1,21 @@
+  patterns:
+  - name: RSA
+    regex: '(RSA\.generate|RSA\.generate_private_key|Cipher\.getInstance\(.?RSA)'
+    primitive: pke
+    variant: "RSA-2048"
+  - name: ECDSA
+    regex: '(ECDSA|SigningKey\.generate|ec\.generate_private_key)'
+    primitive: signature
+    variant: "ECDSA"
+  - name: DH
+    regex: '(DiffieHellman|dh\.generate_parameters)'
+    primitive: key-agree
+    variant: "DH"
+  - name: AES
+    regex: '(AES\.new|Cipher\.getInstance\(.?AES)'
+    primitive: ae
+    variant: "AES-128-GCM"
+  - name: MD5
+    regex: '(MD5\.new|hashlib\.md5|MessageDigest\.getInstance\(.?MD5)'
+    primitive: hash
+    variant: "MD5"

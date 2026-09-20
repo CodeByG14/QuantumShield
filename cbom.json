@@ -1,0 +1,120 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:e17bc33b-3089-4780-8e5b-15977f1d3028",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-09-20T10:05:34.775391+00:00",
+    "component": {
+      "type": "application",
+      "name": "quantumshield-test-repo"
+    }
+  },
+  "components": [
+    {
+      "type": "cryptographic-asset",
+      "name": "RSA-2048",
+      "bom-ref": "crypto/algorithm/rsa-09d02f28",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "pke",
+          "parameterSetIdentifier": "RSA-2048"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "samples/test-repo/crypto_demo.py",
+            "line": 12,
+            "additionalContext": "RSA.generate"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "ECDSA",
+      "bom-ref": "crypto/algorithm/ecdsa-8bc22d15",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature",
+          "parameterSetIdentifier": "ECDSA"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "samples/test-repo/crypto_demo.py",
+            "line": 8,
+            "additionalContext": "ec.generate_private_key"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "DH",
+      "bom-ref": "crypto/algorithm/dh-50a1b703",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree",
+          "parameterSetIdentifier": "DH"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "samples/test-repo/crypto_demo.py",
+            "line": 25,
+            "additionalContext": "dh.generate_parameters"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "AES-128-GCM",
+      "bom-ref": "crypto/algorithm/aes-5751725d",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "ae",
+          "parameterSetIdentifier": "AES-128-GCM"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "samples/test-repo/crypto_demo.py",
+            "line": 21,
+            "additionalContext": "AES.new"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "MD5",
+      "bom-ref": "crypto/algorithm/md5-b320729c",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash",
+          "parameterSetIdentifier": "MD5"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "samples/test-repo/crypto_demo.py",
+            "line": 16,
+            "additionalContext": "MD5.new"
+          }
+        ]
+      }
+    }
+  ]
+}
