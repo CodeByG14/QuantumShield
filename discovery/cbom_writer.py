@@ -24,7 +24,8 @@ def findings_to_cbom(findings, output_file="cbom.json"):
                         "line": f["line"],
                         "additionalContext": f["matched_text"],
                     }
-                ]
+                ],
+                "confidence": f["confidence"]
             }
         })
 

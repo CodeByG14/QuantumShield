@@ -1,0 +1,236 @@
+{
+  "generated_from": "cbom.json",
+  "scoring_formula_version": "v1",
+  "findings": [
+    {
+      "bom-ref": "crypto/algorithm/rsa-add8c164",
+      "name": "RSA-2048",
+      "quantum_factor": 1.5,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.275,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/crypto_demo.py",
+      "line": 12
+    },
+    {
+      "bom-ref": "crypto/algorithm/ecdsa-4b39c5c2",
+      "name": "ECDSA",
+      "quantum_factor": 1.5,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.275,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/crypto_demo.py",
+      "line": 8
+    },
+    {
+      "bom-ref": "crypto/algorithm/dh-62d69325",
+      "name": "DH",
+      "quantum_factor": 1.5,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.275,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/crypto_demo.py",
+      "line": 25
+    },
+    {
+      "bom-ref": "crypto/algorithm/p-256-ab8ddcbe",
+      "name": "P-256",
+      "quantum_factor": 1.5,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.275,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/crypto_demo.py",
+      "line": 8
+    },
+    {
+      "bom-ref": "crypto/algorithm/rsa-7a7b8fb7",
+      "name": "RSA-2048",
+      "quantum_factor": 1.5,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.275,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/CryptoDemo.java",
+      "line": 7
+    },
+    {
+      "bom-ref": "crypto/algorithm/ecdh-17ee93d3",
+      "name": "ECDH",
+      "quantum_factor": 1.5,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.275,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/EllipticCurveDemo.java",
+      "line": 8
+    },
+    {
+      "bom-ref": "crypto/algorithm/ecdh-a93cb340",
+      "name": "ECDH",
+      "quantum_factor": 1.5,
+      "confidence": 0.7,
+      "algorithm_risk_score": 1.05,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/EllipticCurveDemo.java",
+      "line": 7
+    },
+    {
+      "bom-ref": "crypto/algorithm/p-256-57dc4e31",
+      "name": "P-256",
+      "quantum_factor": 1.5,
+      "confidence": 0.7,
+      "algorithm_risk_score": 1.05,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/EllipticCurveDemo.java",
+      "line": 10
+    },
+    {
+      "bom-ref": "crypto/algorithm/p-256-cebbba28",
+      "name": "P-256",
+      "quantum_factor": 1.5,
+      "confidence": 0.7,
+      "algorithm_risk_score": 1.05,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/EllipticCurveDemo.java",
+      "line": 12
+    },
+    {
+      "bom-ref": "crypto/algorithm/p-384-a1acfd0d",
+      "name": "P-384",
+      "quantum_factor": 1.5,
+      "confidence": 0.7,
+      "algorithm_risk_score": 1.05,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/EllipticCurveDemo.java",
+      "line": 16
+    },
+    {
+      "bom-ref": "crypto/algorithm/p-384-d30c933b",
+      "name": "P-384",
+      "quantum_factor": 1.5,
+      "confidence": 0.7,
+      "algorithm_risk_score": 1.05,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/EllipticCurveDemo.java",
+      "line": 17
+    },
+    {
+      "bom-ref": "crypto/algorithm/secp256k1-96cf6f66",
+      "name": "secp256k1",
+      "quantum_factor": 1.5,
+      "confidence": 0.7,
+      "algorithm_risk_score": 1.05,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/EllipticCurveDemo.java",
+      "line": 21
+    },
+    {
+      "bom-ref": "crypto/algorithm/secp256k1-f6583cc4",
+      "name": "secp256k1",
+      "quantum_factor": 1.5,
+      "confidence": 0.7,
+      "algorithm_risk_score": 1.05,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/EllipticCurveDemo.java",
+      "line": 22
+    },
+    {
+      "bom-ref": "crypto/algorithm/secp256k1-60cc597f",
+      "name": "secp256k1",
+      "quantum_factor": 1.5,
+      "confidence": 0.7,
+      "algorithm_risk_score": 1.05,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/EllipticCurveDemo.java",
+      "line": 22
+    },
+    {
+      "bom-ref": "crypto/algorithm/secp256k1-6d008ebd",
+      "name": "secp256k1",
+      "quantum_factor": 1.5,
+      "confidence": 0.7,
+      "algorithm_risk_score": 1.05,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/EllipticCurveDemo.java",
+      "line": 23
+    },
+    {
+      "bom-ref": "crypto/algorithm/secp256k1-03c95354",
+      "name": "secp256k1",
+      "quantum_factor": 1.5,
+      "confidence": 0.7,
+      "algorithm_risk_score": 1.05,
+      "tier": "shor-vulnerable",
+      "location": "samples/test-repo/EllipticCurveDemo.java",
+      "line": 24
+    },
+    {
+      "bom-ref": "crypto/algorithm/aes-36a4fba7",
+      "name": "AES-128-GCM",
+      "quantum_factor": 1.2,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.02,
+      "tier": "grover-affected",
+      "location": "samples/test-repo/crypto_demo.py",
+      "line": 21
+    },
+    {
+      "bom-ref": "crypto/algorithm/md5-8ee8089d",
+      "name": "MD5",
+      "quantum_factor": 1.2,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.02,
+      "tier": "grover-affected",
+      "location": "samples/test-repo/crypto_demo.py",
+      "line": 16
+    },
+    {
+      "bom-ref": "crypto/algorithm/aes-c138717a",
+      "name": "AES-128-GCM",
+      "quantum_factor": 1.2,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.02,
+      "tier": "grover-affected",
+      "location": "samples/test-repo/QuantumSafeCrypto.java",
+      "line": 11
+    },
+    {
+      "bom-ref": "crypto/algorithm/aes-a8d340e9",
+      "name": "AES-128-GCM",
+      "quantum_factor": 1.2,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.02,
+      "tier": "grover-affected",
+      "location": "samples/test-repo/CryptoDemo.java",
+      "line": 24
+    },
+    {
+      "bom-ref": "crypto/algorithm/sha-1-6280e63e",
+      "name": "SHA-1",
+      "quantum_factor": 1.2,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.02,
+      "tier": "grover-affected",
+      "location": "samples/test-repo/CryptoDemo.java",
+      "line": 12
+    },
+    {
+      "bom-ref": "crypto/algorithm/sha-256-51236822",
+      "name": "SHA-256",
+      "quantum_factor": 1.2,
+      "confidence": 0.85,
+      "algorithm_risk_score": 1.02,
+      "tier": "grover-affected",
+      "location": "samples/test-repo/CryptoDemo.java",
+      "line": 16
+    },
+    {
+      "bom-ref": "crypto/algorithm/aes-256-fc83ec74",
+      "name": "AES-256",
+      "quantum_factor": 1.0,
+      "confidence": 0.85,
+      "algorithm_risk_score": 0.85,
+      "tier": "quantum-safe",
+      "location": "samples/test-repo/QuantumSafeCrypto.java",
+      "line": 15
+    }
+  ]
+}
