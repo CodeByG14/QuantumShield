@@ -1,20 +1,34 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:cff45a71-7cca-4b6e-b158-9ac0bc7c481f",
+  "serialNumber": "urn:uuid:c72d23d7-0dd3-461a-9adc-e0d79381bb6f",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-04T09:11:31.391461+00:00",
+    "timestamp": "2026-10-04T09:59:26.106942+00:00",
     "component": {
       "type": "application",
       "name": "quantumshield-test-repo"
-    }
+    },
+    "properties": [
+      {
+        "name": "quantumshield:files_discovered",
+        "value": "6"
+      },
+      {
+        "name": "quantumshield:files_analyzed",
+        "value": "4"
+      },
+      {
+        "name": "quantumshield:files_skipped",
+        "value": "2"
+      }
+    ]
   },
   "components": [
     {
       "type": "cryptographic-asset",
       "name": "RSA-2048",
-      "bom-ref": "crypto/regex/rsa-be7a917a",
+      "bom-ref": "crypto/regex/rsa-ec152102",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -31,13 +45,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "ECDSA",
-      "bom-ref": "crypto/regex/ecdsa-d72693d1",
+      "bom-ref": "crypto/regex/ecdsa-6dd51325",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -54,13 +70,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "DH",
-      "bom-ref": "crypto/regex/dh-630a5f4c",
+      "bom-ref": "crypto/regex/dh-cdf4e612",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -77,13 +95,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "AES-128-GCM",
-      "bom-ref": "crypto/regex/aes-5fc262ca",
+      "bom-ref": "crypto/regex/aes-32a31ca7",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -100,13 +120,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "MD5",
-      "bom-ref": "crypto/regex/md5-c621a147",
+      "bom-ref": "crypto/regex/md5-a7bd9843",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -123,13 +145,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "P-256",
-      "bom-ref": "crypto/regex/p-256-75449356",
+      "bom-ref": "crypto/regex/p-256-249ba855",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -146,13 +170,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "AES-128-GCM",
-      "bom-ref": "crypto/regex/aes-333aa3c8",
+      "bom-ref": "crypto/regex/aes-15beb434",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -169,13 +195,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "AES-256",
-      "bom-ref": "crypto/regex/aes-256-ffd5406a",
+      "bom-ref": "crypto/regex/aes-256-8e10467a",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -192,13 +220,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "RSA-2048",
-      "bom-ref": "crypto/regex/rsa-979248b2",
+      "bom-ref": "crypto/regex/rsa-3b75f296",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -215,13 +245,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "AES-128-GCM",
-      "bom-ref": "crypto/regex/aes-9247d133",
+      "bom-ref": "crypto/regex/aes-74b3d682",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -238,13 +270,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "SHA-1",
-      "bom-ref": "crypto/regex/sha-1-dbe34e60",
+      "bom-ref": "crypto/regex/sha-1-b9488d05",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -261,13 +295,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "SHA-256",
-      "bom-ref": "crypto/regex/sha-256-2f4a37f6",
+      "bom-ref": "crypto/regex/sha-256-bd10b39d",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -284,13 +320,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "ECDH",
-      "bom-ref": "crypto/regex/ecdh-30ba2c6c",
+      "bom-ref": "crypto/regex/ecdh-2ec0e676",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -305,24 +343,7 @@
             "line": 7,
             "additionalContext": "ECDH",
             "confidence": 0.7
-          }
-        ],
-        "detection_method": "regex"
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "ECDH",
-      "bom-ref": "crypto/regex/ecdh-619d42a3",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "ECDH"
-        }
-      },
-      "evidence": {
-        "occurrences": [
+          },
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 8,
@@ -330,13 +351,15 @@
             "confidence": 0.85
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "P-256",
-      "bom-ref": "crypto/regex/p-256-7b935bc3",
+      "bom-ref": "crypto/regex/p-256-c76c00e7",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -351,24 +374,7 @@
             "line": 10,
             "additionalContext": "P-256",
             "confidence": 0.7
-          }
-        ],
-        "detection_method": "regex"
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "P-256",
-      "bom-ref": "crypto/regex/p-256-35831b91",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "P-256"
-        }
-      },
-      "evidence": {
-        "occurrences": [
+          },
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 12,
@@ -376,13 +382,15 @@
             "confidence": 0.7
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "P-384",
-      "bom-ref": "crypto/regex/p-384-c65c46df",
+      "bom-ref": "crypto/regex/p-384-156ec953",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -397,24 +405,7 @@
             "line": 16,
             "additionalContext": "P-384",
             "confidence": 0.7
-          }
-        ],
-        "detection_method": "regex"
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "P-384",
-      "bom-ref": "crypto/regex/p-384-92238561",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "P-384"
-        }
-      },
-      "evidence": {
-        "occurrences": [
+          },
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 17,
@@ -422,13 +413,15 @@
             "confidence": 0.7
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "secp256k1",
-      "bom-ref": "crypto/regex/secp256k1-a813bf21",
+      "bom-ref": "crypto/regex/secp256k1-ac99e705",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -443,93 +436,25 @@
             "line": 21,
             "additionalContext": "secp256k1",
             "confidence": 0.7
-          }
-        ],
-        "detection_method": "regex"
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "secp256k1",
-      "bom-ref": "crypto/regex/secp256k1-c419295f",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "secp256k1"
-        }
-      },
-      "evidence": {
-        "occurrences": [
+          },
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 22,
             "additionalContext": "secp256k1",
             "confidence": 0.7
-          }
-        ],
-        "detection_method": "regex"
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "secp256k1",
-      "bom-ref": "crypto/regex/secp256k1-9bcbf27c",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "secp256k1"
-        }
-      },
-      "evidence": {
-        "occurrences": [
+          },
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 22,
             "additionalContext": "secp256k1",
             "confidence": 0.7
-          }
-        ],
-        "detection_method": "regex"
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "secp256k1",
-      "bom-ref": "crypto/regex/secp256k1-f6bad054",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "secp256k1"
-        }
-      },
-      "evidence": {
-        "occurrences": [
+          },
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 23,
             "additionalContext": "secp256k1",
             "confidence": 0.7
-          }
-        ],
-        "detection_method": "regex"
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "secp256k1",
-      "bom-ref": "crypto/regex/secp256k1-c04d114a",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "secp256k1"
-        }
-      },
-      "evidence": {
-        "occurrences": [
+          },
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 24,
@@ -537,13 +462,15 @@
             "confidence": 0.7
           }
         ],
-        "detection_method": "regex"
+        "detection_methods": [
+          "regex"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "unknown",
-      "bom-ref": "crypto/manifest/unknown-89d647b3",
+      "bom-ref": "crypto/manifest/unknown-4e2d66b6",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -560,13 +487,15 @@
             "confidence": 0.5
           }
         ],
-        "detection_method": "manifest"
+        "detection_methods": [
+          "manifest"
+        ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "unknown",
-      "bom-ref": "crypto/file-extension/unknown-fbd37aa2",
+      "bom-ref": "crypto/file-extension/unknown-9157d1c2",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
@@ -583,7 +512,9 @@
             "confidence": 0.5
           }
         ],
-        "detection_method": "file-extension"
+        "detection_methods": [
+          "file-extension"
+        ]
       }
     }
   ]

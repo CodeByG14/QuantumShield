@@ -1,7 +1,7 @@
 from pathlib import Path
 import tomllib  # Python 3.11+; use `import tomli as tomllib` if on older Python
 
-from common.models import CryptoFinding, DetectionMethod
+from common.models import CryptoFinding, DetectionMethod, ScanResult
 
 KNOWN_CRYPTO_LIBS = {
     "pycryptodome": "Capable of RSA, AES, DES, ECDSA, hashing — specific algorithm usage not determined from manifest alone",
@@ -49,7 +49,7 @@ def parse_pyproject_toml(filepath: Path) -> list[str]:
     return cleaned
 
 
-def scan_manifests(target_dir: str) -> list[CryptoFinding]:
+def scan_manifests(target_dir: str) -> ScanResult:
     findings = []
     target = Path(target_dir)
 
@@ -91,10 +91,10 @@ def scan_manifests(target_dir: str) -> list[CryptoFinding]:
                     )
                 )
 
-    return findings
+    return ScanResult(findings=findings, coverage=None)
 
 
 if __name__ == "__main__":
     results = scan_manifests("samples/test-repo")
-    for r in results:
+    for r in results.findings:
         print(r.model_dump())

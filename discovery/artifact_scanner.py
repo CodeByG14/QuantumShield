@@ -1,11 +1,11 @@
 from pathlib import Path
 
-from common.models import CryptoFinding, DetectionMethod
+from common.models import CryptoFinding, DetectionMethod, ScanResult
 
 CERT_KEY_EXTENSIONS = {".pem", ".crt", ".cer", ".key", ".der", ".p12", ".pfx", ".jks"}
 
 
-def scan_artifacts(target_dir: str) -> list[CryptoFinding]:
+def scan_artifacts(target_dir: str) -> ScanResult:
     findings = []
     target = Path(target_dir)
 
@@ -25,10 +25,10 @@ def scan_artifacts(target_dir: str) -> list[CryptoFinding]:
                 )
             )
 
-    return findings
+    return ScanResult(findings=findings, coverage=None)
 
 
 if __name__ == "__main__":
     results = scan_artifacts("samples/test-repo")
-    for r in results:
+    for r in results.findings:
         print(r.model_dump())

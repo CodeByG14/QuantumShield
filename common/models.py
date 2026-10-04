@@ -54,3 +54,24 @@ class CryptoFinding(BaseModel):
 
     class Config:
         use_enum_values = True
+
+
+class CoverageStats(BaseModel):
+    files_discovered: int
+    files_analyzed: int
+    files_skipped: int
+
+
+class ScanResult(BaseModel):
+    """
+    Structured return type for any scanner function (source, manifest,
+    artifact). Using a named model instead of a tuple means call sites
+    are self-documenting (.findings / .coverage, not positional [0]/[1]),
+    and new fields can be added later without breaking existing callers
+    — they just won't use the new field until they're updated to.
+    """
+
+    findings: list[CryptoFinding]
+    coverage: Optional[CoverageStats] = (
+        None  # not all scanners track coverage (manifest/artifact scanners may not need it)
+    )
