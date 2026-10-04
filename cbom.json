@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:9fe89718-45cc-48b0-bf9b-abe3c36be439",
+  "serialNumber": "urn:uuid:cff45a71-7cca-4b6e-b158-9ac0bc7c481f",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-26T16:55:58.452472+00:00",
+    "timestamp": "2026-10-04T09:11:31.391461+00:00",
     "component": {
       "type": "application",
       "name": "quantumshield-test-repo"
@@ -14,11 +14,11 @@
     {
       "type": "cryptographic-asset",
       "name": "RSA-2048",
-      "bom-ref": "crypto/algorithm/rsa-add8c164",
+      "bom-ref": "crypto/regex/rsa-be7a917a",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "pke",
+          "primitive": "unknown",
           "parameterSetIdentifier": "RSA-2048"
         }
       },
@@ -27,20 +27,21 @@
           {
             "location": "samples/test-repo/crypto_demo.py",
             "line": 12,
-            "additionalContext": "RSA.generate"
+            "additionalContext": "RSA.generate",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "ECDSA",
-      "bom-ref": "crypto/algorithm/ecdsa-4b39c5c2",
+      "bom-ref": "crypto/regex/ecdsa-d72693d1",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "signature",
+          "primitive": "unknown",
           "parameterSetIdentifier": "ECDSA"
         }
       },
@@ -49,20 +50,21 @@
           {
             "location": "samples/test-repo/crypto_demo.py",
             "line": 8,
-            "additionalContext": "ec.generate_private_key"
+            "additionalContext": "ec.generate_private_key",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "DH",
-      "bom-ref": "crypto/algorithm/dh-62d69325",
+      "bom-ref": "crypto/regex/dh-630a5f4c",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "key-agree",
+          "primitive": "unknown",
           "parameterSetIdentifier": "DH"
         }
       },
@@ -71,20 +73,21 @@
           {
             "location": "samples/test-repo/crypto_demo.py",
             "line": 25,
-            "additionalContext": "dh.generate_parameters"
+            "additionalContext": "dh.generate_parameters",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "AES-128-GCM",
-      "bom-ref": "crypto/algorithm/aes-36a4fba7",
+      "bom-ref": "crypto/regex/aes-5fc262ca",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "ae",
+          "primitive": "unknown",
           "parameterSetIdentifier": "AES-128-GCM"
         }
       },
@@ -93,20 +96,21 @@
           {
             "location": "samples/test-repo/crypto_demo.py",
             "line": 21,
-            "additionalContext": "AES.new"
+            "additionalContext": "AES.new",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "MD5",
-      "bom-ref": "crypto/algorithm/md5-8ee8089d",
+      "bom-ref": "crypto/regex/md5-c621a147",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "hash",
+          "primitive": "unknown",
           "parameterSetIdentifier": "MD5"
         }
       },
@@ -115,20 +119,21 @@
           {
             "location": "samples/test-repo/crypto_demo.py",
             "line": 16,
-            "additionalContext": "MD5.new"
+            "additionalContext": "MD5.new",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "P-256",
-      "bom-ref": "crypto/algorithm/p-256-ab8ddcbe",
+      "bom-ref": "crypto/regex/p-256-75449356",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "signature",
+          "primitive": "unknown",
           "parameterSetIdentifier": "P-256"
         }
       },
@@ -137,20 +142,21 @@
           {
             "location": "samples/test-repo/crypto_demo.py",
             "line": 8,
-            "additionalContext": "SECP256R1"
+            "additionalContext": "SECP256R1",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "AES-128-GCM",
-      "bom-ref": "crypto/algorithm/aes-c138717a",
+      "bom-ref": "crypto/regex/aes-333aa3c8",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "ae",
+          "primitive": "unknown",
           "parameterSetIdentifier": "AES-128-GCM"
         }
       },
@@ -159,20 +165,21 @@
           {
             "location": "samples/test-repo/QuantumSafeCrypto.java",
             "line": 11,
-            "additionalContext": "Cipher.getInstance(\"AES/"
+            "additionalContext": "Cipher.getInstance(\"AES/",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "AES-256",
-      "bom-ref": "crypto/algorithm/aes-256-fc83ec74",
+      "bom-ref": "crypto/regex/aes-256-ffd5406a",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "ae",
+          "primitive": "unknown",
           "parameterSetIdentifier": "AES-256"
         }
       },
@@ -181,20 +188,21 @@
           {
             "location": "samples/test-repo/QuantumSafeCrypto.java",
             "line": 15,
-            "additionalContext": "Cipher.getInstance(\"AES256"
+            "additionalContext": "Cipher.getInstance(\"AES256",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "RSA-2048",
-      "bom-ref": "crypto/algorithm/rsa-7a7b8fb7",
+      "bom-ref": "crypto/regex/rsa-979248b2",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "pke",
+          "primitive": "unknown",
           "parameterSetIdentifier": "RSA-2048"
         }
       },
@@ -203,20 +211,21 @@
           {
             "location": "samples/test-repo/CryptoDemo.java",
             "line": 7,
-            "additionalContext": "KeyPairGenerator.getInstance(\"RSA"
+            "additionalContext": "KeyPairGenerator.getInstance(\"RSA",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "AES-128-GCM",
-      "bom-ref": "crypto/algorithm/aes-a8d340e9",
+      "bom-ref": "crypto/regex/aes-9247d133",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "ae",
+          "primitive": "unknown",
           "parameterSetIdentifier": "AES-128-GCM"
         }
       },
@@ -225,20 +234,21 @@
           {
             "location": "samples/test-repo/CryptoDemo.java",
             "line": 24,
-            "additionalContext": "Cipher.getInstance(\"AES/"
+            "additionalContext": "Cipher.getInstance(\"AES/",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "SHA-1",
-      "bom-ref": "crypto/algorithm/sha-1-6280e63e",
+      "bom-ref": "crypto/regex/sha-1-dbe34e60",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "hash",
+          "primitive": "unknown",
           "parameterSetIdentifier": "SHA-1"
         }
       },
@@ -247,20 +257,21 @@
           {
             "location": "samples/test-repo/CryptoDemo.java",
             "line": 12,
-            "additionalContext": "MessageDigest.getInstance(\"SHA-1"
+            "additionalContext": "MessageDigest.getInstance(\"SHA-1",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "SHA-256",
-      "bom-ref": "crypto/algorithm/sha-256-51236822",
+      "bom-ref": "crypto/regex/sha-256-2f4a37f6",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "hash",
+          "primitive": "unknown",
           "parameterSetIdentifier": "SHA-256"
         }
       },
@@ -269,20 +280,21 @@
           {
             "location": "samples/test-repo/CryptoDemo.java",
             "line": 16,
-            "additionalContext": "MessageDigest.getInstance(\"SHA-256"
+            "additionalContext": "MessageDigest.getInstance(\"SHA-256",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "ECDH",
-      "bom-ref": "crypto/algorithm/ecdh-a93cb340",
+      "bom-ref": "crypto/regex/ecdh-30ba2c6c",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "key-agree",
+          "primitive": "unknown",
           "parameterSetIdentifier": "ECDH"
         }
       },
@@ -291,20 +303,21 @@
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 7,
-            "additionalContext": "ECDH"
+            "additionalContext": "ECDH",
+            "confidence": 0.7
           }
         ],
-        "confidence": 0.7
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "ECDH",
-      "bom-ref": "crypto/algorithm/ecdh-17ee93d3",
+      "bom-ref": "crypto/regex/ecdh-619d42a3",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "key-agree",
+          "primitive": "unknown",
           "parameterSetIdentifier": "ECDH"
         }
       },
@@ -313,20 +326,21 @@
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 8,
-            "additionalContext": "KeyAgreement.getInstance(\"ECDH"
+            "additionalContext": "KeyAgreement.getInstance(\"ECDH",
+            "confidence": 0.85
           }
         ],
-        "confidence": 0.85
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "P-256",
-      "bom-ref": "crypto/algorithm/p-256-57dc4e31",
+      "bom-ref": "crypto/regex/p-256-7b935bc3",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "signature",
+          "primitive": "unknown",
           "parameterSetIdentifier": "P-256"
         }
       },
@@ -335,20 +349,21 @@
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 10,
-            "additionalContext": "P-256"
+            "additionalContext": "P-256",
+            "confidence": 0.7
           }
         ],
-        "confidence": 0.7
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "P-256",
-      "bom-ref": "crypto/algorithm/p-256-cebbba28",
+      "bom-ref": "crypto/regex/p-256-35831b91",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "signature",
+          "primitive": "unknown",
           "parameterSetIdentifier": "P-256"
         }
       },
@@ -357,20 +372,21 @@
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 12,
-            "additionalContext": "secp256r1"
+            "additionalContext": "secp256r1",
+            "confidence": 0.7
           }
         ],
-        "confidence": 0.7
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "P-384",
-      "bom-ref": "crypto/algorithm/p-384-a1acfd0d",
+      "bom-ref": "crypto/regex/p-384-c65c46df",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "signature",
+          "primitive": "unknown",
           "parameterSetIdentifier": "P-384"
         }
       },
@@ -379,20 +395,21 @@
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 16,
-            "additionalContext": "P-384"
+            "additionalContext": "P-384",
+            "confidence": 0.7
           }
         ],
-        "confidence": 0.7
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "P-384",
-      "bom-ref": "crypto/algorithm/p-384-d30c933b",
+      "bom-ref": "crypto/regex/p-384-92238561",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "signature",
+          "primitive": "unknown",
           "parameterSetIdentifier": "P-384"
         }
       },
@@ -401,20 +418,21 @@
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 17,
-            "additionalContext": "secp384r1"
+            "additionalContext": "secp384r1",
+            "confidence": 0.7
           }
         ],
-        "confidence": 0.7
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "secp256k1",
-      "bom-ref": "crypto/algorithm/secp256k1-96cf6f66",
+      "bom-ref": "crypto/regex/secp256k1-a813bf21",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "signature",
+          "primitive": "unknown",
           "parameterSetIdentifier": "secp256k1"
         }
       },
@@ -423,20 +441,21 @@
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 21,
-            "additionalContext": "secp256k1"
+            "additionalContext": "secp256k1",
+            "confidence": 0.7
           }
         ],
-        "confidence": 0.7
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "secp256k1",
-      "bom-ref": "crypto/algorithm/secp256k1-f6583cc4",
+      "bom-ref": "crypto/regex/secp256k1-c419295f",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "signature",
+          "primitive": "unknown",
           "parameterSetIdentifier": "secp256k1"
         }
       },
@@ -445,20 +464,21 @@
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 22,
-            "additionalContext": "secp256k1"
+            "additionalContext": "secp256k1",
+            "confidence": 0.7
           }
         ],
-        "confidence": 0.7
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "secp256k1",
-      "bom-ref": "crypto/algorithm/secp256k1-60cc597f",
+      "bom-ref": "crypto/regex/secp256k1-9bcbf27c",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "signature",
+          "primitive": "unknown",
           "parameterSetIdentifier": "secp256k1"
         }
       },
@@ -467,20 +487,21 @@
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 22,
-            "additionalContext": "secp256k1"
+            "additionalContext": "secp256k1",
+            "confidence": 0.7
           }
         ],
-        "confidence": 0.7
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "secp256k1",
-      "bom-ref": "crypto/algorithm/secp256k1-6d008ebd",
+      "bom-ref": "crypto/regex/secp256k1-f6bad054",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "signature",
+          "primitive": "unknown",
           "parameterSetIdentifier": "secp256k1"
         }
       },
@@ -489,20 +510,21 @@
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 23,
-            "additionalContext": "secp256k1"
+            "additionalContext": "secp256k1",
+            "confidence": 0.7
           }
         ],
-        "confidence": 0.7
+        "detection_method": "regex"
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "secp256k1",
-      "bom-ref": "crypto/algorithm/secp256k1-03c95354",
+      "bom-ref": "crypto/regex/secp256k1-c04d114a",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "signature",
+          "primitive": "unknown",
           "parameterSetIdentifier": "secp256k1"
         }
       },
@@ -511,10 +533,57 @@
           {
             "location": "samples/test-repo/EllipticCurveDemo.java",
             "line": 24,
-            "additionalContext": "secp256k1"
+            "additionalContext": "secp256k1",
+            "confidence": 0.7
           }
         ],
-        "confidence": 0.7
+        "detection_method": "regex"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "unknown",
+      "bom-ref": "crypto/manifest/unknown-89d647b3",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "unknown",
+          "parameterSetIdentifier": "unknown"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "samples/test-repo/requirements.txt",
+            "line": null,
+            "additionalContext": "Dependency 'cryptography' declared \u2014 Capable of RSA, AES, ECDSA, ECDH, SHA-2 family \u2014 specific algorithm usage not determined from manifest alone",
+            "confidence": 0.5
+          }
+        ],
+        "detection_method": "manifest"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "unknown",
+      "bom-ref": "crypto/file-extension/unknown-fbd37aa2",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "unknown",
+          "parameterSetIdentifier": "unknown"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "samples/test-repo/server.pem",
+            "line": null,
+            "additionalContext": "server.pem matched known cert/key extension (.pem)",
+            "confidence": 0.5
+          }
+        ],
+        "detection_method": "file-extension"
       }
     }
   ]
