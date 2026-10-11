@@ -53,6 +53,7 @@ class DetectionMethod(str, Enum):
 class EvidenceType(str, Enum):
     API_CALL = "api-call"
     KEYWORD = "keyword"
+    CURVE_PARAMETER = "curve-parameter"
     COMMENT_MENTION = "comment-mention"
     DEPENDENCY = "dependency"
     CERTIFICATE = "certificate"
@@ -221,7 +222,10 @@ class CryptoFinding(_Strict):
             raise ValueError(
                 "a finding needs evidence, or an explicit evidence_gap_reason"
             )
-        if self.status == FindingStatus.UNABLE_TO_ANALYZE and not self.evidence_gap_reason:
+        if (
+            self.status == FindingStatus.UNABLE_TO_ANALYZE
+            and not self.evidence_gap_reason
+        ):
             raise ValueError("UNABLE_TO_ANALYZE requires evidence_gap_reason")
         if self.status == FindingStatus.CONFIRMED and not any(
             e.confidence == Confidence.HIGH
@@ -307,7 +311,9 @@ class FileRecord(_Strict):
             )
 
         stages = {r.stage: r.status for r in results}
-        failures = [f"{r.stage}: {r.reason}" for r in results if r.status == StageStatus.FAILED]
+        failures = [
+            f"{r.stage}: {r.reason}" for r in results if r.status == StageStatus.FAILED
+        ]
         statuses = set(stages.values())
         if statuses == {StageStatus.SUCCESS}:
             outcome = FileOutcome.ANALYZED
@@ -353,18 +359,24 @@ class CoverageReport(_Strict):
         ext_counts: Counter[str] = Counter()
         for r in records:
             if r.outcome == FileOutcome.UNSUPPORTED:
-                ext_counts[PurePosixPath(r.path).suffix.lower() or "(no extension)"] += 1
+                ext_counts[
+                    PurePosixPath(r.path).suffix.lower() or "(no extension)"
+                ] += 1
 
         analyzed = outcomes[FileOutcome.ANALYZED]
         return cls(
             files_discovered=discovered,
-            files_eligible=analyzed + outcomes[FileOutcome.PARTIAL] + outcomes[FileOutcome.FAILED],
+            files_eligible=analyzed
+            + outcomes[FileOutcome.PARTIAL]
+            + outcomes[FileOutcome.FAILED],
             files_analyzed=analyzed,
             files_partial=outcomes[FileOutcome.PARTIAL],
             files_failed=outcomes[FileOutcome.FAILED],
             files_unsupported=outcomes[FileOutcome.UNSUPPORTED],
             files_skipped=outcomes[FileOutcome.SKIPPED],
-            file_coverage_percent=round(analyzed / discovered * 100, 1) if discovered else 0.0,
+            file_coverage_percent=(
+                round(analyzed / discovered * 100, 1) if discovered else 0.0
+            ),
             stage_counts=stage_counts,
             unsupported_extensions=dict(ext_counts),
             files=records,
@@ -449,9 +461,14 @@ class RiskAssessment(_Strict):
 
     @model_validator(mode="after")
     def _kind_matches_score(self):
-        scored = self.risk_kind in (RiskKind.HNDL_CONFIDENTIALITY, RiskKind.AUTHENTICITY)
+        scored = self.risk_kind in (
+            RiskKind.HNDL_CONFIDENTIALITY,
+            RiskKind.AUTHENTICITY,
+        )
         if scored and (self.risk_score is None or self.risk_level is None):
-            raise ValueError(f"{self.risk_kind.value} requires risk_score and risk_level")
+            raise ValueError(
+                f"{self.risk_kind.value} requires risk_score and risk_level"
+            )
         if not scored and (self.risk_score is not None or self.risk_level is not None):
             raise ValueError(f"{self.risk_kind.value} must not carry a score or level")
         return self
