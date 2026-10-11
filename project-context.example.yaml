@@ -1,0 +1,10 @@
+# Copy to project-context.yaml and replace these placeholders.
+# Keep unknown values null rather than guessing; affected assessments stay provisional.
+# Scores use a 0..5 scale.
+project_name: your-project-name
+data_sensitivity: null       # 0 = low, 5 = highest sensitivity
+confidentiality_years: null  # years data must remain confidential
+exposure: null               # exposure to possible ciphertext collection (0..5)
+system_criticality: null     # business/system criticality (0..5)
+migration_years: null        # years needed to migrate; policy assumes 3 when missing
+threat_horizon_year: null    # policy assumes 2035 when missing

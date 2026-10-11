@@ -1,34 +1,44 @@
-from pathlib import Path
+"""
+Artifact detector: password-protected key containers whose contents we cannot parse.
 
-from common.models import CryptoFinding, DetectionMethod, ScanResult
+This is a classifier, not an analysis stage. The file is reported as a
+low-confidence potential asset, and coverage records it as UNSUPPORTED because
+its contents are never examined.
+"""
 
-CERT_KEY_EXTENSIONS = {".pem", ".crt", ".cer", ".key", ".der", ".p12", ".pfx", ".jks"}
+from pathlib import PurePosixPath
+
+from common.models import (
+    Confidence,
+    CryptoFinding,
+    DetectionMethod,
+    Evidence,
+    EvidenceType,
+    FindingStatus,
+)
+
+ARTIFACT_SUFFIXES = {".p12": "PKCS#12", ".pfx": "PKCS#12", ".jks": "Java KeyStore"}
 
 
-def scan_artifacts(target_dir: str) -> ScanResult:
-    findings = []
-    target = Path(target_dir)
-
-    for filepath in target.rglob("*"):
-        if filepath.is_file() and filepath.suffix.lower() in CERT_KEY_EXTENSIONS:
-            findings.append(
-                CryptoFinding(
-                    algorithm="unknown",
-                    variant=None,
-                    purpose=None,
-                    file=str(filepath),
-                    line=None,
-                    evidence=f"{filepath.name} matched known cert/key extension ({filepath.suffix})",
+def detect_artifact(rel_path: str) -> list[CryptoFinding]:
+    suffix = PurePosixPath(rel_path).suffix.lower()
+    container = ARTIFACT_SUFFIXES.get(suffix)
+    if container is None:
+        return []
+    return [
+        CryptoFinding(
+            algorithm="unknown",
+            status=FindingStatus.POTENTIAL,
+            evidence=[
+                Evidence(
+                    file_path=rel_path,
+                    evidence_type=EvidenceType.FILE_EXTENSION,
                     detection_method=DetectionMethod.FILE_EXTENSION,
-                    confidence=0.5,
-                    source="artifact_scanner.py",
+                    rule_id="ARTIFACT-001",
+                    excerpt=f"{container} container ({suffix}); contents not parsed",
+                    confidence=Confidence.LOW,
+                    metadata={"container": container},
                 )
-            )
-
-    return ScanResult(findings=findings, coverage=None)
-
-
-if __name__ == "__main__":
-    results = scan_artifacts("samples/test-repo")
-    for r in results.findings:
-        print(r.model_dump())
+            ],
+        )
+    ]

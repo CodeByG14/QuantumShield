@@ -1,519 +1,1072 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:c72d23d7-0dd3-461a-9adc-e0d79381bb6f",
+  "serialNumber": "urn:uuid:f9f467b7-adb2-47d0-a1d7-5cf0af255486",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-04T09:59:26.106942+00:00",
+    "timestamp": "2026-10-11T14:05:08.218328+00:00",
     "component": {
       "type": "application",
-      "name": "quantumshield-test-repo"
+      "name": "test-repo"
     },
     "properties": [
       {
-        "name": "quantumshield:files_discovered",
-        "value": "6"
+        "name": "quantumshield:files-discovered",
+        "value": "10"
       },
       {
-        "name": "quantumshield:files_analyzed",
-        "value": "4"
+        "name": "quantumshield:files-analyzed",
+        "value": "9"
       },
       {
-        "name": "quantumshield:files_skipped",
-        "value": "2"
+        "name": "quantumshield:files-partial",
+        "value": "0"
+      },
+      {
+        "name": "quantumshield:files-failed",
+        "value": "1"
+      },
+      {
+        "name": "quantumshield:files-unsupported",
+        "value": "0"
+      },
+      {
+        "name": "quantumshield:files-skipped",
+        "value": "0"
+      },
+      {
+        "name": "quantumshield:file-coverage-percent",
+        "value": "90.0"
       }
     ]
   },
   "components": [
     {
       "type": "cryptographic-asset",
-      "name": "RSA-2048",
-      "bom-ref": "crypto/regex/rsa-ec152102",
+      "name": "RSA",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "RSA-2048"
+          "primitive": "unknown"
         }
       },
+      "bom-ref": "component/CRYPTO-001",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-001"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "potential"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "medium"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "undetermined"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "JV-RSA-001"
+        }
+      ],
       "evidence": {
         "occurrences": [
           {
-            "location": "samples/test-repo/crypto_demo.py",
-            "line": 12,
-            "additionalContext": "RSA.generate",
-            "confidence": 0.85
-          }
-        ],
-        "detection_methods": [
-          "regex"
-        ]
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "ECDSA",
-      "bom-ref": "crypto/regex/ecdsa-6dd51325",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "ECDSA"
-        }
-      },
-      "evidence": {
-        "occurrences": [
-          {
-            "location": "samples/test-repo/crypto_demo.py",
-            "line": 8,
-            "additionalContext": "ec.generate_private_key",
-            "confidence": 0.85
-          }
-        ],
-        "detection_methods": [
-          "regex"
-        ]
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "DH",
-      "bom-ref": "crypto/regex/dh-cdf4e612",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "DH"
-        }
-      },
-      "evidence": {
-        "occurrences": [
-          {
-            "location": "samples/test-repo/crypto_demo.py",
-            "line": 25,
-            "additionalContext": "dh.generate_parameters",
-            "confidence": 0.85
-          }
-        ],
-        "detection_methods": [
-          "regex"
-        ]
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "AES-128-GCM",
-      "bom-ref": "crypto/regex/aes-32a31ca7",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "AES-128-GCM"
-        }
-      },
-      "evidence": {
-        "occurrences": [
-          {
-            "location": "samples/test-repo/crypto_demo.py",
-            "line": 21,
-            "additionalContext": "AES.new",
-            "confidence": 0.85
-          }
-        ],
-        "detection_methods": [
-          "regex"
-        ]
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "MD5",
-      "bom-ref": "crypto/regex/md5-a7bd9843",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "MD5"
-        }
-      },
-      "evidence": {
-        "occurrences": [
-          {
-            "location": "samples/test-repo/crypto_demo.py",
-            "line": 16,
-            "additionalContext": "MD5.new",
-            "confidence": 0.85
-          }
-        ],
-        "detection_methods": [
-          "regex"
-        ]
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "P-256",
-      "bom-ref": "crypto/regex/p-256-249ba855",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "P-256"
-        }
-      },
-      "evidence": {
-        "occurrences": [
-          {
-            "location": "samples/test-repo/crypto_demo.py",
-            "line": 8,
-            "additionalContext": "SECP256R1",
-            "confidence": 0.85
-          }
-        ],
-        "detection_methods": [
-          "regex"
-        ]
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "AES-128-GCM",
-      "bom-ref": "crypto/regex/aes-15beb434",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "AES-128-GCM"
-        }
-      },
-      "evidence": {
-        "occurrences": [
-          {
-            "location": "samples/test-repo/QuantumSafeCrypto.java",
-            "line": 11,
-            "additionalContext": "Cipher.getInstance(\"AES/",
-            "confidence": 0.85
-          }
-        ],
-        "detection_methods": [
-          "regex"
-        ]
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "AES-256",
-      "bom-ref": "crypto/regex/aes-256-8e10467a",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "AES-256"
-        }
-      },
-      "evidence": {
-        "occurrences": [
-          {
-            "location": "samples/test-repo/QuantumSafeCrypto.java",
-            "line": 15,
-            "additionalContext": "Cipher.getInstance(\"AES256",
-            "confidence": 0.85
-          }
-        ],
-        "detection_methods": [
-          "regex"
-        ]
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "RSA-2048",
-      "bom-ref": "crypto/regex/rsa-3b75f296",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "RSA-2048"
-        }
-      },
-      "evidence": {
-        "occurrences": [
-          {
-            "location": "samples/test-repo/CryptoDemo.java",
+            "location": "CryptoDemo.java",
             "line": 7,
-            "additionalContext": "KeyPairGenerator.getInstance(\"RSA",
-            "confidence": 0.85
+            "additionalContext": "KeyPairGenerator.getInstance(\"RSA\")"
           }
-        ],
-        "detection_methods": [
-          "regex"
-        ]
-      }
-    },
-    {
-      "type": "cryptographic-asset",
-      "name": "AES-128-GCM",
-      "bom-ref": "crypto/regex/aes-74b3d682",
-      "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "AES-128-GCM"
-        }
-      },
-      "evidence": {
-        "occurrences": [
-          {
-            "location": "samples/test-repo/CryptoDemo.java",
-            "line": 24,
-            "additionalContext": "Cipher.getInstance(\"AES/",
-            "confidence": 0.85
-          }
-        ],
-        "detection_methods": [
-          "regex"
         ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "SHA-1",
-      "bom-ref": "crypto/regex/sha-1-b9488d05",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "SHA-1"
+          "primitive": "hash"
         }
       },
+      "bom-ref": "component/CRYPTO-002",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-002"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "hash"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "JV-SHA1-001"
+        }
+      ],
       "evidence": {
         "occurrences": [
           {
-            "location": "samples/test-repo/CryptoDemo.java",
+            "location": "CryptoDemo.java",
             "line": 12,
-            "additionalContext": "MessageDigest.getInstance(\"SHA-1",
-            "confidence": 0.85
+            "additionalContext": "MessageDigest.getInstance(\"SHA-1\")"
           }
-        ],
-        "detection_methods": [
-          "regex"
         ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "SHA-256",
-      "bom-ref": "crypto/regex/sha-256-bd10b39d",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "SHA-256"
+          "primitive": "hash"
         }
       },
+      "bom-ref": "component/CRYPTO-003",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-003"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "hash"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "JV-SHA256-001"
+        }
+      ],
       "evidence": {
         "occurrences": [
           {
-            "location": "samples/test-repo/CryptoDemo.java",
+            "location": "CryptoDemo.java",
             "line": 16,
-            "additionalContext": "MessageDigest.getInstance(\"SHA-256",
-            "confidence": 0.85
+            "additionalContext": "MessageDigest.getInstance(\"SHA-256\")"
           }
-        ],
-        "detection_methods": [
-          "regex"
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "AES",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher"
+        }
+      },
+      "bom-ref": "component/CRYPTO-004",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-004"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "potential"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "medium"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "symmetric-encryption"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "JV-AES-001,JV-AES-002"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "CryptoDemo.java",
+            "line": 20,
+            "additionalContext": "KeyGenerator.getInstance(\"AES\")"
+          },
+          {
+            "location": "CryptoDemo.java",
+            "line": 24,
+            "additionalContext": "Cipher.getInstance(\"AES/GCM/NoPadding\")"
+          }
         ]
       }
     },
     {
       "type": "cryptographic-asset",
       "name": "ECDH",
-      "bom-ref": "crypto/regex/ecdh-2ec0e676",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "ECDH"
+          "primitive": "key-agree"
         }
       },
+      "bom-ref": "component/CRYPTO-005",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-005"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "key-establishment"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "JV-ECDH-001"
+        }
+      ],
       "evidence": {
         "occurrences": [
           {
-            "location": "samples/test-repo/EllipticCurveDemo.java",
-            "line": 7,
-            "additionalContext": "ECDH",
-            "confidence": 0.7
-          },
-          {
-            "location": "samples/test-repo/EllipticCurveDemo.java",
+            "location": "EllipticCurveDemo.java",
             "line": 8,
-            "additionalContext": "KeyAgreement.getInstance(\"ECDH",
-            "confidence": 0.85
+            "additionalContext": "KeyAgreement.getInstance(\"ECDH\")"
           }
-        ],
-        "detection_methods": [
-          "regex"
         ]
       }
     },
     {
       "type": "cryptographic-asset",
-      "name": "P-256",
-      "bom-ref": "crypto/regex/p-256-c76c00e7",
+      "name": "EC",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "unknown"
+        }
+      },
+      "bom-ref": "component/CRYPTO-006",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-006"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "potential"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "medium"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "undetermined"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "JV-EC-001"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "EllipticCurveDemo.java",
+            "line": 11,
+            "additionalContext": "KeyPairGenerator.getInstance(\"EC\")"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "EC",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
           "primitive": "unknown",
-          "parameterSetIdentifier": "P-256"
+          "curve": "P-256"
         }
       },
+      "bom-ref": "component/CRYPTO-007",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-007"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "potential"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "low"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "undetermined"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "JV-EC-002"
+        }
+      ],
       "evidence": {
         "occurrences": [
           {
-            "location": "samples/test-repo/EllipticCurveDemo.java",
-            "line": 10,
-            "additionalContext": "P-256",
-            "confidence": 0.7
-          },
-          {
-            "location": "samples/test-repo/EllipticCurveDemo.java",
+            "location": "EllipticCurveDemo.java",
             "line": 12,
-            "additionalContext": "secp256r1",
-            "confidence": 0.7
+            "additionalContext": "ECGenParameterSpec(\"secp256r1\")"
           }
-        ],
-        "detection_methods": [
-          "regex"
         ]
       }
     },
     {
       "type": "cryptographic-asset",
-      "name": "P-384",
-      "bom-ref": "crypto/regex/p-384-156ec953",
+      "name": "EC",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
           "primitive": "unknown",
-          "parameterSetIdentifier": "P-384"
+          "curve": "P-384"
         }
       },
+      "bom-ref": "component/CRYPTO-008",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-008"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "potential"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "low"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "undetermined"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "JV-EC-002"
+        }
+      ],
       "evidence": {
         "occurrences": [
           {
-            "location": "samples/test-repo/EllipticCurveDemo.java",
-            "line": 16,
-            "additionalContext": "P-384",
-            "confidence": 0.7
-          },
-          {
-            "location": "samples/test-repo/EllipticCurveDemo.java",
+            "location": "EllipticCurveDemo.java",
             "line": 17,
-            "additionalContext": "secp384r1",
-            "confidence": 0.7
+            "additionalContext": "ECGenParameterSpec(\"secp384r1\")"
           }
-        ],
-        "detection_methods": [
-          "regex"
         ]
       }
     },
     {
       "type": "cryptographic-asset",
-      "name": "secp256k1",
-      "bom-ref": "crypto/regex/secp256k1-ac99e705",
+      "name": "EC",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
           "primitive": "unknown",
-          "parameterSetIdentifier": "secp256k1"
+          "curve": "secp256k1"
         }
       },
+      "bom-ref": "component/CRYPTO-009",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-009"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "potential"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "low"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "undetermined"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "JV-EC-002"
+        }
+      ],
       "evidence": {
         "occurrences": [
           {
-            "location": "samples/test-repo/EllipticCurveDemo.java",
+            "location": "EllipticCurveDemo.java",
+            "line": 22,
+            "additionalContext": "ECGenParameterSpec(\"secp256k1\")"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "AES",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher"
+        }
+      },
+      "bom-ref": "component/CRYPTO-010",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-010"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "potential"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "medium"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "symmetric-encryption"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "JV-AES-001,JV-AES-002"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "QuantumSafeCrypto.java",
+            "line": 7,
+            "additionalContext": "KeyGenerator.getInstance(\"AES\")"
+          },
+          {
+            "location": "QuantumSafeCrypto.java",
+            "line": 11,
+            "additionalContext": "Cipher.getInstance(\"AES/GCM/NoPadding\")"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "AES-256",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher",
+          "parameterSetIdentifier": "256"
+        }
+      },
+      "bom-ref": "component/CRYPTO-011",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-011"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "symmetric-encryption"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "JV-AES-001"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "QuantumSafeCrypto.java",
+            "line": 15,
+            "additionalContext": "Cipher.getInstance(\"AES256/GCM/NoPadding\")"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "EC",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "unknown",
+          "curve": "P-256"
+        }
+      },
+      "bom-ref": "component/CRYPTO-012",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-012"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "undetermined"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "PY-EC-001"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_demo.py",
+            "line": 8,
+            "additionalContext": "ec.generate_private_key(ec.SECP256R1()"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "RSA-2048",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "unknown",
+          "parameterSetIdentifier": "2048"
+        }
+      },
+      "bom-ref": "component/CRYPTO-013",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-013"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "undetermined"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "PY-RSA-002"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_demo.py",
+            "line": 12,
+            "additionalContext": "RSA.generate(2048)"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "MD5",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash"
+        }
+      },
+      "bom-ref": "component/CRYPTO-014",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-014"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "hash"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "PY-MD5-001"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_demo.py",
+            "line": 16,
+            "additionalContext": "MD5.new("
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "AES",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher"
+        }
+      },
+      "bom-ref": "component/CRYPTO-015",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-015"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "potential"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "medium"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "symmetric-encryption"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "PY-AES-001"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_demo.py",
             "line": 21,
-            "additionalContext": "secp256k1",
-            "confidence": 0.7
-          },
-          {
-            "location": "samples/test-repo/EllipticCurveDemo.java",
-            "line": 22,
-            "additionalContext": "secp256k1",
-            "confidence": 0.7
-          },
-          {
-            "location": "samples/test-repo/EllipticCurveDemo.java",
-            "line": 22,
-            "additionalContext": "secp256k1",
-            "confidence": 0.7
-          },
-          {
-            "location": "samples/test-repo/EllipticCurveDemo.java",
-            "line": 23,
-            "additionalContext": "secp256k1",
-            "confidence": 0.7
-          },
-          {
-            "location": "samples/test-repo/EllipticCurveDemo.java",
-            "line": 24,
-            "additionalContext": "secp256k1",
-            "confidence": 0.7
+            "additionalContext": "AES.new(k, AES.MODE_GCM)"
           }
-        ],
-        "detection_methods": [
-          "regex"
         ]
       }
     },
     {
       "type": "cryptographic-asset",
-      "name": "unknown",
-      "bom-ref": "crypto/manifest/unknown-4e2d66b6",
+      "name": "DH-2048",
       "cryptoProperties": {
         "assetType": "algorithm",
         "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "unknown"
+          "primitive": "key-agree",
+          "parameterSetIdentifier": "2048"
         }
       },
+      "bom-ref": "component/CRYPTO-016",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-016"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "key-establishment"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "PY-DH-001"
+        }
+      ],
       "evidence": {
         "occurrences": [
           {
-            "location": "samples/test-repo/requirements.txt",
-            "line": null,
-            "additionalContext": "Dependency 'cryptography' declared \u2014 Capable of RSA, AES, ECDSA, ECDH, SHA-2 family \u2014 specific algorithm usage not determined from manifest alone",
-            "confidence": 0.5
+            "location": "crypto_demo.py",
+            "line": 25,
+            "additionalContext": "dh.generate_parameters(generator=2, key_size=2048)"
           }
-        ],
-        "detection_methods": [
-          "manifest"
         ]
       }
     },
     {
       "type": "cryptographic-asset",
-      "name": "unknown",
-      "bom-ref": "crypto/file-extension/unknown-9157d1c2",
+      "name": "private key (P-256)",
       "cryptoProperties": {
-        "assetType": "algorithm",
-        "algorithmProperties": {
-          "primitive": "unknown",
-          "parameterSetIdentifier": "unknown"
+        "assetType": "related-crypto-material",
+        "relatedCryptoMaterialProperties": {
+          "type": "private-key",
+          "size": 256
         }
       },
+      "bom-ref": "component/CRYPTO-017",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-017"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "undetermined"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "X509-PRIVKEY-001"
+        },
+        {
+          "name": "quantumshield:key-material",
+          "value": "private"
+        }
+      ],
       "evidence": {
         "occurrences": [
           {
-            "location": "samples/test-repo/server.pem",
-            "line": null,
-            "additionalContext": "server.pem matched known cert/key extension (.pem)",
-            "confidence": 0.5
+            "location": "ec_test.key",
+            "line": 1,
+            "additionalContext": "private key, P-256"
           }
-        ],
-        "detection_methods": [
-          "file-extension"
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "certificate (P-256)",
+      "cryptoProperties": {
+        "assetType": "certificate",
+        "certificateProperties": {
+          "certificateFormat": "X.509",
+          "subjectName": "CN=ec-test.local",
+          "issuerName": "CN=ec-test.local",
+          "notValidBefore": "2026-10-11T08:28:30+00:00",
+          "notValidAfter": "2027-10-11T08:28:30+00:00"
+        }
+      },
+      "bom-ref": "component/CRYPTO-018",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-018"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "signature"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "X509-CERT-001"
+        },
+        {
+          "name": "quantumshield:assumption",
+          "value": "Certificate declares no keyUsage; role assumed to be signature (authenticity). Key-establishment use of this key is not ruled out."
+        },
+        {
+          "name": "quantumshield:subject",
+          "value": "CN=ec-test.local"
+        },
+        {
+          "name": "quantumshield:issuer",
+          "value": "CN=ec-test.local"
+        },
+        {
+          "name": "quantumshield:not-valid-before",
+          "value": "2026-10-11T08:28:30+00:00"
+        },
+        {
+          "name": "quantumshield:not-valid-after",
+          "value": "2027-10-11T08:28:30+00:00"
+        },
+        {
+          "name": "quantumshield:fingerprint-sha256",
+          "value": "d8c438c834efcc5267cbae8ac533dbef1afd074d55734d77bfae040b194b3f0c"
+        },
+        {
+          "name": "quantumshield:signature-algorithm",
+          "value": "ecdsa-with-SHA256"
+        },
+        {
+          "name": "quantumshield:key-usage",
+          "value": "not declared"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "ec_test.pem",
+            "line": 1,
+            "additionalContext": "X.509 certificate, P-256 public key"
+          }
+        ]
+      }
+    },
+    {
+      "type": "library",
+      "name": "cryptography",
+      "purl": "pkg:pypi/cryptography",
+      "bom-ref": "component/CRYPTO-019",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-019"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "potential"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "medium"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "undetermined"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "MANIFEST-001"
+        },
+        {
+          "name": "quantumshield:package",
+          "value": "cryptography"
+        },
+        {
+          "name": "quantumshield:capability",
+          "value": "RSA, ECC, DH, AES, SHA-2 and X.509 support"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "requirements.txt",
+            "line": 1,
+            "additionalContext": "cryptography>=41.0"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "private key (RSA-2048)",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "relatedCryptoMaterialProperties": {
+          "type": "private-key",
+          "size": 2048
+        }
+      },
+      "bom-ref": "component/CRYPTO-020",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-020"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "undetermined"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "X509-PRIVKEY-001"
+        },
+        {
+          "name": "quantumshield:key-material",
+          "value": "private"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "rsa_test.key",
+            "line": 1,
+            "additionalContext": "private key, RSA-2048"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "certificate (RSA-2048)",
+      "cryptoProperties": {
+        "assetType": "certificate",
+        "certificateProperties": {
+          "certificateFormat": "X.509",
+          "subjectName": "CN=rsa-test.local",
+          "issuerName": "CN=rsa-test.local",
+          "notValidBefore": "2026-10-11T08:28:30+00:00",
+          "notValidAfter": "2027-10-11T08:28:30+00:00"
+        }
+      },
+      "bom-ref": "component/CRYPTO-021",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-021"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "confirmed"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "high"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "signature"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "X509-CERT-001"
+        },
+        {
+          "name": "quantumshield:assumption",
+          "value": "Certificate declares no keyUsage; role assumed to be signature (authenticity). Key-establishment use of this key is not ruled out."
+        },
+        {
+          "name": "quantumshield:subject",
+          "value": "CN=rsa-test.local"
+        },
+        {
+          "name": "quantumshield:issuer",
+          "value": "CN=rsa-test.local"
+        },
+        {
+          "name": "quantumshield:not-valid-before",
+          "value": "2026-10-11T08:28:30+00:00"
+        },
+        {
+          "name": "quantumshield:not-valid-after",
+          "value": "2027-10-11T08:28:30+00:00"
+        },
+        {
+          "name": "quantumshield:fingerprint-sha256",
+          "value": "7d0c45bec17fd85517214f76c17acda55b7d8981b493dc3698853e553092ac07"
+        },
+        {
+          "name": "quantumshield:signature-algorithm",
+          "value": "sha256WithRSAEncryption"
+        },
+        {
+          "name": "quantumshield:key-usage",
+          "value": "not declared"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "rsa_test.pem",
+            "line": 1,
+            "additionalContext": "X.509 certificate, RSA-2048 public key"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "unidentified cryptographic material",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "relatedCryptoMaterialProperties": {
+          "type": "unknown"
+        }
+      },
+      "bom-ref": "component/CRYPTO-022",
+      "properties": [
+        {
+          "name": "quantumshield:finding-id",
+          "value": "CRYPTO-022"
+        },
+        {
+          "name": "quantumshield:status",
+          "value": "unable-to-analyze"
+        },
+        {
+          "name": "quantumshield:confidence",
+          "value": "low"
+        },
+        {
+          "name": "quantumshield:role",
+          "value": "undetermined"
+        },
+        {
+          "name": "quantumshield:rules",
+          "value": "X509-UNREADABLE-001"
+        },
+        {
+          "name": "quantumshield:evidence-gap",
+          "value": "file is empty"
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "server.pem",
+            "additionalContext": "empty file"
+          }
         ]
       }
     }
