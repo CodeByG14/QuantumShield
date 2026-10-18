@@ -27,7 +27,7 @@ Cryptographic migration recommendations must depend on the purpose of the crypto
 ## GitHub Repository / Commit URL
 
 Repository URL: https://github.com/CodeByG14/QuantumShield.git
-Local commit: b9ea49b (branch: main)
+Local commit: 7f75d04 (branch: main)
 Status: Committed locally. The code must be pushed by the student, not by the coding agent.
 
 ## Supporting Document / Demo Link
