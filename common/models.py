@@ -129,8 +129,9 @@ class RiskLevel(str, Enum):
 
 class RiskKind(str, Enum):
     HNDL_CONFIDENTIALITY = "hndl-confidentiality"  # harvest-now-decrypt-later applies
-    AUTHENTICITY = "authenticity"  # signatures: not an HNDL risk
-    NOT_HNDL_APPLICABLE = "not-hndl-applicable"  # e.g. hashes
+    SIGNATURE_TRANSITION = "signature-transition"  # quantum-vulnerable signature: migration priority, not HNDL
+    CLASSICAL_WEAKNESS = "classical-weakness"  # classical cryptographic weakness independent of quantum
+    NOT_HNDL_APPLICABLE = "not-hndl-applicable"  # e.g. strong hashes, MACs
     NOT_ASSESSED = "not-assessed"  # role undetermined / could not analyze
 
 
@@ -418,6 +419,22 @@ _CONTEXT_REQUIRED = (
 )
 
 
+class AssetContext(_Strict):
+    """Context override for a specific asset, component, or finding.
+    
+    Takes precedence over project-level context. Use asset_id to match against
+    a finding's primary_location or a specific finding_id. All fields are optional
+    since this is an override - unset values fall through to project context.
+    """
+    asset_id: str  # finding_id, file path, component name, or other asset identifier
+    data_sensitivity: int | None = Field(default=None, ge=0, le=5)
+    confidentiality_years: float | None = Field(default=None, ge=0)
+    exposure: int | None = Field(default=None, ge=0, le=5)
+    system_criticality: int | None = Field(default=None, ge=0, le=5)
+    migration_years: float | None = Field(default=None, ge=0)
+    threat_horizon_year: int | None = Field(default=None, ge=2000, le=2100)
+
+
 class ProjectContext(_Strict):
     project_name: str = "unnamed-project"
     data_sensitivity: int | None = Field(default=None, ge=0, le=5)
@@ -427,9 +444,34 @@ class ProjectContext(_Strict):
     # Mosca inputs; the policy supplies documented defaults when these are unset.
     migration_years: float | None = Field(default=None, ge=0)
     threat_horizon_year: int | None = Field(default=None, ge=2000, le=2100)
+    # Asset-level context overrides with explicit precedence
+    asset_contexts: list[AssetContext] = Field(default_factory=list)
 
     def missing_inputs(self) -> list[str]:
         return [name for name in _CONTEXT_REQUIRED if getattr(self, name) is None]
+    
+    def get_asset_context(self, finding: CryptoFinding) -> AssetContext | None:
+        """Find the most specific asset context for a finding.
+        
+        Matches by finding_id first, then by primary_location (file path).
+        """
+        if not self.asset_contexts:
+            return None
+        
+        # Try exact finding_id match first
+        if finding.finding_id:
+            for ac in self.asset_contexts:
+                if ac.asset_id == finding.finding_id:
+                    return ac
+        
+        # Try file path match
+        location = finding.primary_location
+        if location:
+            for ac in self.asset_contexts:
+                if ac.asset_id in location or location.startswith(ac.asset_id):
+                    return ac
+        
+        return None
 
 
 # --------------------------------------------------------------------------
@@ -444,6 +486,8 @@ class FactorScore(_Strict):
     contribution: float = Field(ge=0)
     basis: str  # why this score: observed, supplied, or assumed
     assumed: bool = False
+    # Provenance: where the value came from in the context hierarchy
+    context_source: str | None = None  # "finding_override", "asset_context", "project_context", "policy_default"
 
 
 class RiskAssessment(_Strict):
@@ -458,12 +502,15 @@ class RiskAssessment(_Strict):
     provisional: bool = False
     confidence: Confidence  # reported beside the score, never inside it
     policy_version: str
+    # Context provenance: track which context layer was used
+    context_provenance: dict[str, str] = Field(default_factory=dict)  # factor_name -> source
 
     @model_validator(mode="after")
     def _kind_matches_score(self):
         scored = self.risk_kind in (
             RiskKind.HNDL_CONFIDENTIALITY,
-            RiskKind.AUTHENTICITY,
+            RiskKind.SIGNATURE_TRANSITION,
+            RiskKind.CLASSICAL_WEAKNESS,
         )
         if scored and (self.risk_score is None or self.risk_level is None):
             raise ValueError(

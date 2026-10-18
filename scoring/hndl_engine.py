@@ -9,6 +9,7 @@ from __future__ import annotations
 from datetime import date
 
 from common.models import (
+    AssetContext,
     Confidence,
     CryptoFinding,
     CryptoRole,
@@ -21,7 +22,7 @@ from common.models import (
     ScanResult,
 )
 from scoring.policy import (
-    AUTHENTICITY_WEIGHTS,
+    CLASSICAL_WEAKNESS_WEIGHTS,
     CLASSICALLY_WEAK_HASHES,
     CONFIDENTIALITY_WEIGHTS,
     DEFAULT_MIGRATION_YEARS,
@@ -29,6 +30,7 @@ from scoring.policy import (
     MISSING_CONTEXT_SCORE,
     POLICY_VERSION,
     SHOR_VULNERABLE_FAMILIES,
+    SIGNATURE_TRANSITION_WEIGHTS,
     confidentiality_lifetime_score,
     quantum_profile,
     risk_floor_for_level,
@@ -41,6 +43,34 @@ def _add_missing(missing: list[str], field: str) -> None:
         missing.append(field)
 
 
+def _get_context_value_with_source(
+    *,
+    field_name: str,
+    finding: CryptoFinding,
+    asset_context: AssetContext | None,
+    project_context: ProjectContext,
+) -> tuple[int | float | None, str]:
+    """Get context value with explicit precedence and source tracking.
+    
+    Precedence: finding override (future) > asset context > project context > None (policy default)
+    Returns: (value, source) where source is one of:
+        "asset_context", "project_context", "policy_default"
+    """
+    # Check asset-level context first
+    if asset_context is not None:
+        asset_value = getattr(asset_context, field_name, None)
+        if asset_value is not None:
+            return asset_value, "asset_context"
+    
+    # Fall through to project-level context
+    project_value = getattr(project_context, field_name, None)
+    if project_value is not None:
+        return project_value, "project_context"
+    
+    # No value at any level
+    return None, "policy_default"
+
+
 def _context_factor(
     *,
     name: str,
@@ -48,6 +78,7 @@ def _context_factor(
     weight: float,
     missing: list[str],
     explanation: list[str],
+    context_source: str = "policy_default",
 ) -> FactorScore:
     if value is None:
         _add_missing(missing, name)
@@ -59,8 +90,8 @@ def _context_factor(
         assumed = True
     else:
         score = float(value)
-        basis = "supplied"
-        assumed = False
+        basis = "supplied" if context_source != "policy_default" else "assumed"
+        assumed = (context_source == "policy_default")
     return FactorScore(
         factor=name,
         score=score,
@@ -68,6 +99,7 @@ def _context_factor(
         contribution=round(score / 5.0 * weight * 100.0, 4),
         basis=basis,
         assumed=assumed,
+        context_source=context_source,
     )
 
 
@@ -86,6 +118,31 @@ def _quantum_factor(finding: CryptoFinding, weight: float, explanation: list[str
         contribution=round(profile.score / 5.0 * weight * 100.0, 4),
         basis="assumed" if profile.assumed else "observed",
         assumed=profile.assumed,
+        context_source="observed",  # Quantum vulnerability comes from algorithm detection
+    )
+
+
+def _classical_weakness_factor(finding: CryptoFinding, weight: float, explanation: list[str]) -> FactorScore:
+    """Classical cryptographic weakness factor (independent of quantum computing)."""
+    algorithm = finding.algorithm.strip().upper().replace("_", "-")
+    
+    # High vulnerability for known-broken algorithms
+    if algorithm in CLASSICALLY_WEAK_HASHES:
+        score = 5.0
+        explanation.append(f"{algorithm} is classically cryptographically broken.")
+    else:
+        # Other classical weaknesses could be added here
+        score = 4.0
+        explanation.append(f"{algorithm} has classical cryptographic weaknesses.")
+    
+    return FactorScore(
+        factor="classical_vulnerability",
+        score=score,
+        weight=weight,
+        contribution=round(score / 5.0 * weight * 100.0, 4),
+        basis="observed",
+        assumed=False,
+        context_source="observed",
     )
 
 
@@ -134,12 +191,21 @@ def assess_finding(
     confidentiality/key-establishment risk and the resulting assessment is
     provisional. Unknown algorithm families and unreadable artifacts are not
     scored because no defensible quantum-vulnerability factor can be assigned.
+    
+    Uses explicit context precedence: asset context > project context > policy default.
+    Context provenance is tracked for transparency.
     """
 
     explanation: list[str] = []
     missing: list[str] = []
+    context_provenance: dict[str, str] = {}
     profile = quantum_profile(finding)
     algorithm = finding.algorithm.strip().upper().replace("_", "-")
+    
+    # Get asset-specific context if available
+    asset_context = context.get_asset_context(finding)
+    if asset_context:
+        explanation.append(f"Using asset-specific context for asset '{asset_context.asset_id}'.")
 
     if finding.status == FindingStatus.UNABLE_TO_ANALYZE:
         explanation.append(
@@ -151,15 +217,104 @@ def assess_finding(
             finding, RiskKind.NOT_ASSESSED, explanation, provisional=True
         )
 
-    if algorithm in {"MD5", "SHA-1", "SHA1", "SHA-256", "SHA256", "SHA-384", "SHA384", "SHA-512", "SHA512", "SHA-3", "SHA3"} and finding.role == CryptoRole.HASH:
-        if algorithm in CLASSICALLY_WEAK_HASHES:
-            explanation.append(
-                f"{algorithm} is flagged as classically weak regardless of quantum computing; this report does not mislabel that as HNDL risk."
+    # Classical cryptographic weakness (e.g., MD5, SHA-1): not a quantum issue
+    if algorithm in CLASSICALLY_WEAK_HASHES and finding.role == CryptoRole.HASH:
+        explanation.append(
+            f"{algorithm} is flagged as a classical cryptographic weakness, independent of quantum computing."
+        )
+        explanation.append("This is assessed as classical-weakness risk, not HNDL or quantum-related risk.")
+        weights = CLASSICAL_WEAKNESS_WEIGHTS
+        risk_kind = RiskKind.CLASSICAL_WEAKNESS
+        
+        factor_scores: list[FactorScore] = []
+        
+        # Classical vulnerability factor
+        factor_scores.append(_classical_weakness_factor(finding, weights["classical_vulnerability"], explanation))
+        
+        # Context factors with provenance
+        data_sens_val, data_sens_src = _get_context_value_with_source(
+            field_name="data_sensitivity",
+            finding=finding,
+            asset_context=asset_context,
+            project_context=context,
+        )
+        context_provenance["data_sensitivity"] = data_sens_src
+        factor_scores.append(
+            _context_factor(
+                name="data_sensitivity",
+                value=data_sens_val,
+                weight=weights["data_sensitivity"],
+                missing=missing,
+                explanation=explanation,
+                context_source=data_sens_src,
             )
-        else:
-            explanation.append(
-                "Hash findings are marked not HNDL-applicable by policy; review their separate integrity and collision-resistance properties where needed."
+        )
+        
+        exposure_val, exposure_src = _get_context_value_with_source(
+            field_name="exposure",
+            finding=finding,
+            asset_context=asset_context,
+            project_context=context,
+        )
+        context_provenance["exposure"] = exposure_src
+        factor_scores.append(
+            _context_factor(
+                name="exposure",
+                value=exposure_val,
+                weight=weights["exposure"],
+                missing=missing,
+                explanation=explanation,
+                context_source=exposure_src,
             )
+        )
+        
+        crit_val, crit_src = _get_context_value_with_source(
+            field_name="system_criticality",
+            finding=finding,
+            asset_context=asset_context,
+            project_context=context,
+        )
+        context_provenance["system_criticality"] = crit_src
+        factor_scores.append(
+            _context_factor(
+                name="system_criticality",
+                value=crit_val,
+                weight=weights["system_criticality"],
+                missing=missing,
+                explanation=explanation,
+                context_source=crit_src,
+            )
+        )
+        
+        baseline_score = round(sum(f.contribution for f in factor_scores), 2)
+        risk_score = baseline_score
+        risk_level = risk_level_for_score(risk_score)
+        explanation.append(
+            f"The weighted base score is {baseline_score:.2f}/100; the reported score is {risk_score:.2f}/100 ({risk_level.value})."
+        )
+        
+        provisional = bool(missing) or finding.status == FindingStatus.POTENTIAL or finding.confidence in (Confidence.LOW, Confidence.UNKNOWN)
+        
+        return RiskAssessment(
+            finding_id=finding.finding_id or "",
+            risk_kind=risk_kind,
+            risk_score=risk_score,
+            risk_level=risk_level,
+            factors=factor_scores,
+            escalations=[],
+            explanation=explanation,
+            missing_inputs=sorted(missing),
+            provisional=provisional,
+            confidence=finding.confidence,
+            policy_version=POLICY_VERSION,
+            context_provenance=context_provenance,
+        )
+
+    # Strong hashes (not classically weak): not HNDL-applicable
+    if algorithm in {"SHA-256", "SHA256", "SHA-384", "SHA384", "SHA-512", "SHA512", "SHA-3", "SHA3"} and finding.role == CryptoRole.HASH:
+        explanation.append(
+            "Hash findings are marked not HNDL-applicable by policy; review their separate integrity and collision-resistance properties where needed."
+        )
         return _empty_assessment(finding, RiskKind.NOT_HNDL_APPLICABLE, explanation)
 
     if finding.role == CryptoRole.MAC:
@@ -178,9 +333,9 @@ def assess_finding(
 
     conservative_role_assumption = False
     if finding.role == CryptoRole.SIGNATURE:
-        risk_kind = RiskKind.AUTHENTICITY
-        weights = AUTHENTICITY_WEIGHTS
-        explanation.append("This is assessed as authenticity risk, not HNDL confidentiality risk.")
+        risk_kind = RiskKind.SIGNATURE_TRANSITION
+        weights = SIGNATURE_TRANSITION_WEIGHTS
+        explanation.append("This is assessed as signature-transition priority risk, not HNDL confidentiality risk.")
     elif finding.role in (CryptoRole.KEY_ESTABLISHMENT, CryptoRole.SYMMETRIC_ENCRYPTION):
         risk_kind = RiskKind.HNDL_CONFIDENTIALITY
         weights = CONFIDENTIALITY_WEIGHTS
@@ -193,7 +348,7 @@ def assess_finding(
         )
     else:
         explanation.append(
-            f"Role '{finding.role.value}' is not covered by the current HNDL/authenticity scoring policy."
+            f"Role '{finding.role.value}' is not covered by the current HNDL/signature-transition scoring policy."
         )
         return _empty_assessment(
             finding, RiskKind.NOT_ASSESSED, explanation, provisional=True
@@ -207,19 +362,36 @@ def assess_finding(
     quantum_weight = weights["quantum_vulnerability"]
     factor_scores.append(_quantum_factor(finding, quantum_weight, explanation))
 
+    # Context factors with asset-level precedence and provenance tracking
+    data_sens_val, data_sens_src = _get_context_value_with_source(
+        field_name="data_sensitivity",
+        finding=finding,
+        asset_context=asset_context,
+        project_context=context,
+    )
+    context_provenance["data_sensitivity"] = data_sens_src
     factor_scores.append(
         _context_factor(
             name="data_sensitivity",
-            value=context.data_sensitivity,
+            value=data_sens_val,
             weight=weights["data_sensitivity"],
             missing=missing,
             explanation=explanation,
+            context_source=data_sens_src,
         )
     )
 
     if risk_kind == RiskKind.HNDL_CONFIDENTIALITY:
         lifetime_weight = weights["confidentiality_lifetime"]
-        if context.confidentiality_years is None:
+        lifetime_val, lifetime_src = _get_context_value_with_source(
+            field_name="confidentiality_years",
+            finding=finding,
+            asset_context=asset_context,
+            project_context=context,
+        )
+        context_provenance["confidentiality_years"] = lifetime_src
+        
+        if lifetime_val is None:
             lifetime_score = MISSING_CONTEXT_SCORE
             _add_missing(missing, "confidentiality_years")
             explanation.append(
@@ -227,10 +399,11 @@ def assess_finding(
             )
             lifetime_basis, lifetime_assumed = "assumed", True
         else:
-            lifetime_score = confidentiality_lifetime_score(context.confidentiality_years)
-            lifetime_basis, lifetime_assumed = "supplied", False
+            lifetime_score = confidentiality_lifetime_score(lifetime_val)
+            lifetime_basis = "supplied" if lifetime_src != "policy_default" else "assumed"
+            lifetime_assumed = (lifetime_src == "policy_default")
             explanation.append(
-                f"A confidentiality lifetime of {context.confidentiality_years:g} year(s) maps to {lifetime_score:g}/5 under the v{POLICY_VERSION} lifetime bands."
+                f"A confidentiality lifetime of {lifetime_val:g} year(s) maps to {lifetime_score:g}/5 under the v{POLICY_VERSION} lifetime bands."
             )
         factor_scores.append(
             FactorScore(
@@ -240,25 +413,43 @@ def assess_finding(
                 contribution=round(lifetime_score / 5.0 * lifetime_weight * 100.0, 4),
                 basis=lifetime_basis,
                 assumed=lifetime_assumed,
+                context_source=lifetime_src,
             )
         )
 
+    exposure_val, exposure_src = _get_context_value_with_source(
+        field_name="exposure",
+        finding=finding,
+        asset_context=asset_context,
+        project_context=context,
+    )
+    context_provenance["exposure"] = exposure_src
     factor_scores.append(
         _context_factor(
             name="exposure",
-            value=context.exposure,
+            value=exposure_val,
             weight=weights["exposure"],
             missing=missing,
             explanation=explanation,
+            context_source=exposure_src,
         )
     )
+    
+    crit_val, crit_src = _get_context_value_with_source(
+        field_name="system_criticality",
+        finding=finding,
+        asset_context=asset_context,
+        project_context=context,
+    )
+    context_provenance["system_criticality"] = crit_src
     factor_scores.append(
         _context_factor(
             name="system_criticality",
-            value=context.system_criticality,
+            value=crit_val,
             weight=weights["system_criticality"],
             missing=missing,
             explanation=explanation,
+            context_source=crit_src,
         )
     )
 
@@ -270,46 +461,58 @@ def assess_finding(
     # a duration remaining until the horizon (year - assessment year), rather
     # than comparing years directly to a calendar year.
     if risk_kind == RiskKind.HNDL_CONFIDENTIALITY and profile.tier == "shor-vulnerable":
-        # These are policy defaults for Mosca timing. List the fields as missing
-        # even when confidentiality lifetime is absent and escalation cannot run.
-        if context.migration_years is None:
+        # Get migration_years and threat_horizon_year with asset precedence
+        migration_val, migration_src = _get_context_value_with_source(
+            field_name="migration_years",
+            finding=finding,
+            asset_context=asset_context,
+            project_context=context,
+        )
+        context_provenance["migration_years"] = migration_src
+        
+        if migration_val is None:
             migration_years = DEFAULT_MIGRATION_YEARS
             _add_missing(missing, "migration_years")
             explanation.append(
                 f"migration_years was not supplied; Mosca timing assumes {DEFAULT_MIGRATION_YEARS:g} year(s)."
             )
         else:
-            migration_years = context.migration_years
-        if context.threat_horizon_year is None:
+            migration_years = migration_val
+        
+        horizon_val, horizon_src = _get_context_value_with_source(
+            field_name="threat_horizon_year",
+            finding=finding,
+            asset_context=asset_context,
+            project_context=context,
+        )
+        context_provenance["threat_horizon_year"] = horizon_src
+        
+        if horizon_val is None:
             threat_horizon_year = DEFAULT_THREAT_HORIZON_YEAR
             _add_missing(missing, "threat_horizon_year")
             explanation.append(
                 f"threat_horizon_year was not supplied; policy assumes {DEFAULT_THREAT_HORIZON_YEAR}."
             )
         else:
-            threat_horizon_year = context.threat_horizon_year
+            threat_horizon_year = int(horizon_val)
 
-        if context.confidentiality_years is not None:
+        if lifetime_val is not None:
             current = assessment_year if assessment_year is not None else date.today().year
             years_to_horizon = max(0, threat_horizon_year - current)
-            total_required = context.confidentiality_years + migration_years
+            total_required = lifetime_val + migration_years
             if total_required > years_to_horizon:
-                sensitivity = (
-                    context.data_sensitivity
-                    if context.data_sensitivity is not None
-                    else MISSING_CONTEXT_SCORE
-                )
+                sensitivity = data_sens_val if data_sens_val is not None else MISSING_CONTEXT_SCORE
                 if sensitivity >= 4:
                     floor = RiskLevel.CRITICAL
                     reason = (
-                        f"Mosca escalation: confidentiality lifetime ({context.confidentiality_years:g} years) + "
+                        f"Mosca escalation: confidentiality lifetime ({lifetime_val:g} years) + "
                         f"migration time ({migration_years:g} years) exceeds {years_to_horizon:g} year(s) until "
                         f"the {threat_horizon_year} threat horizon; data sensitivity is at least 4/5."
                     )
                 else:
                     floor = RiskLevel.VERY_HIGH
                     reason = (
-                        f"Mosca escalation: confidentiality lifetime ({context.confidentiality_years:g} years) + "
+                        f"Mosca escalation: confidentiality lifetime ({lifetime_val:g} years) + "
                         f"migration time ({migration_years:g} years) exceeds {years_to_horizon:g} year(s) until "
                         f"the {threat_horizon_year} threat horizon."
                     )
@@ -349,6 +552,7 @@ def assess_finding(
         provisional=provisional,
         confidence=finding.confidence,
         policy_version=POLICY_VERSION,
+        context_provenance=context_provenance,
     )
 
 

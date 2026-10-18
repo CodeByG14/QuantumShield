@@ -12,9 +12,10 @@ from common.models import (
 )
 from scoring.hndl_engine import assess_finding
 from scoring.policy import (
-    AUTHENTICITY_WEIGHTS,
+    CLASSICAL_WEAKNESS_WEIGHTS,
     CONFIDENTIALITY_WEIGHTS,
     POLICY_VERSION,
+    SIGNATURE_TRANSITION_WEIGHTS,
     confidentiality_lifetime_score,
     quantum_profile,
     risk_level_for_score,
@@ -72,7 +73,8 @@ def complete_context(**overrides):
 
 def test_weights_are_normalized():
     assert sum(CONFIDENTIALITY_WEIGHTS.values()) == 1.0
-    assert sum(AUTHENTICITY_WEIGHTS.values()) == 1.0
+    assert sum(SIGNATURE_TRANSITION_WEIGHTS.values()) == 1.0
+    assert sum(CLASSICAL_WEAKNESS_WEIGHTS.values()) == 1.0
 
 
 def test_lifetime_mapping_is_monotonic_and_bounded():
@@ -131,7 +133,7 @@ def test_bare_asymmetric_key_with_undetermined_role_is_scored_provisionally():
 def test_signature_is_authenticity_risk_and_drops_lifetime_factor():
     finding = make_finding("RSA", role=CryptoRole.SIGNATURE)
     result = assess_finding(finding, complete_context(), assessment_year=2026)
-    assert result.risk_kind == RiskKind.AUTHENTICITY
+    assert result.risk_kind == RiskKind.SIGNATURE_TRANSITION
     assert result.risk_score is not None
     assert len(result.factors) == 4
     assert "confidentiality_lifetime" not in {factor.factor for factor in result.factors}
@@ -142,9 +144,9 @@ def test_signature_is_authenticity_risk_and_drops_lifetime_factor():
 def test_hash_is_not_hndl_scored_and_md5_is_not_mislabelled_quantum_risk():
     finding = make_finding("MD5", role=CryptoRole.HASH)
     result = assess_finding(finding, complete_context())
-    assert result.risk_kind == RiskKind.NOT_HNDL_APPLICABLE
-    assert result.risk_score is None
-    assert any("classically weak" in item for item in result.explanation)
+    assert result.risk_kind == RiskKind.CLASSICAL_WEAKNESS
+    assert result.risk_score is not None  # Now scored as classical weakness
+    assert any("classical" in item.lower() for item in result.explanation)
 
 
 def test_library_component_is_not_scored_as_crypto_usage():
@@ -243,4 +245,4 @@ def test_signature_does_not_require_confidentiality_lifetime_input():
     finding = make_finding("ECDSA", role=CryptoRole.SIGNATURE)
     result = assess_finding(finding, ProjectContext(data_sensitivity=3, exposure=2, system_criticality=4))
     assert "confidentiality_years" not in result.missing_inputs
-    assert result.risk_kind == RiskKind.AUTHENTICITY
+    assert result.risk_kind == RiskKind.SIGNATURE_TRANSITION

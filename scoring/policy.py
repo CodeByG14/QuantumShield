@@ -24,14 +24,25 @@ CONFIDENTIALITY_WEIGHTS: Mapping[str, float] = {
     "system_criticality": 0.10,
 }
 
-# Signature use is assessed as authenticity risk, not HNDL. Remove lifetime's
-# 0.20 weight and renormalize the remaining weights to sum to 1.0.
-AUTHENTICITY_WEIGHTS: Mapping[str, float] = {
+# Signature transition priority: authenticity/integrity concerns, not HNDL.
+# Remove lifetime's 0.20 weight and renormalize the remaining weights to sum to 1.0.
+SIGNATURE_TRANSITION_WEIGHTS: Mapping[str, float] = {
     "quantum_vulnerability": 0.375,
     "data_sensitivity": 0.3125,
     "exposure": 0.1875,
     "system_criticality": 0.125,
 }
+
+# Classical cryptographic weakness (e.g., MD5, broken ciphers): independent of quantum computing.
+CLASSICAL_WEAKNESS_WEIGHTS: Mapping[str, float] = {
+    "classical_vulnerability": 0.40,
+    "data_sensitivity": 0.30,
+    "exposure": 0.20,
+    "system_criticality": 0.10,
+}
+
+# For backward compatibility during migration
+AUTHENTICITY_WEIGHTS = SIGNATURE_TRANSITION_WEIGHTS
 
 RISK_THRESHOLDS: tuple[tuple[float, RiskLevel], ...] = (
     (80.0, RiskLevel.CRITICAL),

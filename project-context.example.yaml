@@ -1,10 +1,49 @@
-# Copy to project-context.yaml and replace these placeholders.
+# QuantumShield Project Context Configuration (Week 6)
+# Copy to project-context.yaml and customize for your project.
 # Keep unknown values null rather than guessing; affected assessments stay provisional.
 # Scores use a 0..5 scale.
+
 project_name: your-project-name
+
+# Project-level context (applies to all findings by default)
 data_sensitivity: null       # 0 = low, 5 = highest sensitivity
 confidentiality_years: null  # years data must remain confidential
 exposure: null               # exposure to possible ciphertext collection (0..5)
 system_criticality: null     # business/system criticality (0..5)
 migration_years: null        # years needed to migrate; policy assumes 3 when missing
 threat_horizon_year: null    # policy assumes 2035 when missing
+
+# Asset-level context overrides (Week 6 feature)
+# Use asset_contexts to override project defaults for specific assets/components/findings.
+# Precedence: finding_id match > file path match > project-level > policy default
+# All fields are optional; unset fields fall through to project-level or policy default.
+asset_contexts:
+  # Example 1: Override by finding ID (most specific)
+  - asset_id: "CRYPTO-001"
+    data_sensitivity: 5
+    confidentiality_years: 20
+    exposure: 5
+    system_criticality: 5
+  
+  # Example 2: Override by file path (matches all findings in that file)
+  - asset_id: "src/payment/processor.py"
+    data_sensitivity: 5
+    confidentiality_years: 15
+    system_criticality: 5
+  
+  # Example 3: Partial override (only some fields)
+  - asset_id: "src/archive/longterm.py"
+    confidentiality_years: 30  # Long-term archive, other fields use project defaults
+  
+  # Example 4: Test code with lower criticality
+  - asset_id: "tests/"
+    data_sensitivity: 1
+    confidentiality_years: 1
+    exposure: 1
+    system_criticality: 1
+
+# To use:
+# 1. Set project-level defaults for typical findings
+# 2. Add asset_contexts entries for special cases (critical components, long-term data, test code)
+# 3. Match by finding_id for maximum precision, or file path for component-level overrides
+# 4. Check context_provenance in assessment.json to verify which context was used

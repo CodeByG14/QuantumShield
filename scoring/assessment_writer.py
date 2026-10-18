@@ -79,6 +79,14 @@ def _limitations(
         limitations.append(
             "No project-context YAML was loaded; missing context values use explicit provisional defaults and are listed per risk assessment."
         )
+    
+    # Week 6: Asset-level context information
+    if context.asset_contexts:
+        limitations.append(
+            f"Asset-level context overrides are configured for {len(context.asset_contexts)} asset(s). "
+            "Check context_provenance in each risk assessment to see which context layer was used."
+        )
+    
     if context.data_sensitivity is None or context.confidentiality_years is None or context.exposure is None or context.system_criticality is None:
         limitations.append(
             "One or more project risk attributes were not supplied; affected factor scores use the documented 3/5 provisional assumption."
