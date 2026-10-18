@@ -1,0 +1,31 @@
+# QuantumShield Week 6 Track 1 Test Context
+project_name: test-repo-week6
+
+# Project-level defaults
+data_sensitivity: 3
+confidentiality_years: 5
+exposure: 3
+system_criticality: 3
+migration_years: 3
+threat_horizon_year: 2035
+
+# Asset-level context overrides (Week 6 feature demonstration)
+asset_contexts:
+  # Critical demo file gets higher settings
+  - asset_id: "CryptoDemo.java"
+    data_sensitivity: 5
+    confidentiality_years: 15
+    exposure: 5
+    system_criticality: 5
+
+  # Test certificates can have lower priority
+  - asset_id: "ec_test.pem"
+    data_sensitivity: 2
+    confidentiality_years: 2
+    system_criticality: 1
+
+  # Python demo also critical
+  - asset_id: "crypto_demo.py"
+    data_sensitivity: 5
+    confidentiality_years: 20
+    exposure: 5

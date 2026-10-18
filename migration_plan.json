@@ -1,0 +1,682 @@
+{
+  "migration_plan_id": "a3e21fc1-6b12-4571-8cc4-a61699edc679",
+  "plan_version": "1.0",
+  "generated_at": "2026-10-18T11:14:01.851245+00:00",
+  "source_assessment_id": "24f72af2-77c8-424b-b654-c3d143304755",
+  "recommendation_policy_version": "1.0",
+  "schema_version": "1.0",
+  "summary": {
+    "total_tasks": 20,
+    "by_priority": {
+      "urgent": 2,
+      "high": 4,
+      "medium": 8,
+      "low": 6
+    },
+    "by_action": {
+      "urgent-classical": 2,
+      "migrate": 4,
+      "review": 4,
+      "manual-review": 9,
+      "no-action-needed": 1
+    },
+    "by_effort": {
+      "small": 6,
+      "large": 4,
+      "unknown": 10
+    },
+    "by_confidence": {
+      "high": 11,
+      "low": 9
+    }
+  },
+  "tasks": [
+    {
+      "task_id": "TASK-002",
+      "finding_id": "CRYPTO-002",
+      "affected_component": "CryptoDemo.java:12",
+      "source": {
+        "algorithm": "SHA-1",
+        "role": "hash",
+        "location": "CryptoDemo.java:12"
+      },
+      "recommendation": {
+        "algorithm": "SHA-256 or SHA-3",
+        "standard": null,
+        "rationale": "SHA-1 is classically broken (collision attacks demonstrated). Urgent replacement needed independent of quantum threats."
+      },
+      "compatibility_notes": [
+        "Widely known weakness; migration should be prioritized",
+        "SHA-256 is the standard replacement"
+      ],
+      "prerequisites": [],
+      "verification_steps": [
+        "Eliminate all SHA-1 usage",
+        "Check certificate chains for SHA-1 signatures"
+      ],
+      "effort_band": "small",
+      "priority": 10,
+      "confidence": "high",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-014",
+      "finding_id": "CRYPTO-014",
+      "affected_component": "crypto_demo.py:16",
+      "source": {
+        "algorithm": "MD5",
+        "role": "hash",
+        "location": "crypto_demo.py:16"
+      },
+      "recommendation": {
+        "algorithm": "SHA-256 or SHA-3",
+        "standard": null,
+        "rationale": "MD5 is classically broken (collision attacks). This is NOT a quantum issue but requires immediate remediation."
+      },
+      "compatibility_notes": [
+        "Urgent replacement due to classical weakness",
+        "SHA-256 is widely supported",
+        "SHA-3 provides additional security margin"
+      ],
+      "prerequisites": [],
+      "verification_steps": [
+        "Replace all MD5 usage",
+        "Verify no legacy MD5 hashes remain in critical paths"
+      ],
+      "effort_band": "small",
+      "priority": 10,
+      "confidence": "high",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-018",
+      "finding_id": "CRYPTO-018",
+      "affected_component": "ec_test.pem:1",
+      "source": {
+        "algorithm": "EC",
+        "role": "signature",
+        "location": "ec_test.pem:1"
+      },
+      "recommendation": {
+        "algorithm": "ML-DSA or SLH-DSA",
+        "standard": "NIST FIPS 204, FIPS 205",
+        "rationale": "ECDSA is vulnerable to Shor's algorithm. ML-DSA and SLH-DSA are post-quantum signature alternatives."
+      },
+      "compatibility_notes": [
+        "Different signature sizes and performance",
+        "No direct parameter mapping from ECDSA to PQC",
+        "Consider ML-DSA for most cases; SLH-DSA for conservative approach"
+      ],
+      "prerequisites": [
+        "Library support verification",
+        "Certificate infrastructure updates if used for PKI"
+      ],
+      "verification_steps": [
+        "End-to-end signature workflow testing",
+        "Cross-implementation compatibility"
+      ],
+      "effort_band": "large",
+      "priority": 20,
+      "confidence": "high",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-020",
+      "finding_id": "CRYPTO-021",
+      "affected_component": "rsa_test.pem:1",
+      "source": {
+        "algorithm": "RSA",
+        "role": "signature",
+        "location": "rsa_test.pem:1"
+      },
+      "recommendation": {
+        "algorithm": "ML-DSA or SLH-DSA",
+        "standard": "NIST FIPS 204, FIPS 205",
+        "rationale": "RSA signatures are vulnerable to Shor's algorithm. ML-DSA and SLH-DSA provide post-quantum signature schemes."
+      },
+      "compatibility_notes": [
+        "ML-DSA: faster, smaller signatures; lattice-based",
+        "SLH-DSA: conservative choice; hash-based, larger signatures",
+        "Signature formats completely different",
+        "Verification process changes"
+      ],
+      "prerequisites": [
+        "Choose between ML-DSA and SLH-DSA based on requirements",
+        "Verify support in target environment",
+        "Update signature verification in all consumers"
+      ],
+      "verification_steps": [
+        "Test signature generation and verification",
+        "Verify signature validation in all contexts",
+        "Test with invalid signatures",
+        "Performance and size benchmarks"
+      ],
+      "effort_band": "large",
+      "priority": 20,
+      "confidence": "high",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-005",
+      "finding_id": "CRYPTO-005",
+      "affected_component": "EllipticCurveDemo.java:8",
+      "source": {
+        "algorithm": "ECDH",
+        "role": "key-establishment",
+        "location": "EllipticCurveDemo.java:8"
+      },
+      "recommendation": {
+        "algorithm": "ML-KEM",
+        "standard": "NIST FIPS 203",
+        "rationale": "Elliptic-curve and finite-field Diffie-Hellman are vulnerable to Shor's algorithm. ML-KEM provides post-quantum key establishment."
+      },
+      "compatibility_notes": [
+        "Different key sizes and performance characteristics",
+        "Protocol integration required",
+        "Consider hybrid ECDH + ML-KEM where supported"
+      ],
+      "prerequisites": [
+        "Verify protocol supports new key-exchange mechanism",
+        "Check library support for ML-KEM"
+      ],
+      "verification_steps": [
+        "Test key agreement with all peer implementations",
+        "Verify forward secrecy properties maintained",
+        "Performance testing"
+      ],
+      "effort_band": "large",
+      "priority": 30,
+      "confidence": "high",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-016",
+      "finding_id": "CRYPTO-016",
+      "affected_component": "crypto_demo.py:25",
+      "source": {
+        "algorithm": "DH",
+        "role": "key-establishment",
+        "location": "crypto_demo.py:25"
+      },
+      "recommendation": {
+        "algorithm": "ML-KEM",
+        "standard": "NIST FIPS 203",
+        "rationale": "Elliptic-curve and finite-field Diffie-Hellman are vulnerable to Shor's algorithm. ML-KEM provides post-quantum key establishment."
+      },
+      "compatibility_notes": [
+        "Different key sizes and performance characteristics",
+        "Protocol integration required",
+        "Consider hybrid ECDH + ML-KEM where supported"
+      ],
+      "prerequisites": [
+        "Verify protocol supports new key-exchange mechanism",
+        "Check library support for ML-KEM"
+      ],
+      "verification_steps": [
+        "Test key agreement with all peer implementations",
+        "Verify forward secrecy properties maintained",
+        "Performance testing"
+      ],
+      "effort_band": "large",
+      "priority": 30,
+      "confidence": "high",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-011",
+      "finding_id": "CRYPTO-011",
+      "affected_component": "QuantumSafeCrypto.java:15",
+      "source": {
+        "algorithm": "AES",
+        "role": "symmetric-encryption",
+        "location": "QuantumSafeCrypto.java:15"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "AES with adequate key size (AES-256) remains quantum-resistant. Grover's algorithm provides quadratic speedup but AES-256 provides sufficient security margin."
+      },
+      "compatibility_notes": [
+        "Consider AES-256 if using AES-128",
+        "No post-quantum public-key replacement applicable",
+        "Focus on key-establishment mechanism, not AES itself"
+      ],
+      "prerequisites": [],
+      "verification_steps": [
+        "Verify AES key size is 256 bits",
+        "Ensure key establishment uses post-quantum mechanism"
+      ],
+      "effort_band": "small",
+      "priority": 40,
+      "confidence": "high",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-012",
+      "finding_id": "CRYPTO-012",
+      "affected_component": "crypto_demo.py:8",
+      "source": {
+        "algorithm": "EC",
+        "role": "undetermined",
+        "location": "crypto_demo.py:8"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "Cryptographic role could not be determined from available evidence. Manual review required to understand actual usage before recommending migration."
+      },
+      "compatibility_notes": [
+        "Insufficient information for automatic recommendation",
+        "May be library dependency rather than direct usage"
+      ],
+      "prerequisites": [
+        "Investigate actual cryptographic usage",
+        "Determine whether this is active crypto or a dependency"
+      ],
+      "verification_steps": [
+        "Code review to understand usage context",
+        "Determine actual cryptographic role",
+        "Re-assess with clarified role"
+      ],
+      "effort_band": null,
+      "priority": 50,
+      "confidence": "low",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-013",
+      "finding_id": "CRYPTO-013",
+      "affected_component": "crypto_demo.py:12",
+      "source": {
+        "algorithm": "RSA",
+        "role": "undetermined",
+        "location": "crypto_demo.py:12"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "Cryptographic role could not be determined from available evidence. Manual review required to understand actual usage before recommending migration."
+      },
+      "compatibility_notes": [
+        "Insufficient information for automatic recommendation",
+        "May be library dependency rather than direct usage"
+      ],
+      "prerequisites": [
+        "Investigate actual cryptographic usage",
+        "Determine whether this is active crypto or a dependency"
+      ],
+      "verification_steps": [
+        "Code review to understand usage context",
+        "Determine actual cryptographic role",
+        "Re-assess with clarified role"
+      ],
+      "effort_band": null,
+      "priority": 50,
+      "confidence": "low",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-017",
+      "finding_id": "CRYPTO-017",
+      "affected_component": "ec_test.key:1",
+      "source": {
+        "algorithm": "EC",
+        "role": "undetermined",
+        "location": "ec_test.key:1"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "Cryptographic role could not be determined from available evidence. Manual review required to understand actual usage before recommending migration."
+      },
+      "compatibility_notes": [
+        "Insufficient information for automatic recommendation",
+        "May be library dependency rather than direct usage"
+      ],
+      "prerequisites": [
+        "Investigate actual cryptographic usage",
+        "Determine whether this is active crypto or a dependency"
+      ],
+      "verification_steps": [
+        "Code review to understand usage context",
+        "Determine actual cryptographic role",
+        "Re-assess with clarified role"
+      ],
+      "effort_band": null,
+      "priority": 50,
+      "confidence": "low",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-019",
+      "finding_id": "CRYPTO-020",
+      "affected_component": "rsa_test.key:1",
+      "source": {
+        "algorithm": "RSA",
+        "role": "undetermined",
+        "location": "rsa_test.key:1"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "Cryptographic role could not be determined from available evidence. Manual review required to understand actual usage before recommending migration."
+      },
+      "compatibility_notes": [
+        "Insufficient information for automatic recommendation",
+        "May be library dependency rather than direct usage"
+      ],
+      "prerequisites": [
+        "Investigate actual cryptographic usage",
+        "Determine whether this is active crypto or a dependency"
+      ],
+      "verification_steps": [
+        "Code review to understand usage context",
+        "Determine actual cryptographic role",
+        "Re-assess with clarified role"
+      ],
+      "effort_band": null,
+      "priority": 50,
+      "confidence": "low",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-004",
+      "finding_id": "CRYPTO-004",
+      "affected_component": "CryptoDemo.java:20",
+      "source": {
+        "algorithm": "AES",
+        "role": "symmetric-encryption",
+        "location": "CryptoDemo.java:20"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "AES with adequate key size (AES-256) remains quantum-resistant. Grover's algorithm provides quadratic speedup but AES-256 provides sufficient security margin."
+      },
+      "compatibility_notes": [
+        "Consider AES-256 if using AES-128",
+        "No post-quantum public-key replacement applicable",
+        "Focus on key-establishment mechanism, not AES itself"
+      ],
+      "prerequisites": [],
+      "verification_steps": [
+        "Verify AES key size is 256 bits",
+        "Ensure key establishment uses post-quantum mechanism"
+      ],
+      "effort_band": "small",
+      "priority": 60,
+      "confidence": "high",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-010",
+      "finding_id": "CRYPTO-010",
+      "affected_component": "QuantumSafeCrypto.java:7",
+      "source": {
+        "algorithm": "AES",
+        "role": "symmetric-encryption",
+        "location": "QuantumSafeCrypto.java:7"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "AES with adequate key size (AES-256) remains quantum-resistant. Grover's algorithm provides quadratic speedup but AES-256 provides sufficient security margin."
+      },
+      "compatibility_notes": [
+        "Consider AES-256 if using AES-128",
+        "No post-quantum public-key replacement applicable",
+        "Focus on key-establishment mechanism, not AES itself"
+      ],
+      "prerequisites": [],
+      "verification_steps": [
+        "Verify AES key size is 256 bits",
+        "Ensure key establishment uses post-quantum mechanism"
+      ],
+      "effort_band": "small",
+      "priority": 60,
+      "confidence": "high",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-015",
+      "finding_id": "CRYPTO-015",
+      "affected_component": "crypto_demo.py:21",
+      "source": {
+        "algorithm": "AES",
+        "role": "symmetric-encryption",
+        "location": "crypto_demo.py:21"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "AES with adequate key size (AES-256) remains quantum-resistant. Grover's algorithm provides quadratic speedup but AES-256 provides sufficient security margin."
+      },
+      "compatibility_notes": [
+        "Consider AES-256 if using AES-128",
+        "No post-quantum public-key replacement applicable",
+        "Focus on key-establishment mechanism, not AES itself"
+      ],
+      "prerequisites": [],
+      "verification_steps": [
+        "Verify AES key size is 256 bits",
+        "Ensure key establishment uses post-quantum mechanism"
+      ],
+      "effort_band": "small",
+      "priority": 60,
+      "confidence": "high",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-001",
+      "finding_id": "CRYPTO-001",
+      "affected_component": "CryptoDemo.java:7",
+      "source": {
+        "algorithm": "RSA",
+        "role": "undetermined",
+        "location": "CryptoDemo.java:7"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "Cryptographic role could not be determined from available evidence. Manual review required to understand actual usage before recommending migration."
+      },
+      "compatibility_notes": [
+        "Insufficient information for automatic recommendation",
+        "May be library dependency rather than direct usage"
+      ],
+      "prerequisites": [
+        "Investigate actual cryptographic usage",
+        "Determine whether this is active crypto or a dependency"
+      ],
+      "verification_steps": [
+        "Code review to understand usage context",
+        "Determine actual cryptographic role",
+        "Re-assess with clarified role"
+      ],
+      "effort_band": null,
+      "priority": 70,
+      "confidence": "low",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-006",
+      "finding_id": "CRYPTO-006",
+      "affected_component": "EllipticCurveDemo.java:11",
+      "source": {
+        "algorithm": "EC",
+        "role": "undetermined",
+        "location": "EllipticCurveDemo.java:11"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "Cryptographic role could not be determined from available evidence. Manual review required to understand actual usage before recommending migration."
+      },
+      "compatibility_notes": [
+        "Insufficient information for automatic recommendation",
+        "May be library dependency rather than direct usage"
+      ],
+      "prerequisites": [
+        "Investigate actual cryptographic usage",
+        "Determine whether this is active crypto or a dependency"
+      ],
+      "verification_steps": [
+        "Code review to understand usage context",
+        "Determine actual cryptographic role",
+        "Re-assess with clarified role"
+      ],
+      "effort_band": null,
+      "priority": 70,
+      "confidence": "low",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-007",
+      "finding_id": "CRYPTO-007",
+      "affected_component": "EllipticCurveDemo.java:12",
+      "source": {
+        "algorithm": "EC",
+        "role": "undetermined",
+        "location": "EllipticCurveDemo.java:12"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "Cryptographic role could not be determined from available evidence. Manual review required to understand actual usage before recommending migration."
+      },
+      "compatibility_notes": [
+        "Insufficient information for automatic recommendation",
+        "May be library dependency rather than direct usage"
+      ],
+      "prerequisites": [
+        "Investigate actual cryptographic usage",
+        "Determine whether this is active crypto or a dependency"
+      ],
+      "verification_steps": [
+        "Code review to understand usage context",
+        "Determine actual cryptographic role",
+        "Re-assess with clarified role"
+      ],
+      "effort_band": null,
+      "priority": 70,
+      "confidence": "low",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-008",
+      "finding_id": "CRYPTO-008",
+      "affected_component": "EllipticCurveDemo.java:17",
+      "source": {
+        "algorithm": "EC",
+        "role": "undetermined",
+        "location": "EllipticCurveDemo.java:17"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "Cryptographic role could not be determined from available evidence. Manual review required to understand actual usage before recommending migration."
+      },
+      "compatibility_notes": [
+        "Insufficient information for automatic recommendation",
+        "May be library dependency rather than direct usage"
+      ],
+      "prerequisites": [
+        "Investigate actual cryptographic usage",
+        "Determine whether this is active crypto or a dependency"
+      ],
+      "verification_steps": [
+        "Code review to understand usage context",
+        "Determine actual cryptographic role",
+        "Re-assess with clarified role"
+      ],
+      "effort_band": null,
+      "priority": 70,
+      "confidence": "low",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-009",
+      "finding_id": "CRYPTO-009",
+      "affected_component": "EllipticCurveDemo.java:22",
+      "source": {
+        "algorithm": "EC",
+        "role": "undetermined",
+        "location": "EllipticCurveDemo.java:22"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "Cryptographic role could not be determined from available evidence. Manual review required to understand actual usage before recommending migration."
+      },
+      "compatibility_notes": [
+        "Insufficient information for automatic recommendation",
+        "May be library dependency rather than direct usage"
+      ],
+      "prerequisites": [
+        "Investigate actual cryptographic usage",
+        "Determine whether this is active crypto or a dependency"
+      ],
+      "verification_steps": [
+        "Code review to understand usage context",
+        "Determine actual cryptographic role",
+        "Re-assess with clarified role"
+      ],
+      "effort_band": null,
+      "priority": 70,
+      "confidence": "low",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "task_id": "TASK-003",
+      "finding_id": "CRYPTO-003",
+      "affected_component": "CryptoDemo.java:16",
+      "source": {
+        "algorithm": "SHA-256",
+        "role": "hash",
+        "location": "CryptoDemo.java:16"
+      },
+      "recommendation": {
+        "algorithm": null,
+        "standard": null,
+        "rationale": "Strong hash functions remain secure against quantum computers. Grover's algorithm provides quadratic speedup, but security margins are sufficient."
+      },
+      "compatibility_notes": [
+        "SHA-256 and stronger remain appropriate",
+        "SHA-3 is a conservative choice"
+      ],
+      "prerequisites": [],
+      "verification_steps": [],
+      "effort_band": null,
+      "priority": 100,
+      "confidence": "high",
+      "status": "pending",
+      "depends_on": []
+    }
+  ],
+  "metadata": {
+    "project_name": "test-repo-week6",
+    "target": "/home/girish/Documents/code_surf/quantumshield/samples/test-repo",
+    "policy_version": "1.0",
+    "findings_count": 22
+  },
+  "advisory_notice": "This migration plan is advisory only. All recommendations require compatibility testing, application changes, and verification in your specific environment. Do not apply changes automatically without review."
+}

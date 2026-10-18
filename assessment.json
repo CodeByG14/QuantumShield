@@ -1,0 +1,2267 @@
+{
+  "assessment_id": "24f72af2-77c8-424b-b654-c3d143304755",
+  "scan_timestamp": "2026-10-18T10:12:59.889402Z",
+  "target": "/home/girish/Documents/code_surf/quantumshield/samples/test-repo",
+  "policy_version": "1.0",
+  "project_context": {
+    "project_name": "test-repo-week6",
+    "data_sensitivity": 3,
+    "confidentiality_years": 5.0,
+    "exposure": 3,
+    "system_criticality": 3,
+    "migration_years": 3.0,
+    "threat_horizon_year": 2035,
+    "asset_contexts": [
+      {
+        "asset_id": "CryptoDemo.java",
+        "data_sensitivity": 5,
+        "confidentiality_years": 15.0,
+        "exposure": 5,
+        "system_criticality": 5,
+        "migration_years": null,
+        "threat_horizon_year": null
+      },
+      {
+        "asset_id": "ec_test.pem",
+        "data_sensitivity": 2,
+        "confidentiality_years": 2.0,
+        "exposure": null,
+        "system_criticality": 1,
+        "migration_years": null,
+        "threat_horizon_year": null
+      },
+      {
+        "asset_id": "crypto_demo.py",
+        "data_sensitivity": 5,
+        "confidentiality_years": 20.0,
+        "exposure": 5,
+        "system_criticality": null,
+        "migration_years": null,
+        "threat_horizon_year": null
+      }
+    ]
+  },
+  "coverage": {
+    "files_discovered": 10,
+    "files_eligible": 10,
+    "files_analyzed": 9,
+    "files_partial": 0,
+    "files_failed": 1,
+    "files_unsupported": 0,
+    "files_skipped": 0,
+    "file_coverage_percent": 90.0,
+    "stage_counts": {
+      "source": {
+        "success": 4,
+        "failed": 0
+      },
+      "x509": {
+        "success": 4,
+        "failed": 1
+      },
+      "manifest": {
+        "success": 1,
+        "failed": 0
+      }
+    },
+    "unsupported_extensions": {},
+    "files": [
+      {
+        "path": "CryptoDemo.java",
+        "outcome": "analyzed",
+        "stages": {
+          "source": "success"
+        },
+        "reason": null
+      },
+      {
+        "path": "EllipticCurveDemo.java",
+        "outcome": "analyzed",
+        "stages": {
+          "source": "success"
+        },
+        "reason": null
+      },
+      {
+        "path": "QuantumSafeCrypto.java",
+        "outcome": "analyzed",
+        "stages": {
+          "source": "success"
+        },
+        "reason": null
+      },
+      {
+        "path": "crypto_demo.py",
+        "outcome": "analyzed",
+        "stages": {
+          "source": "success"
+        },
+        "reason": null
+      },
+      {
+        "path": "ec_test.key",
+        "outcome": "analyzed",
+        "stages": {
+          "x509": "success"
+        },
+        "reason": null
+      },
+      {
+        "path": "ec_test.pem",
+        "outcome": "analyzed",
+        "stages": {
+          "x509": "success"
+        },
+        "reason": null
+      },
+      {
+        "path": "requirements.txt",
+        "outcome": "analyzed",
+        "stages": {
+          "manifest": "success"
+        },
+        "reason": null
+      },
+      {
+        "path": "rsa_test.key",
+        "outcome": "analyzed",
+        "stages": {
+          "x509": "success"
+        },
+        "reason": null
+      },
+      {
+        "path": "rsa_test.pem",
+        "outcome": "analyzed",
+        "stages": {
+          "x509": "success"
+        },
+        "reason": null
+      },
+      {
+        "path": "server.pem",
+        "outcome": "failed",
+        "stages": {
+          "x509": "failed"
+        },
+        "reason": "x509: file is empty"
+      }
+    ],
+    "metric_note": "File coverage = files analyzed / files discovered. It measures how much of the project the scanner processed, not how complete cryptographic discovery is."
+  },
+  "findings": [
+    {
+      "finding_id": "CRYPTO-001",
+      "algorithm": "RSA",
+      "variant": null,
+      "key_size": null,
+      "curve": null,
+      "role": "undetermined",
+      "purpose": null,
+      "status": "potential",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-001-E1",
+          "finding_id": "CRYPTO-001",
+          "file_path": "CryptoDemo.java",
+          "line_start": 7,
+          "line_end": 7,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "JV-RSA-001",
+          "excerpt": "KeyPairGenerator.getInstance(\"RSA\")",
+          "confidence": "medium",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "medium"
+    },
+    {
+      "finding_id": "CRYPTO-002",
+      "algorithm": "SHA-1",
+      "variant": "SHA-1",
+      "key_size": null,
+      "curve": null,
+      "role": "hash",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-002-E1",
+          "finding_id": "CRYPTO-002",
+          "file_path": "CryptoDemo.java",
+          "line_start": 12,
+          "line_end": 12,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "JV-SHA1-001",
+          "excerpt": "MessageDigest.getInstance(\"SHA-1\")",
+          "confidence": "high",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-003",
+      "algorithm": "SHA-256",
+      "variant": "SHA-256",
+      "key_size": null,
+      "curve": null,
+      "role": "hash",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-003-E1",
+          "finding_id": "CRYPTO-003",
+          "file_path": "CryptoDemo.java",
+          "line_start": 16,
+          "line_end": 16,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "JV-SHA256-001",
+          "excerpt": "MessageDigest.getInstance(\"SHA-256\")",
+          "confidence": "high",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-004",
+      "algorithm": "AES",
+      "variant": null,
+      "key_size": null,
+      "curve": null,
+      "role": "symmetric-encryption",
+      "purpose": null,
+      "status": "potential",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-004-E1",
+          "finding_id": "CRYPTO-004",
+          "file_path": "CryptoDemo.java",
+          "line_start": 20,
+          "line_end": 20,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "JV-AES-002",
+          "excerpt": "KeyGenerator.getInstance(\"AES\")",
+          "confidence": "medium",
+          "metadata": {}
+        },
+        {
+          "evidence_id": "CRYPTO-004-E2",
+          "finding_id": "CRYPTO-004",
+          "file_path": "CryptoDemo.java",
+          "line_start": 24,
+          "line_end": 24,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "JV-AES-001",
+          "excerpt": "Cipher.getInstance(\"AES/GCM/NoPadding\")",
+          "confidence": "medium",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "medium"
+    },
+    {
+      "finding_id": "CRYPTO-005",
+      "algorithm": "ECDH",
+      "variant": "ECDH",
+      "key_size": null,
+      "curve": null,
+      "role": "key-establishment",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-005-E1",
+          "finding_id": "CRYPTO-005",
+          "file_path": "EllipticCurveDemo.java",
+          "line_start": 8,
+          "line_end": 8,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "JV-ECDH-001",
+          "excerpt": "KeyAgreement.getInstance(\"ECDH\")",
+          "confidence": "high",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-006",
+      "algorithm": "EC",
+      "variant": null,
+      "key_size": null,
+      "curve": null,
+      "role": "undetermined",
+      "purpose": null,
+      "status": "potential",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-006-E1",
+          "finding_id": "CRYPTO-006",
+          "file_path": "EllipticCurveDemo.java",
+          "line_start": 11,
+          "line_end": 11,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "JV-EC-001",
+          "excerpt": "KeyPairGenerator.getInstance(\"EC\")",
+          "confidence": "medium",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "medium"
+    },
+    {
+      "finding_id": "CRYPTO-007",
+      "algorithm": "EC",
+      "variant": null,
+      "key_size": null,
+      "curve": "P-256",
+      "role": "undetermined",
+      "purpose": null,
+      "status": "potential",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-007-E1",
+          "finding_id": "CRYPTO-007",
+          "file_path": "EllipticCurveDemo.java",
+          "line_start": 12,
+          "line_end": 12,
+          "evidence_type": "curve-parameter",
+          "detection_method": "regex",
+          "rule_id": "JV-EC-002",
+          "excerpt": "ECGenParameterSpec(\"secp256r1\")",
+          "confidence": "low",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "low"
+    },
+    {
+      "finding_id": "CRYPTO-008",
+      "algorithm": "EC",
+      "variant": null,
+      "key_size": null,
+      "curve": "P-384",
+      "role": "undetermined",
+      "purpose": null,
+      "status": "potential",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-008-E1",
+          "finding_id": "CRYPTO-008",
+          "file_path": "EllipticCurveDemo.java",
+          "line_start": 17,
+          "line_end": 17,
+          "evidence_type": "curve-parameter",
+          "detection_method": "regex",
+          "rule_id": "JV-EC-002",
+          "excerpt": "ECGenParameterSpec(\"secp384r1\")",
+          "confidence": "low",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "low"
+    },
+    {
+      "finding_id": "CRYPTO-009",
+      "algorithm": "EC",
+      "variant": null,
+      "key_size": null,
+      "curve": "secp256k1",
+      "role": "undetermined",
+      "purpose": null,
+      "status": "potential",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-009-E1",
+          "finding_id": "CRYPTO-009",
+          "file_path": "EllipticCurveDemo.java",
+          "line_start": 22,
+          "line_end": 22,
+          "evidence_type": "curve-parameter",
+          "detection_method": "regex",
+          "rule_id": "JV-EC-002",
+          "excerpt": "ECGenParameterSpec(\"secp256k1\")",
+          "confidence": "low",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "low"
+    },
+    {
+      "finding_id": "CRYPTO-010",
+      "algorithm": "AES",
+      "variant": null,
+      "key_size": null,
+      "curve": null,
+      "role": "symmetric-encryption",
+      "purpose": null,
+      "status": "potential",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-010-E1",
+          "finding_id": "CRYPTO-010",
+          "file_path": "QuantumSafeCrypto.java",
+          "line_start": 7,
+          "line_end": 7,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "JV-AES-002",
+          "excerpt": "KeyGenerator.getInstance(\"AES\")",
+          "confidence": "medium",
+          "metadata": {}
+        },
+        {
+          "evidence_id": "CRYPTO-010-E2",
+          "finding_id": "CRYPTO-010",
+          "file_path": "QuantumSafeCrypto.java",
+          "line_start": 11,
+          "line_end": 11,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "JV-AES-001",
+          "excerpt": "Cipher.getInstance(\"AES/GCM/NoPadding\")",
+          "confidence": "medium",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "medium"
+    },
+    {
+      "finding_id": "CRYPTO-011",
+      "algorithm": "AES",
+      "variant": "AES-256",
+      "key_size": 256,
+      "curve": null,
+      "role": "symmetric-encryption",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-011-E1",
+          "finding_id": "CRYPTO-011",
+          "file_path": "QuantumSafeCrypto.java",
+          "line_start": 15,
+          "line_end": 15,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "JV-AES-001",
+          "excerpt": "Cipher.getInstance(\"AES256/GCM/NoPadding\")",
+          "confidence": "high",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-012",
+      "algorithm": "EC",
+      "variant": null,
+      "key_size": null,
+      "curve": "P-256",
+      "role": "undetermined",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-012-E1",
+          "finding_id": "CRYPTO-012",
+          "file_path": "crypto_demo.py",
+          "line_start": 8,
+          "line_end": 8,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "PY-EC-001",
+          "excerpt": "ec.generate_private_key(ec.SECP256R1()",
+          "confidence": "high",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-013",
+      "algorithm": "RSA",
+      "variant": "RSA-2048",
+      "key_size": 2048,
+      "curve": null,
+      "role": "undetermined",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-013-E1",
+          "finding_id": "CRYPTO-013",
+          "file_path": "crypto_demo.py",
+          "line_start": 12,
+          "line_end": 12,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "PY-RSA-002",
+          "excerpt": "RSA.generate(2048)",
+          "confidence": "high",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-014",
+      "algorithm": "MD5",
+      "variant": "MD5",
+      "key_size": null,
+      "curve": null,
+      "role": "hash",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-014-E1",
+          "finding_id": "CRYPTO-014",
+          "file_path": "crypto_demo.py",
+          "line_start": 16,
+          "line_end": 16,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "PY-MD5-001",
+          "excerpt": "MD5.new(",
+          "confidence": "high",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-015",
+      "algorithm": "AES",
+      "variant": null,
+      "key_size": null,
+      "curve": null,
+      "role": "symmetric-encryption",
+      "purpose": null,
+      "status": "potential",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-015-E1",
+          "finding_id": "CRYPTO-015",
+          "file_path": "crypto_demo.py",
+          "line_start": 21,
+          "line_end": 21,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "PY-AES-001",
+          "excerpt": "AES.new(k, AES.MODE_GCM)",
+          "confidence": "medium",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "medium"
+    },
+    {
+      "finding_id": "CRYPTO-016",
+      "algorithm": "DH",
+      "variant": "DH-2048",
+      "key_size": 2048,
+      "curve": null,
+      "role": "key-establishment",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-016-E1",
+          "finding_id": "CRYPTO-016",
+          "file_path": "crypto_demo.py",
+          "line_start": 25,
+          "line_end": 25,
+          "evidence_type": "api-call",
+          "detection_method": "regex",
+          "rule_id": "PY-DH-001",
+          "excerpt": "dh.generate_parameters(generator=2, key_size=2048)",
+          "confidence": "high",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-017",
+      "algorithm": "EC",
+      "variant": "P-256",
+      "key_size": 256,
+      "curve": "P-256",
+      "role": "undetermined",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-017-E1",
+          "finding_id": "CRYPTO-017",
+          "file_path": "ec_test.key",
+          "line_start": 1,
+          "line_end": 1,
+          "evidence_type": "key-file",
+          "detection_method": "x509",
+          "rule_id": "X509-PRIVKEY-001",
+          "excerpt": "private key, P-256",
+          "confidence": "high",
+          "metadata": {
+            "key_material": "private"
+          }
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-018",
+      "algorithm": "EC",
+      "variant": "P-256",
+      "key_size": 256,
+      "curve": "P-256",
+      "role": "signature",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-018-E1",
+          "finding_id": "CRYPTO-018",
+          "file_path": "ec_test.pem",
+          "line_start": 1,
+          "line_end": 1,
+          "evidence_type": "certificate",
+          "detection_method": "x509",
+          "rule_id": "X509-CERT-001",
+          "excerpt": "X.509 certificate, P-256 public key",
+          "confidence": "high",
+          "metadata": {
+            "subject": "CN=ec-test.local",
+            "issuer": "CN=ec-test.local",
+            "not_valid_before": "2026-10-11T08:28:30+00:00",
+            "not_valid_after": "2027-10-11T08:28:30+00:00",
+            "fingerprint_sha256": "d8c438c834efcc5267cbae8ac533dbef1afd074d55734d77bfae040b194b3f0c",
+            "signature_algorithm": "ecdsa-with-SHA256",
+            "key_usage": "not declared"
+          }
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [
+        "Certificate declares no keyUsage; role assumed to be signature (authenticity). Key-establishment use of this key is not ruled out."
+      ],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-019",
+      "algorithm": "library:cryptography",
+      "variant": null,
+      "key_size": null,
+      "curve": null,
+      "role": "undetermined",
+      "purpose": null,
+      "status": "potential",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-019-E1",
+          "finding_id": "CRYPTO-019",
+          "file_path": "requirements.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "evidence_type": "dependency",
+          "detection_method": "manifest",
+          "rule_id": "MANIFEST-001",
+          "excerpt": "cryptography>=41.0",
+          "confidence": "medium",
+          "metadata": {
+            "package": "cryptography",
+            "capability": "RSA, ECC, DH, AES, SHA-2 and X.509 support"
+          }
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "medium"
+    },
+    {
+      "finding_id": "CRYPTO-020",
+      "algorithm": "RSA",
+      "variant": "RSA-2048",
+      "key_size": 2048,
+      "curve": null,
+      "role": "undetermined",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-020-E1",
+          "finding_id": "CRYPTO-020",
+          "file_path": "rsa_test.key",
+          "line_start": 1,
+          "line_end": 1,
+          "evidence_type": "key-file",
+          "detection_method": "x509",
+          "rule_id": "X509-PRIVKEY-001",
+          "excerpt": "private key, RSA-2048",
+          "confidence": "high",
+          "metadata": {
+            "key_material": "private"
+          }
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-021",
+      "algorithm": "RSA",
+      "variant": "RSA-2048",
+      "key_size": 2048,
+      "curve": null,
+      "role": "signature",
+      "purpose": null,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-021-E1",
+          "finding_id": "CRYPTO-021",
+          "file_path": "rsa_test.pem",
+          "line_start": 1,
+          "line_end": 1,
+          "evidence_type": "certificate",
+          "detection_method": "x509",
+          "rule_id": "X509-CERT-001",
+          "excerpt": "X.509 certificate, RSA-2048 public key",
+          "confidence": "high",
+          "metadata": {
+            "subject": "CN=rsa-test.local",
+            "issuer": "CN=rsa-test.local",
+            "not_valid_before": "2026-10-11T08:28:30+00:00",
+            "not_valid_after": "2027-10-11T08:28:30+00:00",
+            "fingerprint_sha256": "7d0c45bec17fd85517214f76c17acda55b7d8981b493dc3698853e553092ac07",
+            "signature_algorithm": "sha256WithRSAEncryption",
+            "key_usage": "not declared"
+          }
+        }
+      ],
+      "evidence_gap_reason": null,
+      "assumptions": [
+        "Certificate declares no keyUsage; role assumed to be signature (authenticity). Key-establishment use of this key is not ruled out."
+      ],
+      "confidence": "high"
+    },
+    {
+      "finding_id": "CRYPTO-022",
+      "algorithm": "unknown",
+      "variant": null,
+      "key_size": null,
+      "curve": null,
+      "role": "undetermined",
+      "purpose": null,
+      "status": "unable-to-analyze",
+      "evidence": [
+        {
+          "evidence_id": "CRYPTO-022-E1",
+          "finding_id": "CRYPTO-022",
+          "file_path": "server.pem",
+          "line_start": null,
+          "line_end": null,
+          "evidence_type": "key-file",
+          "detection_method": "x509",
+          "rule_id": "X509-UNREADABLE-001",
+          "excerpt": "empty file",
+          "confidence": "low",
+          "metadata": {}
+        }
+      ],
+      "evidence_gap_reason": "file is empty",
+      "assumptions": [],
+      "confidence": "low"
+    }
+  ],
+  "risks": [
+    {
+      "finding_id": "CRYPTO-001",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 100.0,
+      "risk_level": "critical",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 5.0,
+          "weight": 0.25,
+          "contribution": 25.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 5.0,
+          "weight": 0.2,
+          "contribution": 20.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 5.0,
+          "weight": 0.15,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 5.0,
+          "weight": 0.1,
+          "contribution": 10.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        }
+      ],
+      "escalations": [
+        "Mosca escalation: confidentiality lifetime (15 years) + migration time (3 years) exceeds 9 year(s) until the 2035 threat horizon; data sensitivity is at least 4/5."
+      ],
+      "explanation": [
+        "Using asset-specific context for asset 'CryptoDemo.java'.",
+        "The cryptographic role is undetermined. Policy conservatively assesses this asymmetric asset as a potential confidentiality/key-establishment risk; validate its actual use.",
+        "RSA belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "A confidentiality lifetime of 15 year(s) maps to 5/5 under the v1.0 lifetime bands.",
+        "Mosca escalation: confidentiality lifetime (15 years) + migration time (3 years) exceeds 9 year(s) until the 2035 threat horizon; data sensitivity is at least 4/5.",
+        "The weighted base score is 100.00/100; the reported score is 100.00/100 (critical).",
+        "The underlying discovery is potential, not confirmed; validate the evidence before acting on this score."
+      ],
+      "missing_inputs": [
+        "cryptographic_role"
+      ],
+      "provisional": true,
+      "confidence": "medium",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "asset_context",
+        "confidentiality_years": "asset_context",
+        "exposure": "asset_context",
+        "system_criticality": "asset_context",
+        "migration_years": "project_context",
+        "threat_horizon_year": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-002",
+      "risk_kind": "classical-weakness",
+      "risk_score": 100.0,
+      "risk_level": "critical",
+      "factors": [
+        {
+          "factor": "classical_vulnerability",
+          "score": 5.0,
+          "weight": 0.4,
+          "contribution": 40.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 5.0,
+          "weight": 0.2,
+          "contribution": 20.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 5.0,
+          "weight": 0.1,
+          "contribution": 10.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "Using asset-specific context for asset 'CryptoDemo.java'.",
+        "SHA-1 is flagged as a classical cryptographic weakness, independent of quantum computing.",
+        "This is assessed as classical-weakness risk, not HNDL or quantum-related risk.",
+        "SHA-1 is classically cryptographically broken.",
+        "The weighted base score is 100.00/100; the reported score is 100.00/100 (critical)."
+      ],
+      "missing_inputs": [],
+      "provisional": false,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "asset_context",
+        "exposure": "asset_context",
+        "system_criticality": "asset_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-003",
+      "risk_kind": "not-hndl-applicable",
+      "risk_score": null,
+      "risk_level": null,
+      "factors": [],
+      "escalations": [],
+      "explanation": [
+        "Using asset-specific context for asset 'CryptoDemo.java'.",
+        "Hash findings are marked not HNDL-applicable by policy; review their separate integrity and collision-resistance properties where needed."
+      ],
+      "missing_inputs": [],
+      "provisional": false,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {}
+    },
+    {
+      "finding_id": "CRYPTO-004",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 88.0,
+      "risk_level": "critical",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 3.0,
+          "weight": 0.3,
+          "contribution": 18.0,
+          "basis": "assumed",
+          "assumed": true,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 5.0,
+          "weight": 0.25,
+          "contribution": 25.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 5.0,
+          "weight": 0.2,
+          "contribution": 20.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 5.0,
+          "weight": 0.15,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 5.0,
+          "weight": 0.1,
+          "contribution": 10.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "Using asset-specific context for asset 'CryptoDemo.java'.",
+        "The algorithm parameter needed for a more precise quantum factor was not resolved.",
+        "AES key size was unresolved; policy conservatively assumes AES-128.",
+        "Quantum-vulnerability factor: 3/5 (grover-affected).",
+        "This factor uses a documented conservative assumption.",
+        "A confidentiality lifetime of 15 year(s) maps to 5/5 under the v1.0 lifetime bands.",
+        "The weighted base score is 88.00/100; the reported score is 88.00/100 (critical).",
+        "The underlying discovery is potential, not confirmed; validate the evidence before acting on this score."
+      ],
+      "missing_inputs": [
+        "key_size"
+      ],
+      "provisional": true,
+      "confidence": "medium",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "asset_context",
+        "confidentiality_years": "asset_context",
+        "exposure": "asset_context",
+        "system_criticality": "asset_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-005",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 72.0,
+      "risk_level": "very-high",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 3.0,
+          "weight": 0.25,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 3.0,
+          "weight": 0.2,
+          "contribution": 12.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 3.0,
+          "weight": 0.15,
+          "contribution": 9.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "ECDH belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "A confidentiality lifetime of 5 year(s) maps to 3/5 under the v1.0 lifetime bands.",
+        "The weighted base score is 72.00/100; the reported score is 72.00/100 (very-high)."
+      ],
+      "missing_inputs": [],
+      "provisional": false,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "project_context",
+        "confidentiality_years": "project_context",
+        "exposure": "project_context",
+        "system_criticality": "project_context",
+        "migration_years": "project_context",
+        "threat_horizon_year": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-006",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 72.0,
+      "risk_level": "very-high",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 3.0,
+          "weight": 0.25,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 3.0,
+          "weight": 0.2,
+          "contribution": 12.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 3.0,
+          "weight": 0.15,
+          "contribution": 9.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "The cryptographic role is undetermined. Policy conservatively assesses this asymmetric asset as a potential confidentiality/key-establishment risk; validate its actual use.",
+        "EC belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "A confidentiality lifetime of 5 year(s) maps to 3/5 under the v1.0 lifetime bands.",
+        "The weighted base score is 72.00/100; the reported score is 72.00/100 (very-high).",
+        "The underlying discovery is potential, not confirmed; validate the evidence before acting on this score."
+      ],
+      "missing_inputs": [
+        "cryptographic_role"
+      ],
+      "provisional": true,
+      "confidence": "medium",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "project_context",
+        "confidentiality_years": "project_context",
+        "exposure": "project_context",
+        "system_criticality": "project_context",
+        "migration_years": "project_context",
+        "threat_horizon_year": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-007",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 72.0,
+      "risk_level": "very-high",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 3.0,
+          "weight": 0.25,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 3.0,
+          "weight": 0.2,
+          "contribution": 12.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 3.0,
+          "weight": 0.15,
+          "contribution": 9.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "The cryptographic role is undetermined. Policy conservatively assesses this asymmetric asset as a potential confidentiality/key-establishment risk; validate its actual use.",
+        "EC with curve P-256 belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "A confidentiality lifetime of 5 year(s) maps to 3/5 under the v1.0 lifetime bands.",
+        "The weighted base score is 72.00/100; the reported score is 72.00/100 (very-high).",
+        "The underlying discovery is potential, not confirmed; validate the evidence before acting on this score.",
+        "Finding confidence is low; the score should be treated cautiously."
+      ],
+      "missing_inputs": [
+        "cryptographic_role"
+      ],
+      "provisional": true,
+      "confidence": "low",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "project_context",
+        "confidentiality_years": "project_context",
+        "exposure": "project_context",
+        "system_criticality": "project_context",
+        "migration_years": "project_context",
+        "threat_horizon_year": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-008",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 72.0,
+      "risk_level": "very-high",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 3.0,
+          "weight": 0.25,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 3.0,
+          "weight": 0.2,
+          "contribution": 12.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 3.0,
+          "weight": 0.15,
+          "contribution": 9.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "The cryptographic role is undetermined. Policy conservatively assesses this asymmetric asset as a potential confidentiality/key-establishment risk; validate its actual use.",
+        "EC with curve P-384 belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "A confidentiality lifetime of 5 year(s) maps to 3/5 under the v1.0 lifetime bands.",
+        "The weighted base score is 72.00/100; the reported score is 72.00/100 (very-high).",
+        "The underlying discovery is potential, not confirmed; validate the evidence before acting on this score.",
+        "Finding confidence is low; the score should be treated cautiously."
+      ],
+      "missing_inputs": [
+        "cryptographic_role"
+      ],
+      "provisional": true,
+      "confidence": "low",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "project_context",
+        "confidentiality_years": "project_context",
+        "exposure": "project_context",
+        "system_criticality": "project_context",
+        "migration_years": "project_context",
+        "threat_horizon_year": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-009",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 72.0,
+      "risk_level": "very-high",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 3.0,
+          "weight": 0.25,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 3.0,
+          "weight": 0.2,
+          "contribution": 12.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 3.0,
+          "weight": 0.15,
+          "contribution": 9.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "The cryptographic role is undetermined. Policy conservatively assesses this asymmetric asset as a potential confidentiality/key-establishment risk; validate its actual use.",
+        "EC with curve secp256k1 belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "A confidentiality lifetime of 5 year(s) maps to 3/5 under the v1.0 lifetime bands.",
+        "The weighted base score is 72.00/100; the reported score is 72.00/100 (very-high).",
+        "The underlying discovery is potential, not confirmed; validate the evidence before acting on this score.",
+        "Finding confidence is low; the score should be treated cautiously."
+      ],
+      "missing_inputs": [
+        "cryptographic_role"
+      ],
+      "provisional": true,
+      "confidence": "low",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "project_context",
+        "confidentiality_years": "project_context",
+        "exposure": "project_context",
+        "system_criticality": "project_context",
+        "migration_years": "project_context",
+        "threat_horizon_year": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-010",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 60.0,
+      "risk_level": "very-high",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 3.0,
+          "weight": 0.3,
+          "contribution": 18.0,
+          "basis": "assumed",
+          "assumed": true,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 3.0,
+          "weight": 0.25,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 3.0,
+          "weight": 0.2,
+          "contribution": 12.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 3.0,
+          "weight": 0.15,
+          "contribution": 9.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "The algorithm parameter needed for a more precise quantum factor was not resolved.",
+        "AES key size was unresolved; policy conservatively assumes AES-128.",
+        "Quantum-vulnerability factor: 3/5 (grover-affected).",
+        "This factor uses a documented conservative assumption.",
+        "A confidentiality lifetime of 5 year(s) maps to 3/5 under the v1.0 lifetime bands.",
+        "The weighted base score is 60.00/100; the reported score is 60.00/100 (very-high).",
+        "The underlying discovery is potential, not confirmed; validate the evidence before acting on this score."
+      ],
+      "missing_inputs": [
+        "key_size"
+      ],
+      "provisional": true,
+      "confidence": "medium",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "project_context",
+        "confidentiality_years": "project_context",
+        "exposure": "project_context",
+        "system_criticality": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-011",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 42.0,
+      "risk_level": "high",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 0.0,
+          "weight": 0.3,
+          "contribution": 0.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 3.0,
+          "weight": 0.25,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 3.0,
+          "weight": 0.2,
+          "contribution": 12.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 3.0,
+          "weight": 0.15,
+          "contribution": 9.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "AES-256 was mapped using the Week 3 quantum-factor table.",
+        "Quantum-vulnerability factor: 0/5 (quantum-safe).",
+        "A confidentiality lifetime of 5 year(s) maps to 3/5 under the v1.0 lifetime bands.",
+        "The weighted base score is 42.00/100; the reported score is 42.00/100 (high)."
+      ],
+      "missing_inputs": [],
+      "provisional": false,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "project_context",
+        "confidentiality_years": "project_context",
+        "exposure": "project_context",
+        "system_criticality": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-012",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 96.0,
+      "risk_level": "critical",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 5.0,
+          "weight": 0.25,
+          "contribution": 25.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 5.0,
+          "weight": 0.2,
+          "contribution": 20.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 5.0,
+          "weight": 0.15,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [
+        "Mosca escalation: confidentiality lifetime (20 years) + migration time (3 years) exceeds 9 year(s) until the 2035 threat horizon; data sensitivity is at least 4/5."
+      ],
+      "explanation": [
+        "Using asset-specific context for asset 'crypto_demo.py'.",
+        "The cryptographic role is undetermined. Policy conservatively assesses this asymmetric asset as a potential confidentiality/key-establishment risk; validate its actual use.",
+        "EC with curve P-256 belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "A confidentiality lifetime of 20 year(s) maps to 5/5 under the v1.0 lifetime bands.",
+        "Mosca escalation: confidentiality lifetime (20 years) + migration time (3 years) exceeds 9 year(s) until the 2035 threat horizon; data sensitivity is at least 4/5.",
+        "The weighted base score is 96.00/100; the reported score is 96.00/100 (critical)."
+      ],
+      "missing_inputs": [
+        "cryptographic_role"
+      ],
+      "provisional": true,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "asset_context",
+        "confidentiality_years": "asset_context",
+        "exposure": "asset_context",
+        "system_criticality": "project_context",
+        "migration_years": "project_context",
+        "threat_horizon_year": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-013",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 96.0,
+      "risk_level": "critical",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 5.0,
+          "weight": 0.25,
+          "contribution": 25.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 5.0,
+          "weight": 0.2,
+          "contribution": 20.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 5.0,
+          "weight": 0.15,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [
+        "Mosca escalation: confidentiality lifetime (20 years) + migration time (3 years) exceeds 9 year(s) until the 2035 threat horizon; data sensitivity is at least 4/5."
+      ],
+      "explanation": [
+        "Using asset-specific context for asset 'crypto_demo.py'.",
+        "The cryptographic role is undetermined. Policy conservatively assesses this asymmetric asset as a potential confidentiality/key-establishment risk; validate its actual use.",
+        "RSA belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "A confidentiality lifetime of 20 year(s) maps to 5/5 under the v1.0 lifetime bands.",
+        "Mosca escalation: confidentiality lifetime (20 years) + migration time (3 years) exceeds 9 year(s) until the 2035 threat horizon; data sensitivity is at least 4/5.",
+        "The weighted base score is 96.00/100; the reported score is 96.00/100 (critical)."
+      ],
+      "missing_inputs": [
+        "cryptographic_role"
+      ],
+      "provisional": true,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "asset_context",
+        "confidentiality_years": "asset_context",
+        "exposure": "asset_context",
+        "system_criticality": "project_context",
+        "migration_years": "project_context",
+        "threat_horizon_year": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-014",
+      "risk_kind": "classical-weakness",
+      "risk_score": 96.0,
+      "risk_level": "critical",
+      "factors": [
+        {
+          "factor": "classical_vulnerability",
+          "score": 5.0,
+          "weight": 0.4,
+          "contribution": 40.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 5.0,
+          "weight": 0.2,
+          "contribution": 20.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "Using asset-specific context for asset 'crypto_demo.py'.",
+        "MD5 is flagged as a classical cryptographic weakness, independent of quantum computing.",
+        "This is assessed as classical-weakness risk, not HNDL or quantum-related risk.",
+        "MD5 is classically cryptographically broken.",
+        "The weighted base score is 96.00/100; the reported score is 96.00/100 (critical)."
+      ],
+      "missing_inputs": [],
+      "provisional": false,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "asset_context",
+        "exposure": "asset_context",
+        "system_criticality": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-015",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 84.0,
+      "risk_level": "critical",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 3.0,
+          "weight": 0.3,
+          "contribution": 18.0,
+          "basis": "assumed",
+          "assumed": true,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 5.0,
+          "weight": 0.25,
+          "contribution": 25.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 5.0,
+          "weight": 0.2,
+          "contribution": 20.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 5.0,
+          "weight": 0.15,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "Using asset-specific context for asset 'crypto_demo.py'.",
+        "The algorithm parameter needed for a more precise quantum factor was not resolved.",
+        "AES key size was unresolved; policy conservatively assumes AES-128.",
+        "Quantum-vulnerability factor: 3/5 (grover-affected).",
+        "This factor uses a documented conservative assumption.",
+        "A confidentiality lifetime of 20 year(s) maps to 5/5 under the v1.0 lifetime bands.",
+        "The weighted base score is 84.00/100; the reported score is 84.00/100 (critical).",
+        "The underlying discovery is potential, not confirmed; validate the evidence before acting on this score."
+      ],
+      "missing_inputs": [
+        "key_size"
+      ],
+      "provisional": true,
+      "confidence": "medium",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "asset_context",
+        "confidentiality_years": "asset_context",
+        "exposure": "asset_context",
+        "system_criticality": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-016",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 96.0,
+      "risk_level": "critical",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 5.0,
+          "weight": 0.25,
+          "contribution": 25.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 5.0,
+          "weight": 0.2,
+          "contribution": 20.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 5.0,
+          "weight": 0.15,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [
+        "Mosca escalation: confidentiality lifetime (20 years) + migration time (3 years) exceeds 9 year(s) until the 2035 threat horizon; data sensitivity is at least 4/5."
+      ],
+      "explanation": [
+        "Using asset-specific context for asset 'crypto_demo.py'.",
+        "DH belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "A confidentiality lifetime of 20 year(s) maps to 5/5 under the v1.0 lifetime bands.",
+        "Mosca escalation: confidentiality lifetime (20 years) + migration time (3 years) exceeds 9 year(s) until the 2035 threat horizon; data sensitivity is at least 4/5.",
+        "The weighted base score is 96.00/100; the reported score is 96.00/100 (critical)."
+      ],
+      "missing_inputs": [],
+      "provisional": false,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "asset_context",
+        "confidentiality_years": "asset_context",
+        "exposure": "asset_context",
+        "system_criticality": "project_context",
+        "migration_years": "project_context",
+        "threat_horizon_year": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-017",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 72.0,
+      "risk_level": "very-high",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 3.0,
+          "weight": 0.25,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 3.0,
+          "weight": 0.2,
+          "contribution": 12.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 3.0,
+          "weight": 0.15,
+          "contribution": 9.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "The cryptographic role is undetermined. Policy conservatively assesses this asymmetric asset as a potential confidentiality/key-establishment risk; validate its actual use.",
+        "EC with curve P-256 belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "A confidentiality lifetime of 5 year(s) maps to 3/5 under the v1.0 lifetime bands.",
+        "The weighted base score is 72.00/100; the reported score is 72.00/100 (very-high)."
+      ],
+      "missing_inputs": [
+        "cryptographic_role"
+      ],
+      "provisional": true,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "project_context",
+        "confidentiality_years": "project_context",
+        "exposure": "project_context",
+        "system_criticality": "project_context",
+        "migration_years": "project_context",
+        "threat_horizon_year": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-018",
+      "risk_kind": "signature-transition",
+      "risk_score": 63.75,
+      "risk_level": "very-high",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.375,
+          "contribution": 37.5,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 2.0,
+          "weight": 0.3125,
+          "contribution": 12.5,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 3.0,
+          "weight": 0.1875,
+          "contribution": 11.25,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 1.0,
+          "weight": 0.125,
+          "contribution": 2.5,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "asset_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "Using asset-specific context for asset 'ec_test.pem'.",
+        "This is assessed as signature-transition priority risk, not HNDL confidentiality risk.",
+        "EC with curve P-256 belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "The weighted base score is 63.75/100; the reported score is 63.75/100 (very-high)."
+      ],
+      "missing_inputs": [],
+      "provisional": false,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "asset_context",
+        "exposure": "project_context",
+        "system_criticality": "asset_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-019",
+      "risk_kind": "not-assessed",
+      "risk_score": null,
+      "risk_level": null,
+      "factors": [],
+      "escalations": [],
+      "explanation": [
+        "The algorithm family or its quantum-vulnerability tier is not sufficiently identified for a defensible risk score."
+      ],
+      "missing_inputs": [],
+      "provisional": true,
+      "confidence": "medium",
+      "policy_version": "1.0",
+      "context_provenance": {}
+    },
+    {
+      "finding_id": "CRYPTO-020",
+      "risk_kind": "hndl-confidentiality",
+      "risk_score": 72.0,
+      "risk_level": "very-high",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.3,
+          "contribution": 30.0,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 3.0,
+          "weight": 0.25,
+          "contribution": 15.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "confidentiality_lifetime",
+          "score": 3.0,
+          "weight": 0.2,
+          "contribution": 12.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 3.0,
+          "weight": 0.15,
+          "contribution": 9.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.1,
+          "contribution": 6.0,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "The cryptographic role is undetermined. Policy conservatively assesses this asymmetric asset as a potential confidentiality/key-establishment risk; validate its actual use.",
+        "RSA belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "A confidentiality lifetime of 5 year(s) maps to 3/5 under the v1.0 lifetime bands.",
+        "The weighted base score is 72.00/100; the reported score is 72.00/100 (very-high)."
+      ],
+      "missing_inputs": [
+        "cryptographic_role"
+      ],
+      "provisional": true,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "project_context",
+        "confidentiality_years": "project_context",
+        "exposure": "project_context",
+        "system_criticality": "project_context",
+        "migration_years": "project_context",
+        "threat_horizon_year": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-021",
+      "risk_kind": "signature-transition",
+      "risk_score": 75.0,
+      "risk_level": "very-high",
+      "factors": [
+        {
+          "factor": "quantum_vulnerability",
+          "score": 5.0,
+          "weight": 0.375,
+          "contribution": 37.5,
+          "basis": "observed",
+          "assumed": false,
+          "context_source": "observed"
+        },
+        {
+          "factor": "data_sensitivity",
+          "score": 3.0,
+          "weight": 0.3125,
+          "contribution": 18.75,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "exposure",
+          "score": 3.0,
+          "weight": 0.1875,
+          "contribution": 11.25,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        },
+        {
+          "factor": "system_criticality",
+          "score": 3.0,
+          "weight": 0.125,
+          "contribution": 7.5,
+          "basis": "supplied",
+          "assumed": false,
+          "context_source": "project_context"
+        }
+      ],
+      "escalations": [],
+      "explanation": [
+        "This is assessed as signature-transition priority risk, not HNDL confidentiality risk.",
+        "RSA belongs to a public-key construction vulnerable to Shor-type attacks.",
+        "Quantum-vulnerability factor: 5/5 (shor-vulnerable).",
+        "The weighted base score is 75.00/100; the reported score is 75.00/100 (very-high)."
+      ],
+      "missing_inputs": [],
+      "provisional": false,
+      "confidence": "high",
+      "policy_version": "1.0",
+      "context_provenance": {
+        "data_sensitivity": "project_context",
+        "exposure": "project_context",
+        "system_criticality": "project_context"
+      }
+    },
+    {
+      "finding_id": "CRYPTO-022",
+      "risk_kind": "not-assessed",
+      "risk_score": null,
+      "risk_level": null,
+      "factors": [],
+      "escalations": [],
+      "explanation": [
+        "This material could not be analyzed; no risk score is assigned until it can be examined.",
+        "Analysis gap: file is empty"
+      ],
+      "missing_inputs": [],
+      "provisional": true,
+      "confidence": "low",
+      "policy_version": "1.0",
+      "context_provenance": {}
+    }
+  ],
+  "limitations": [
+    "File coverage = files analyzed / files discovered. It measures how much of the project the scanner processed, not how complete cryptographic discovery is.",
+    "Discovery is static and pattern-based; it does not execute project code or perform runtime/network scanning.",
+    "Indirect calls, dynamic dispatch, generated code, unsupported languages, and crypto hidden in binary or packaged dependencies may not be fully identified.",
+    "Risk policy 1.0 is an initial, unvalidated prioritization policy; scores are not probabilities of an attack succeeding.",
+    "Potential and low-confidence findings require review of their evidence before remediation decisions.",
+    "Asset-level context overrides are configured for 3 asset(s). Check context_provenance in each risk assessment to see which context layer was used.",
+    "The assessment has incomplete file coverage: 0 partial, 1 failed, 0 unsupported, and 0 skipped file(s). Review the coverage report before interpreting absence of findings."
+  ]
+}
