@@ -2,7 +2,7 @@
 
 **Project:** QuantumShield: Framework for Post-Quantum Cryptography Migration, Cryptographic Inventory, and Risk Assessment
 **Week:** Week 6 — Track 2
-**Status:** Implementation and test suite reported passing; final recommendation-summary review and local commit are still pending.
+**Status:** Implementation and test suite passing; recommendation-summary classification fixed, regression tests added, TLS scanner integration verified, and local commit created (b9ea49b). Ready for student push.
 
 ## Tasks & Work Completed During This Week
 
@@ -26,8 +26,9 @@ Cryptographic migration recommendations must depend on the purpose of the crypto
 
 ## GitHub Repository / Commit URL
 
-Repository URL: **Not supplied in the available terminal output; fill in the real remote URL.**
-Local commit: **Pending.** The available `git status --short` output shows the Track 2 files as untracked, and no commit hash was shown. Do not invent a commit or repository URL. After final review and local commit, record the actual branch and commit hash here. The code must be pushed by the student, not by the coding agent.
+Repository URL: https://github.com/CodeByG14/QuantumShield.git
+Local commit: b9ea49b (branch: main)
+Status: Committed locally. The code must be pushed by the student, not by the coding agent.
 
 ## Supporting Document / Demo Link
 
@@ -35,10 +36,11 @@ Local repository artifacts: `migration_plan.json`, `assessment.json`, `discovery
 
 ## Verification Record
 
-- Full test suite: `uv run pytest -q` — **162 passed in 3.85s**.
+- Full test suite: `uv run pytest -q` — **166 passed in ~4.0s** (162 original + 4 new summary regression tests).
 - JSON syntax check: `python -m json.tool migration_plan.json` — **passed**.
 - Migration plan generated: **20 tasks**.
-- Plan ID from the final generation shown in the terminal output: `6f3fecce-4241-4283-80b2-9fde3b5bfb15`.
-- Migration-plan summary reported: **urgent 2, high 4, medium 8, low 6; high confidence 11, low confidence 9**.
-- Final action-summary correctness: **needs review**. The reported summary contains `urgent-classical: 2`, `migrate: 4`, `manual-review: 14`, and no `no-action-needed` category. Confirm this is correct against each task before declaring Track 2 fully complete.
-- Git status and commit: **review and local commit pending**.
+- Plan ID from the final generation: `a3e21fc1-6b12-4571-8cc4-a61699edc679`.
+- Migration-plan summary: **urgent 2, high 4, medium 8, low 6; high confidence 11, low confidence 9**.
+- Action summary (`by_action`): **urgent-classical: 2, migrate: 4, review: 4, manual-review: 9, no-action-needed: 1** (sums to 20). Counts use each task's explicit `action_type`, not inference from priority or missing target algorithm.
+- `git diff --check` — **no whitespace errors**.
+- Local commit: **b9ea49b** (branch: main).
