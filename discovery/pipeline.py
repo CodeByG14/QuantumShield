@@ -12,6 +12,7 @@ UNSUPPORTED in coverage, since the contents are never examined.
 
 import os
 from pathlib import Path, PurePosixPath
+from typing import Any
 
 from common.models import (
     CoverageReport,
@@ -27,6 +28,7 @@ from discovery.manifest_scanner import scan_manifest
 from discovery.rules import CompiledRule, load_rules
 from discovery.scanner import LANGUAGE_BY_SUFFIX, scan_source
 from discovery.stage import StageOutput
+from discovery.tls_scanner import scan_tls_endpoints, TLSEndpointResult
 from discovery.x509_scanner import scan_x509
 
 DEFAULT_RULES = Path(__file__).with_name("patterns.yaml")
@@ -103,6 +105,7 @@ def run_scan(
     target: str | Path,
     rules_path: str | Path = DEFAULT_RULES,
     max_file_bytes: int = MAX_FILE_BYTES,
+    tls_endpoints: list[tuple[str, int]] | None = None,
 ) -> ScanResult:
     root = Path(target)
     if not root.is_dir():
@@ -137,6 +140,25 @@ def run_scan(
             record, file_findings = _process_file(path, rel, rules, max_file_bytes)
             records.append(record)
             findings.extend(file_findings)
+
+    # TLS endpoint scanning
+    if tls_endpoints:
+        tls_results: list[TLSEndpointResult] = scan_tls_endpoints(tls_endpoints)
+        for tls_result in tls_results:
+            # Add findings from TLS scan
+            findings.extend(tls_result.findings)
+            # Add coverage record for endpoint
+            endpoint_path = f"tls://{tls_result.host}:{tls_result.port}"
+            if tls_result.handshake_successful:
+                records.append(FileRecord.from_stage_results(
+                    endpoint_path,
+                    [FileStageResult(path=endpoint_path, stage="tls", status=StageStatus.SUCCESS, reason=None)]
+                ))
+            else:
+                records.append(FileRecord.from_stage_results(
+                    endpoint_path,
+                    [FileStageResult(path=endpoint_path, stage="tls", status=StageStatus.FAILED, reason=tls_result.error_message)]
+                ))
 
     records.sort(key=lambda r: r.path)
     return ScanResult(findings=assign_ids(findings), coverage=CoverageReport.from_records(records))

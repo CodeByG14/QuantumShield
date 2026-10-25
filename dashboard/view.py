@@ -125,7 +125,7 @@ def main(argv: list[str] | None = None) -> None:
     if not path.is_file():
         parser.error(
             f"{path} not found. Generate it with: "
-            "uv run python -m scoring.assessment_writer samples/test-repo"
+            "uv run quantumshield scan samples/test-repo -o assessment.json"
         )
     display_assessment(load_assessment(path))
 

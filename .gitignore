@@ -8,4 +8,18 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Generated outputs (do not commit)
+assessment.json
+migration_plan.json
+cbom.json
+scored_output.json
+cdxgen-output.json
+benchmark_results.json
+compliance_report.json
+compliance_report.md
+diff.json
+*.db
+
+# Test fixtures / samples
 samples/

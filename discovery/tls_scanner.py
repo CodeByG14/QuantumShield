@@ -16,6 +16,8 @@ from __future__ import annotations
 
 import socket
 import ssl
+import subprocess
+import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any
@@ -128,10 +130,15 @@ def scan_tls_endpoint(
                 # Observe cipher suite
                 result.cipher_suite = ssock.cipher()[0] if ssock.cipher() else None
 
-                # Key exchange group - Python's ssl module doesn't reliably expose this
-                # for TLS 1.3. We leave it unknown rather than inferring from cipher name.
-                result.key_exchange_group = None
-                result.key_exchange_group_source = "unknown"
+                # Key exchange group - try to observe via openssl for TLS 1.3
+                if result.tls_version in ("TLSv1.3", "TLS/1.3"):
+                    kex_group, kex_source = _observe_key_exchange_group(host, port, timeout)
+                    result.key_exchange_group = kex_group
+                    result.key_exchange_group_source = kex_source
+                else:
+                    # For TLS 1.2, we could infer from cipher suite but policy says don't infer
+                    result.key_exchange_group = None
+                    result.key_exchange_group_source = "unknown"
 
                 # Get peer certificate
                 try:
@@ -161,6 +168,119 @@ def scan_tls_endpoint(
         result.error_message = f"Scan failed: {type(e).__name__}: {e}"
 
     return result
+
+
+def scan_tls_endpoints(
+    endpoints: list[tuple[str, int]],
+    *,
+    timeout: float = 10.0,
+    verify_cert: bool = True,
+) -> list[TLSEndpointResult]:
+    """Scan multiple TLS endpoints sequentially.
+
+    Args:
+        endpoints: List of (host, port) tuples
+        timeout: Connection and handshake timeout per endpoint
+        verify_cert: Whether to verify certificates
+
+    Returns:
+        List of TLSEndpointResult for each endpoint
+    """
+    results = []
+    for host, port in endpoints:
+        result = scan_tls_endpoint(host, port, timeout=timeout, verify_cert=verify_cert)
+        results.append(result)
+    return results
+
+
+def _observe_key_exchange_group(
+    host: str,
+    port: int,
+    timeout: float = 10.0,
+) -> tuple[str | None, str]:
+    """Observe the TLS 1.3 key exchange group using openssl s_client.
+
+    Returns:
+        (group_name, source) where source is "observed" or "unknown"
+    """
+    try:
+        # Run openssl s_client to get detailed connection info
+        # Use -groups to request specific groups and observe what's negotiated
+        cmd = [
+            "openssl", "s_client",
+            "-connect", f"{host}:{port}",
+            "-tls1_3",
+            "-servername", host,
+            "-brief",
+        ]
+        proc = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+        output = proc.stdout + proc.stderr
+
+        # Parse openssl output for negotiated group
+        # OpenSSL 3.5+ prints "Negotiated TLS1.3 group: <group>"
+        group_match = re.search(r"Negotiated TLS1\.3 group:\s+(\S+)", output)
+        if group_match:
+            return group_match.group(1), "observed"
+
+        # Fallback: Server Temp Key for classical connections
+        temp_key_match = re.search(r"Server Temp Key:\s+(\S+)", output)
+        if temp_key_match:
+            return temp_key_match.group(1), "inferred"
+
+        return None, "unknown"
+    except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.SubprocessError):
+        return None, "unknown"
+
+
+def _extract_key_exchange_from_cipher(
+    cipher_suite: str,
+    tls_version: str,
+) -> tuple[str | None, str | None, CryptoRole]:
+    """Extract key exchange algorithm from cipher suite name.
+
+    For TLS 1.3, the cipher suite doesn't include KEX; use observed group.
+    For TLS 1.2, parse from cipher suite name.
+    """
+    if not cipher_suite:
+        return None, None, CryptoRole.KEY_ESTABLISHMENT
+
+    # TLS 1.3 cipher suites don't encode KEX
+    if tls_version in ("TLSv1.3", "TLS/1.3"):
+        return None, None, CryptoRole.KEY_ESTABLISHMENT
+
+    # TLS 1.2: parse from cipher suite
+    # Format: TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+    # or: TLS_DHE_RSA_WITH_AES_128_CBC_SHA
+    # or: TLS_RSA_WITH_AES_256_GCM_SHA384 (RSA key transport)
+    parts = cipher_suite.split("_")
+
+    if "ECDHE" in cipher_suite:
+        # Extract curve if present
+        if "ECDHE" in parts:
+            idx = parts.index("ECDHE")
+            if idx + 1 < len(parts):
+                kex_variant = parts[idx + 1]  # ECDHE_RSA -> RSA is auth, curve is implicit
+            else:
+                kex_variant = "ECDHE"
+            return "ECDH", kex_variant, CryptoRole.KEY_ESTABLISHMENT
+    elif "DHE" in cipher_suite:
+        if "DHE" in parts:
+            idx = parts.index("DHE")
+            if idx + 1 < len(parts):
+                kex_variant = parts[idx + 1]
+            else:
+                kex_variant = "DHE"
+            return "DH", kex_variant, CryptoRole.KEY_ESTABLISHMENT
+    elif cipher_suite.startswith("TLS_RSA_") or "_RSA_" in cipher_suite:
+        # RSA key transport
+        return "RSA", "RSA-KEY-TRANSPORT", CryptoRole.KEY_ESTABLISHMENT
+
+    return None, None, CryptoRole.KEY_ESTABLISHMENT
 
 
 def _extract_findings_from_certificate(
@@ -247,6 +367,39 @@ def _extract_findings_from_certificate(
                 ],
             )
             findings.append(finding)
+
+        # Add key exchange finding if we have a handshake
+        if result.tls_version and result.cipher_suite:
+            # Extract key exchange from cipher suite for TLS 1.2
+            kex_algorithm, kex_variant, kex_role = _extract_key_exchange_from_cipher(
+                result.cipher_suite, result.tls_version
+            )
+            if kex_algorithm:
+                kex_finding = CryptoFinding(
+                    algorithm=kex_algorithm,
+                    variant=kex_variant,
+                    role=kex_role,
+                    status=FindingStatus.CONFIRMED,
+                    evidence=[
+                        Evidence(
+                            file_path=f"tls://{host}:{port}",
+                            line_start=None,
+                            evidence_type=EvidenceType.CIPHER_SUITE,
+                            detection_method=DetectionMethod.TLS_PROBE,
+                            rule_id="TLS-KEY-EXCHANGE",
+                            excerpt=f"TLS {result.tls_version} cipher suite: {result.cipher_suite}",
+                            confidence=Confidence.HIGH,
+                            metadata={
+                                "endpoint": f"{host}:{port}",
+                                "tls_version": result.tls_version,
+                                "cipher_suite": result.cipher_suite,
+                                "key_exchange_group": result.key_exchange_group,
+                                "key_exchange_group_source": result.key_exchange_group_source,
+                            }
+                        )
+                    ],
+                )
+                findings.append(kex_finding)
 
     except Exception as e:
         # Certificate parsing failure - create a finding to represent inability to analyze

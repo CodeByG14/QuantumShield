@@ -13,7 +13,10 @@ from typing import Mapping
 from common.models import CryptoFinding, RiskLevel, Tier
 from scoring.scoring_map import get_quantum_factor
 
-POLICY_VERSION = "1.0"
+POLICY_VERSION = "1.1"
+# Changelog:
+# 1.1 (2026-10-25): Added signature-transition and classical-weakness risk kinds;
+#                    added asset context matching with segment-aware globs.
 
 # HNDL confidentiality risk: vulnerability + data/context impact.
 CONFIDENTIALITY_WEIGHTS: Mapping[str, float] = {

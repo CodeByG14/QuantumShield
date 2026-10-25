@@ -1,7 +1,7 @@
 [project]
 name = "quantumshield"
 version = "0.1.0"
-description = "Add your description here"
+description = "Post-quantum cryptography migration framework"
 readme = "README.md"
 authors = [
     { name = "CodeByG14", email = "nairgirish2004@gmail.com" }
@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
-quantumshield = "quantumshield:main"
+quantumshield = "quantumshield.__main__:main"
 
 [build-system]
 requires = ["uv_build>=0.12.17,<0.13.0"]
@@ -29,5 +29,5 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
+pythonpath = ["src"]
 testpaths = ["tests"]

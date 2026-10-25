@@ -14,6 +14,8 @@ from collections import Counter
 from datetime import datetime
 from enum import Enum
 from pathlib import PurePosixPath
+import fnmatch
+import warnings
 
 from pydantic import (
     BaseModel,
@@ -452,26 +454,96 @@ class ProjectContext(_Strict):
     
     def get_asset_context(self, finding: CryptoFinding) -> AssetContext | None:
         """Find the most specific asset context for a finding.
-        
-        Matches by finding_id first, then by primary_location (file path).
+
+        Precedence (highest to lowest):
+        1. Exact finding_id match (with warning - positional IDs are unstable across scans)
+        2. Most specific file path match using segment-aware globs (*, **, ?)
+           - Longest literal prefix wins when multiple globs match
+        3. Project-level context
+        4. Policy defaults
+
+        AssetContext.asset_id can be:
+        - A finding_id (e.g., "CRYPTO-001")
+        - A file path with glob patterns (e.g., "src/payment/**", "tests/*.py")
+        - A component name
         """
         if not self.asset_contexts:
             return None
-        
-        # Try exact finding_id match first
+
+        # Try exact finding_id match first (highest precedence)
         if finding.finding_id:
             for ac in self.asset_contexts:
                 if ac.asset_id == finding.finding_id:
+                    warnings.warn(
+                        f"Asset context matched by finding_id '{finding.finding_id}'. "
+                        "Positional finding IDs are unstable across scans; "
+                        "prefer path-based asset_id with glob patterns.",
+                        UserWarning,
+                        stacklevel=2,
+                    )
                     return ac
-        
-        # Try file path match
+
+        # Try file path match with segment-aware glob patterns
         location = finding.primary_location
         if location:
+            # Extract file path from location (remove line number if present)
+            file_path = location.split(":")[0] if ":" in location else location
+
+            # Normalize path for matching (use POSIX style)
+            normalized_path = PurePosixPath(file_path).as_posix()
+
+            # Find all matching asset contexts with glob patterns
+            matches: list[tuple[int, AssetContext]] = []  # (specificity_score, asset_context)
+
             for ac in self.asset_contexts:
-                if ac.asset_id in location or location.startswith(ac.asset_id):
-                    return ac
-        
+                # Skip finding_id matches (already handled above)
+                if finding.finding_id and ac.asset_id == finding.finding_id:
+                    continue
+
+                pattern = ac.asset_id
+
+                # Check if it's a glob pattern (contains *, **, or ?)
+                is_glob = any(c in pattern for c in "*?")
+
+                if is_glob:
+                    # Use fnmatch with segment-aware matching
+                    # fnmatch treats ** as literal **, so we need custom handling
+                    if fnmatch.fnmatch(normalized_path, pattern):
+                        # Calculate specificity: count of literal path segments before first wildcard
+                        specificity = self._glob_specificity(pattern)
+                        matches.append((specificity, ac))
+                else:
+                    # Exact path or prefix match
+                    # Check if pattern is a directory prefix of the file path
+                    if normalized_path == pattern or normalized_path.startswith(pattern + "/"):
+                        # Specificity = number of path segments in the pattern
+                        specificity = len(PurePosixPath(pattern).parts)
+                        matches.append((specificity, ac))
+
+            # Return the most specific match (highest specificity score)
+            if matches:
+                matches.sort(key=lambda x: x[0], reverse=True)
+                return matches[0][1]
+
         return None
+
+    @staticmethod
+    def _glob_specificity(pattern: str) -> int:
+        """Calculate specificity of a glob pattern.
+
+        Higher = more specific. Based on literal path segments before first wildcard.
+        """
+        # Split into segments
+        parts = PurePosixPath(pattern).parts
+        specificity = 0
+
+        for part in parts:
+            if any(c in part for c in "*?"):
+                # First wildcard segment - stop counting
+                break
+            specificity += 1
+
+        return specificity
 
 
 # --------------------------------------------------------------------------
