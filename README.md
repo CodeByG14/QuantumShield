@@ -83,3 +83,7 @@ The canonical application package lives under `src/quantumshield/`:
 uv run pytest -q
 uv run quantumshield --help
 ```
+
+## Compliance assessment (Phase 5)
+
+Compliance outputs are sourced planning guidance, not certification. NIST IR 8547 is labelled as draft guidance in the ruleset; CNSA/NSS rules are assessed only when `cnsa_scope_confirmed: true` is explicitly supplied with an applicable `system_category`. See `docs/PHASE_5B_COMPLIANCE.md` for rule provenance and limitations.

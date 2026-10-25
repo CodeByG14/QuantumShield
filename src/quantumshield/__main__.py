@@ -166,24 +166,39 @@ def diff_command(args: argparse.Namespace) -> int:
 
 
 def compliance_command(args: argparse.Namespace) -> int:
-    """Check compliance against NIST IR 8547 / CNSA 2.0."""
-    from quantumshield.compliance.checker import check_compliance
+    """Evaluate findings against sourced NIST IR 8547 and CNSA 2.0 rules."""
     import json
+    from quantumshield.compliance.checker import ComplianceAssessmentError, check_compliance
+    from quantumshield.compliance.report import write_reports
+    from quantumshield.compliance.rules import ComplianceRulesError
 
-    with open(args.assessment) as f:
-        assessment_data = json.load(f)
+    try:
+        with open(args.assessment, encoding="utf-8") as handle:
+            assessment_data = json.load(handle)
+        plan_data = None
+        if args.plan:
+            with open(args.plan, encoding="utf-8") as handle:
+                plan_data = json.load(handle)
+        elif Path("migration_plan.json").is_file():
+            with open("migration_plan.json", encoding="utf-8") as handle:
+                plan_data = json.load(handle)
 
-    from quantumshield.common.models import AssessmentResult
-    assessment = AssessmentResult.model_validate(assessment_data)
-
-    report = check_compliance(assessment, as_of=args.as_of)
-
-    if args.output:
-        with open(args.output, "w") as f:
-            json.dump(report.model_dump(mode="json"), f, indent=2)
-    else:
-        print(json.dumps(report.model_dump(mode="json"), indent=2))
-    return 0
+        report = check_compliance(
+            assessment_data,
+            migration_plan=plan_data,
+            as_of=args.as_of,
+            rules_path=args.rules,
+        )
+        json_path, markdown_path = write_reports(report, args.output, args.markdown_output)
+        print(
+            f"Compliance assessment: {report['summary']['findings']} findings, "
+            f"{report['summary']['results']} rule results"
+        )
+        print(f"Wrote {json_path} and {markdown_path}")
+        return 0
+    except (OSError, json.JSONDecodeError, ValueError, ComplianceAssessmentError, ComplianceRulesError) as exc:
+        print(f"Compliance error: {exc}", file=sys.stderr)
+        return 2
 
 
 def benchmark_command(args: argparse.Namespace) -> int:
@@ -272,11 +287,16 @@ def main() -> int:
     diff_parser.set_defaults(func=diff_command)
 
     # compliance command
-    compliance_parser = subparsers.add_parser("compliance", help="Generate a preliminary migration-readiness advisory (not a compliance certification)")
+    compliance_parser = subparsers.add_parser("compliance", help="Assess sourced NIST IR 8547 / CNSA 2.0 guidance")
     compliance_parser.add_argument("assessment", help="Assessment JSON file")
-    compliance_parser.add_argument("-o", "--output", help="Output compliance JSON")
-    compliance_parser.add_argument("--as-of", help="Compliance as-of date (YYYY-MM-DD), default today")
+    compliance_parser.add_argument("-o", "--output", default="compliance_report.json", help="Output compliance JSON")
+    compliance_parser.add_argument("--markdown-output", default="compliance_report.md", help="Output Markdown report")
+    compliance_parser.add_argument("--plan", help="Migration plan JSON; defaults to migration_plan.json when present")
+    compliance_parser.add_argument("--rules", help="Optional rules YAML path; defaults to packaged rules.yaml")
+    compliance_parser.add_argument("--as-of", help="Evaluation date (YYYY-MM-DD), default today")
     compliance_parser.set_defaults(func=compliance_command)
+
+
 
     # benchmark command
     bench_parser = subparsers.add_parser("benchmark", help="Run PQC benchmarks")

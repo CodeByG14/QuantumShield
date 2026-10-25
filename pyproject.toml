@@ -24,8 +24,7 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 # Ship the core package and the prescribed top-level `monitor` CLI namespace.
-module-name = ["quantumshield", "monitor"]
-
+module-name = ["quantumshield", "monitor", "compliance"]
 [dependency-groups]
 dev = [
     "jsonschema>=4.26.0",
@@ -33,5 +32,5 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = [".", "src"]
 testpaths = ["tests"]

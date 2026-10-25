@@ -1,0 +1,178 @@
+ruleset_version: "1.0.0"
+updated_on: "2026-10-25"
+description: >-
+  A conservative, source-backed transition-planning ruleset for NIST IR 8547
+  (initial public draft) and CNSA 2.0/NSS transition guidance. These rules do
+  not establish legal applicability or certify a system.
+
+system_category_mapping:
+  web:
+    description: "Web browsers, TLS-protected clients/servers, and SRTP clients/servers."
+    source_ids: [nsa_csfc_pqc_addendum_draft]
+  networking:
+    description: "Network equipment such as IPsec gateways, MACsec gateways, and WLAN access systems."
+    source_ids: [nsa_csfc_pqc_addendum_draft]
+  os:
+    description: "Operating-system components such as IPsec/WLAN clients, file encryption, and full-disk encryption."
+    source_ids: [nsa_csfc_pqc_addendum_draft]
+  firmware-signing:
+    description: "Software/firmware signing across components."
+    source_ids: [nsa_csfc_pqc_addendum_draft, nsa_dar_cp_2026]
+  other:
+    description: "Other component declared by the project owner; no CSfC component mapping is inferred."
+    source_ids: [nsa_cnssp15_timeline_2026]
+
+sources:
+  - id: nist_ir_8547_ipd
+    title: "NIST IR 8547, Transition to Post-Quantum Cryptography Standards (Initial Public Draft)"
+    published_on: "2024-11-12"
+    publication_status: "draft"
+    url: "https://csrc.nist.gov/pubs/ir/8547/ipd"
+    scope: "NIST's proposed transition schedule for quantum-vulnerable public-key schemes and 112-bit symmetric standards. Draft; not a final mandatory deadline by itself."
+  - id: nist_fips_203
+    title: "FIPS 203, Module-Lattice-Based Key-Encapsulation Mechanism Standard"
+    published_on: "2024-08-13"
+    publication_status: "final"
+    url: "https://csrc.nist.gov/pubs/fips/203/final"
+    scope: "Final NIST ML-KEM standard."
+  - id: nist_fips_204
+    title: "FIPS 204, Module-Lattice-Based Digital Signature Standard"
+    published_on: "2024-08-13"
+    publication_status: "final"
+    url: "https://csrc.nist.gov/pubs/fips/204/final"
+    scope: "Final NIST ML-DSA standard."
+  - id: nist_fips_205
+    title: "FIPS 205, Stateless Hash-Based Digital Signature Standard"
+    published_on: "2024-08-13"
+    publication_status: "final"
+    url: "https://csrc.nist.gov/pubs/fips/205/final"
+    scope: "Final NIST SLH-DSA standard."
+  - id: nist_sp_800_208
+    title: "NIST SP 800-208, Recommendation for Stateful Hash-Based Signature Schemes"
+    published_on: "2020-10-01"
+    publication_status: "final"
+    url: "https://csrc.nist.gov/pubs/sp/800/208/final"
+    scope: "NIST standardization reference for LMS/HSS and XMSS-family stateful hash-based signatures."
+  - id: nsa_cnssp15_timeline_2026
+    title: "NSA, Post-Quantum Cryptography: A Digital Armor / CNSSP No. 15 transition timeline"
+    published_on: "2026-10-01"
+    publication_status: "official-announcement"
+    url: "https://www.nsa.gov/Cybersecurity/Post-Quantum-Cryptography-Resource-Hub/Article-Display/Article/4616296/post-quantum-cryptography-a-digital-armor/"
+    scope: "National Security Systems (NSS): new commercial NSS must support quantum-resistant algorithms starting in 2027; legacy systems that cannot support them are to be phased out by 2030."
+  - id: nsa_csfc_pqc_addendum_draft
+    title: "NSA CSfC Post Quantum Cryptography Guidance Addendum 1.0, Draft .5"
+    published_on: "2025-04-04"
+    publication_status: "draft"
+    url: "https://www.nsa.gov/Portals/75/documents/resources/everyone/csfc/capability-packages/CSfC%20Post%20Quantum%20Cryptography%20Guidance%20Addendum%201_0%20Draft%20_5.pdf"
+    scope: "Draft component-category mapping and a CSfC-specific transition timeline. Category mapping is draft and applies to CSfC components, not every system."
+  - id: nsa_dar_cp_2026
+    title: "NSA Approved Data-at-Rest Capability Package v5.1.0 (March 2026)"
+    published_on: "2026-03-01"
+    publication_status: "approved-guidance"
+    url: "https://www.nsa.gov/Portals/75/documents/CSfC%20CP%20Updates%202026/%28U%29%20Approved%20DAR%20CP%20v5.1.0%20-%20March%202026.pdf"
+    scope: "Approved CSfC capability package; CNSA 2.0 software/firmware-signing algorithms and data-at-rest context."
+  - id: nsa_mobile_access_cp_2026
+    title: "NSA Mobile Access Capability Package v2.8.0 (March 2026)"
+    published_on: "2026-03-27"
+    publication_status: "approved-guidance"
+    url: "https://www.nsa.gov/Portals/75/%28U%29%20Mobile%20Access%20Capability%20Package%20v2_8_0.pdf"
+    scope: "Approved CSfC capability package; includes CNSA 2.0 objective requirements."
+
+rules:
+  - id: NIST-IR8547-PUBLICKEY-112
+    framework: "NIST IR 8547"
+    kind: public_key_strength
+    algorithms: [rsa, ecdsa, eddsa, ec, dh, diffie-hellman, ecdh, mqv, ecmqv]
+    roles: [signature, key-establishment, undetermined]
+    min_strength_bits: 112
+    max_strength_bits: 112
+    deprecated_effective_date: "2031-01-01"
+    deadline_year: 2035
+    deadline_effective_date: "2036-01-01"
+    status_note: "The draft proposes deprecation after 2030 and disallowance after 2035 for the listed 112-bit public-key schemes."
+    source_ids: [nist_ir_8547_ipd]
+  - id: NIST-IR8547-PUBLICKEY-128-PLUS
+    framework: "NIST IR 8547"
+    kind: public_key_strength
+    algorithms: [rsa, ecdsa, eddsa, ec, dh, diffie-hellman, ecdh, mqv, ecmqv]
+    roles: [signature, key-establishment, undetermined]
+    min_strength_bits: 128
+    max_strength_bits: null
+    deadline_year: 2035
+    deadline_effective_date: "2036-01-01"
+    status_note: "The draft proposes disallowance after 2035 for public-key schemes at 128 bits of security strength or higher."
+    source_ids: [nist_ir_8547_ipd]
+  - id: NIST-IR8547-SYMMETRIC-112
+    framework: "NIST IR 8547"
+    kind: named_algorithms
+    algorithms: [sha-224, sha512/224, sha3-224]
+    roles: [hash, undetermined]
+    deadline_year: 2030
+    deadline_effective_date: "2030-01-01"
+    status_note: "The draft states that NIST symmetric cryptography standards at 112-bit security strength will be disallowed in 2030; the listed hash variants have 112-bit collision strength in its table. It does not assign an earlier deprecated period in this rule."
+    source_ids: [nist_ir_8547_ipd]
+  - id: NIST-FIPS-PQC-MLKEM
+    framework: "NIST IR 8547"
+    kind: approved_pqc
+    algorithms: [ml-kem, module-lattice-based-key-encapsulation-mechanism]
+    roles: [key-establishment, undetermined]
+    status_note: "ML-KEM is standardized in final FIPS 203; no phase-out deadline from this ruleset is assigned."
+    source_ids: [nist_fips_203, nist_ir_8547_ipd]
+  - id: NIST-FIPS-PQC-MLDSA
+    framework: "NIST IR 8547"
+    kind: approved_pqc
+    algorithms: [ml-dsa, module-lattice-based-digital-signature-algorithm]
+    roles: [signature, undetermined]
+    status_note: "ML-DSA is standardized in final FIPS 204; no phase-out deadline from this ruleset is assigned."
+    source_ids: [nist_fips_204, nist_ir_8547_ipd]
+  - id: NIST-FIPS-PQC-SLHDSA
+    framework: "NIST IR 8547"
+    kind: approved_pqc
+    algorithms: [slh-dsa, stateless-hash-based-digital-signature-algorithm]
+    roles: [signature, undetermined]
+    status_note: "SLH-DSA is standardized in final FIPS 205; no phase-out deadline from this ruleset is assigned."
+    source_ids: [nist_fips_205, nist_ir_8547_ipd]
+  - id: NIST-SP800208-PQC-SIGNATURES
+    framework: "NIST IR 8547"
+    kind: approved_pqc
+    algorithms: [lms, hss, xmss, xmssmt]
+    roles: [signature, undetermined]
+    status_note: "The IR 8547 draft lists these stateful hash-based signature schemes as post-quantum signature options; usage and state management still require standards-specific controls."
+    source_ids: [nist_sp_800_208, nist_ir_8547_ipd]
+
+  - id: CNSA2-LEGACY-PUBLICKEY-2030
+    framework: "CNSA 2.0 / CNSSP No. 15"
+    kind: cnsa_legacy_public_key
+    algorithms: [rsa, ecdsa, eddsa, ec, dh, diffie-hellman, ecdh, mqv, ecmqv, dsa]
+    roles: [signature, key-establishment, undetermined]
+    system_categories: [web, networking, os, firmware-signing, other]
+    deadline_year: 2030
+    deadline_effective_date: "2031-01-01"
+    status_note: "Screening signal for an asset explicitly placed in CNSA/NSS scope, based on the announced 2030 phase-out target for legacy systems that cannot support quantum-resistant algorithms. Because this assessment does not model system generation or current PQC capability, this status is not a determination that the particular asset is legacy or non-capable. This is not a universal deadline for ordinary non-NSS systems."
+    source_ids: [nsa_cnssp15_timeline_2026, nsa_csfc_pqc_addendum_draft]
+  - id: CNSA2-MLKEM-1024
+    framework: "CNSA 2.0 / CNSSP No. 15"
+    kind: cnsa_approved_parameterized_pqc
+    algorithms: [ml-kem]
+    required_parameter: "1024"
+    roles: [key-establishment, undetermined]
+    system_categories: [web, networking, os, other]
+    status_note: "CNSA-approved ML-KEM parameter selection is profile-specific; this rule recognizes the ML-KEM-1024 parameter set only."
+    source_ids: [nsa_cnssp15_timeline_2026, nsa_mobile_access_cp_2026, nsa_csfc_pqc_addendum_draft]
+  - id: CNSA2-MLDSA-87
+    framework: "CNSA 2.0 / CNSSP No. 15"
+    kind: cnsa_approved_parameterized_pqc
+    algorithms: [ml-dsa]
+    required_parameter: "87"
+    roles: [signature, undetermined]
+    system_categories: [web, networking, os, firmware-signing, other]
+    status_note: "CNSA guidance identifies ML-DSA-87 for all classification levels in the cited CSfC capability packages."
+    source_ids: [nsa_cnssp15_timeline_2026, nsa_dar_cp_2026, nsa_csfc_pqc_addendum_draft]
+  - id: CNSA2-LMS-XMSS-SIGNING
+    framework: "CNSA 2.0 / CNSSP No. 15"
+    kind: cnsa_approved_pqc
+    algorithms: [lms, xmss]
+    roles: [signature, undetermined]
+    system_categories: [firmware-signing]
+    status_note: "The cited CSfC capability package allows LMS and XMSS for software/firmware signing."
+    source_ids: [nsa_dar_cp_2026, nsa_csfc_pqc_addendum_draft]
