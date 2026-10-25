@@ -1,0 +1,176 @@
+
+version: "1.0"
+metadata:
+  description: "QuantumShield default crypto-agility configuration"
+  created: "2026-10-25"
+
+algorithms:
+  # PQC KEMs
+  ML-KEM-512:
+    kind: kem
+    security_level: 1
+    status: active
+    provider: openssl
+  ML-KEM-768:
+    kind: kem
+    security_level: 3
+    status: active
+    provider: openssl
+  ML-KEM-1024:
+    kind: kem
+    security_level: 5
+    status: active
+    provider: openssl
+
+  # PQC Signatures
+  ML-DSA-44:
+    kind: sig
+    security_level: 2
+    status: active
+    provider: openssl
+  ML-DSA-65:
+    kind: sig
+    security_level: 3
+    status: active
+    provider: openssl
+  ML-DSA-87:
+    kind: sig
+    security_level: 5
+    status: active
+    provider: openssl
+  SLH-DSA-SHA2-128s:
+    kind: sig
+    security_level: 1
+    status: active
+    provider: openssl
+  SLH-DSA-SHA2-128f:
+    kind: sig
+    security_level: 1
+    status: active
+    provider: openssl
+  SLH-DSA-SHA2-192s:
+    kind: sig
+    security_level: 3
+    status: active
+    provider: openssl
+  SLH-DSA-SHA2-192f:
+    kind: sig
+    security_level: 3
+    status: active
+    provider: openssl
+  SLH-DSA-SHA2-256s:
+    kind: sig
+    security_level: 5
+    status: active
+    provider: openssl
+  SLH-DSA-SHA2-256f:
+    kind: sig
+    security_level: 5
+    status: active
+    provider: openssl
+
+  # Classical KEMs
+  X25519:
+    kind: kem
+    security_level: 1
+    status: deprecated
+    deprecation_date: "2030-01-01"
+    provider: cryptography
+  P-256:
+    kind: kem
+    security_level: 1
+    status: deprecated
+    deprecation_date: "2030-01-01"
+    provider: cryptography
+
+  # Classical Signatures
+  RSA-2048:
+    kind: sig
+    security_level: 1
+    status: legacy
+    deprecation_date: "2025-01-01"
+    provider: cryptography
+  P-256:
+    kind: sig
+    security_level: 1
+    status: deprecated
+    deprecation_date: "2030-01-01"
+    provider: cryptography
+  Ed25519:
+    kind: sig
+    security_level: 1
+    status: deprecated
+    deprecation_date: "2030-01-01"
+    provider: cryptography
+
+  # Hashes
+  SHA-256:
+    kind: hash
+    security_level: 1
+    status: active
+    provider: cryptography
+  SHA-384:
+    kind: hash
+    security_level: 2
+    status: active
+    provider: cryptography
+  SHA-512:
+    kind: hash
+    security_level: 3
+    status: active
+    provider: cryptography
+
+purposes:
+  tls-kem:
+    algorithm: ML-KEM-768
+    allowed:
+      - ML-KEM-512
+      - ML-KEM-768
+      - ML-KEM-1024
+      - X25519
+    fallback:
+      - ML-KEM-512
+      - X25519
+    require_pqc: true
+
+  tls-signature:
+    algorithm: ML-DSA-65
+    allowed:
+      - ML-DSA-44
+      - ML-DSA-65
+      - ML-DSA-87
+      - Ed25519
+    fallback:
+      - ML-DSA-44
+      - Ed25519
+    require_pqc: true
+
+  signing:
+    algorithm: ML-DSA-65
+    allowed:
+      - ML-DSA-44
+      - ML-DSA-65
+      - ML-DSA-87
+      - SLH-DSA-SHA2-128s
+      - SLH-DSA-SHA2-128f
+      - Ed25519
+    fallback:
+      - ML-DSA-44
+      - Ed25519
+    require_pqc: true
+
+  hashing:
+    algorithm: SHA-256
+    allowed:
+      - SHA-256
+      - SHA-384
+      - SHA-512
+    fallback: []
+
+defaults:
+  default_kem: ML-KEM-768
+  default_signature: ML-DSA-65
+  default_hash: SHA-256
+  agility_scoring:
+    configurable_weight: 1.0
+    static_weight: 1.0
