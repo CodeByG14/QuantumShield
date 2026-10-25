@@ -2,9 +2,9 @@ import os
 
 import pytest
 
-from common.models import FileOutcome, FindingStatus
-from discovery import pipeline
-from discovery.pipeline import run_scan
+from quantumshield.common.models import FileOutcome, FindingStatus
+from quantumshield.discovery import pipeline
+from quantumshield.discovery.pipeline import run_scan
 
 
 def outcomes(result):

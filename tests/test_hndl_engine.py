@@ -1,4 +1,4 @@
-from common.models import (
+from quantumshield.common.models import (
     Confidence,
     CryptoFinding,
     CryptoRole,
@@ -10,8 +10,8 @@ from common.models import (
     RiskKind,
     RiskLevel,
 )
-from scoring.hndl_engine import assess_finding
-from scoring.policy import (
+from quantumshield.scoring.hndl_engine import assess_finding
+from quantumshield.scoring.policy import (
     CLASSICAL_WEAKNESS_WEIGHTS,
     CONFIDENTIALITY_WEIGHTS,
     POLICY_VERSION,

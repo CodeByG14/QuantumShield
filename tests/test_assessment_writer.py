@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from common.models import (
+from quantumshield.common.models import (
     Confidence,
     CryptoFinding,
     CryptoRole,
@@ -18,7 +18,7 @@ from common.models import (
     CoverageReport,
     StageStatus,
 )
-from scoring.assessment_writer import (
+from quantumshield.scoring.assessment_writer import (
     build_assessment,
     load_project_context,
     write_assessment,
@@ -97,7 +97,7 @@ def test_build_assessment_links_findings_risks_and_coverage(tmp_path):
     assert report.findings[0].finding_id == report.risks[0].finding_id
     assert report.coverage.file_coverage_percent == 100
     assert report.risks[0].risk_score is not None
-    assert report.policy_version == "1.0"
+    assert report.policy_version == "1.1"
 
 
 def test_write_assessment_serializes_enums_and_computed_confidence(tmp_path):

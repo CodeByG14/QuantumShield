@@ -1,5 +1,5 @@
-from common.models import Confidence, CryptoRole, FindingStatus
-from discovery.x509_scanner import scan_x509
+from quantumshield.common.models import Confidence, CryptoRole, FindingStatus
+from quantumshield.discovery.x509_scanner import scan_x509
 
 
 def run(data, path="k.pem"):

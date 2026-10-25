@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from common.models import (
+from quantumshield.common.models import (
     AssessmentResult,
     Confidence,
     CoverageReport,

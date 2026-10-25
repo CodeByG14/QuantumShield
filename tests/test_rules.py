@@ -2,8 +2,8 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from discovery.pipeline import DEFAULT_RULES
-from discovery.rules import Rule, load_rules
+from quantumshield.discovery.pipeline import DEFAULT_RULES
+from quantumshield.discovery.rules import Rule, load_rules
 
 
 def test_shipped_rules_load_and_ids_are_unique():

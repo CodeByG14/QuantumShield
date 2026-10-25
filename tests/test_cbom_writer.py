@@ -1,7 +1,7 @@
 import json
 
-from discovery.cbom_writer import scan_result_to_cbom, write_cbom
-from discovery.pipeline import run_scan
+from quantumshield.discovery.cbom_writer import scan_result_to_cbom, write_cbom
+from quantumshield.discovery.pipeline import run_scan
 
 
 def cbom_for(project):

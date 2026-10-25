@@ -1,9 +1,9 @@
 import pytest
 
-from common.models import Confidence, CryptoRole, EvidenceType, FindingStatus
-from discovery.pipeline import DEFAULT_RULES
-from discovery.rules import Language, load_rules
-from discovery.scanner import scan_source
+from quantumshield.common.models import Confidence, CryptoRole, EvidenceType, FindingStatus
+from quantumshield.discovery.pipeline import DEFAULT_RULES
+from quantumshield.discovery.rules import Language, load_rules
+from quantumshield.discovery.scanner import scan_source
 
 RULES = load_rules(DEFAULT_RULES)
 

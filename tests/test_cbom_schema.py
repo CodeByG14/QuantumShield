@@ -34,8 +34,8 @@ def _validator():
 
 
 def test_generated_cbom_is_schema_valid(sample_project):
-    from discovery.cbom_writer import scan_result_to_cbom
-    from discovery.pipeline import run_scan
+    from quantumshield.discovery.cbom_writer import scan_result_to_cbom
+    from quantumshield.discovery.pipeline import run_scan
 
     cbom = scan_result_to_cbom(run_scan(sample_project), "proj")
     errors = [f"{'/'.join(map(str, e.path))}: {e.message[:120]}" for e in _validator().iter_errors(cbom)]

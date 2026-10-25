@@ -2,7 +2,7 @@
 
 import pytest
 
-from common.models import (
+from quantumshield.common.models import (
     Confidence,
     CryptoFinding,
     CryptoRole,
@@ -11,7 +11,7 @@ from common.models import (
     EvidenceType,
     FindingStatus,
 )
-from scoring.migration_engine import (
+from quantumshield.scoring.migration_engine import (
     MigrationRecommendationRegistry,
     MigrationTask,
     generate_migration_recommendation,
@@ -263,8 +263,10 @@ def test_low_confidence_findings_lower_priority():
     high_task = next(t for t in tasks if t.finding_id == "CRYPTO-001")
     low_task = next(t for t in tasks if t.finding_id == "CRYPTO-002")
 
-    # Low confidence should have higher priority number (lower priority)
+    # Low confidence must be lower priority and routed to review, not auto-migration.
     assert low_task.priority > high_task.priority
+    assert low_task.action_type == "manual-review"
+    assert low_task.confidence == "low"
 
 
 def test_recommendation_includes_verification_steps():
@@ -329,7 +331,7 @@ def test_tasks_carry_explicit_action_type_from_recommendation():
 
 def test_count_by_action_uses_explicit_action_type():
     """_count_by_action must use the explicit action_type, not priority inference."""
-    from scoring.migration_plan_writer import _count_by_action
+    from quantumshield.scoring.migration_plan_writer import _count_by_action
 
     tasks = [
         MigrationTask(
@@ -395,7 +397,7 @@ def test_count_by_action_sums_to_total_for_generated_tasks():
     ]
     tasks = generate_migration_tasks(findings)
 
-    from scoring.migration_plan_writer import _count_by_action
+    from quantumshield.scoring.migration_plan_writer import _count_by_action
     counts = _count_by_action(tasks)
 
     assert sum(counts.values()) == len(tasks) == 7
@@ -409,8 +411,8 @@ def test_count_by_action_sums_to_total_for_generated_tasks():
 def test_build_migration_plan_summary_by_action_matches_tasks():
     """End-to-end: build_migration_plan summary by_action reflects task action_types."""
     from datetime import datetime, timezone
-    from scoring.migration_plan_writer import build_migration_plan
-    from common.models import (
+    from quantumshield.scoring.migration_plan_writer import build_migration_plan
+    from quantumshield.common.models import (
         AssessmentResult, ProjectContext, CoverageReport, FileRecord, FileOutcome,
     )
 
@@ -448,3 +450,17 @@ def test_build_migration_plan_summary_by_action_matches_tasks():
     assert by_action.get("review", 0) >= 1  # AES symmetric
     assert by_action.get("no-action-needed", 0) >= 1  # SHA-256
     assert by_action.get("manual-review", 0) >= 1  # RSA undetermined
+
+
+def test_registry_rejects_dependency_cycles(tmp_path):
+    """Invalid dependency cycles fail at registry load instead of reaching planning."""
+    registry_file = tmp_path / "cyclic.yaml"
+    registry_file.write_text(
+        "version: 'test'\n"
+        "recommendations:\n"
+        "  - id: REC-A\n    source_algorithms: ['RSA']\n    source_roles: ['signature']\n    depends_on: ['REC-B']\n"
+        "  - id: REC-B\n    source_algorithms: ['ECDSA']\n    source_roles: ['signature']\n    depends_on: ['REC-A']\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="dependency cycle"):
+        MigrationRecommendationRegistry(registry_file)

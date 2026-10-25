@@ -1,5 +1,5 @@
-from common.models import Confidence, FindingStatus
-from discovery.manifest_scanner import scan_manifest
+from quantumshield.common.models import Confidence, FindingStatus
+from quantumshield.discovery.manifest_scanner import scan_manifest
 
 
 def libs(out):

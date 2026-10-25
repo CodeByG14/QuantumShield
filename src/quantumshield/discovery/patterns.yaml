@@ -1,0 +1,306 @@
+# QuantumShield detection rules (schema v2).
+#
+# Every rule has an id, a language, the algorithm family it evidences, and an
+# evidence_type:
+#   api-call : a call that actually uses the primitive. Resolved parameters
+#              (key size / curve, if the rule declares `needs`) => HIGH
+#              confidence, otherwise MEDIUM.
+#   keyword  : an algorithm/curve name appears in code. Always LOW confidence.
+#   curve-parameter: a named curve is configured, but a regex cannot establish
+#                    that a crypto operation actually uses it. Always LOW.
+#   A match inside a comment becomes a comment-mention (LOW).
+
+#
+# `role` is only set when the call itself implies it. RSA key generation and
+# EC key generation are genuinely ambiguous, so they stay "undetermined".
+#
+# Regexes are single-quoted YAML strings (no backslash escaping needed).
+
+rules:
+  # ------------------------------------------------------------------ Python
+  - id: PY-RSA-001
+    language: python
+    algorithm: RSA
+    evidence_type: api-call
+    regex: 'rsa\.generate_private_key\s*\([^)]*\)'
+    size_regex: 'key_size\s*=\s*(\d+)'
+    needs: size
+
+  - id: PY-RSA-002
+    language: python
+    algorithm: RSA
+    evidence_type: api-call
+    regex: '\bRSA\.generate\s*\([^)]*\)'
+    size_regex: '\(\s*(\d+)'
+    needs: size
+
+  - id: PY-EC-001
+    language: python
+    algorithm: EC
+    evidence_type: api-call
+    ignorecase: true
+    regex: '\bec\.generate_private_key\s*\([^)]*\)'
+    curve_regex: '\b(secp\d{3}[rk]1|prime256v1)\b'
+    needs: curve
+
+  - id: PY-ECDSA-001
+    language: python
+    algorithm: ECDSA
+    role: signature
+    evidence_type: api-call
+    regex: '\bec\.ECDSA\s*\('
+    variant: ECDSA
+
+  - id: PY-ECDSA-002
+    language: python
+    algorithm: ECDSA
+    role: signature
+    evidence_type: api-call
+    regex: '\bSigningKey\.generate\s*\('
+    variant: ECDSA
+
+  - id: PY-ECDH-001
+    language: python
+    algorithm: ECDH
+    role: key-establishment
+    evidence_type: api-call
+    regex: '\bec\.ECDH\s*\(\s*\)'
+    variant: ECDH
+
+  - id: PY-DH-001
+    language: python
+    algorithm: DH
+    role: key-establishment
+    evidence_type: api-call
+    regex: '\bdh\.generate_parameters\s*\([^)]*\)'
+    size_regex: 'key_size\s*=\s*(\d+)'
+    needs: size
+
+  - id: PY-X25519-001
+    language: python
+    algorithm: X25519
+    role: key-establishment
+    evidence_type: api-call
+    regex: '\bX25519PrivateKey\.generate\s*\('
+    variant: X25519
+
+  - id: PY-ED25519-001
+    language: python
+    algorithm: Ed25519
+    role: signature
+    evidence_type: api-call
+    regex: '\bEd25519PrivateKey\.generate\s*\('
+    variant: Ed25519
+
+  - id: PY-AES-001
+    language: python
+    algorithm: AES
+    role: symmetric-encryption
+    evidence_type: api-call
+    regex: '\bAES\.new\s*\([^)]*\)'
+    size_regex: 'AES[-_]?(128|192|256)'
+    needs: size
+
+  - id: PY-AES-002
+    language: python
+    algorithm: AES
+    role: symmetric-encryption
+    evidence_type: api-call
+    regex: '\bAES(?:GCM|CCM|OCB3|SIV)\s*\('
+    size_regex: 'AES[-_]?(128|192|256)'
+    needs: size
+
+  - id: PY-MD5-001
+    language: python
+    algorithm: MD5
+    role: hash
+    evidence_type: api-call
+    regex: '\b(?:hashlib\.md5|MD5\.new)\s*\('
+    variant: MD5
+
+  - id: PY-SHA1-001
+    language: python
+    algorithm: SHA-1
+    role: hash
+    evidence_type: api-call
+    regex: '\b(?:hashlib\.sha1|SHA1\.new)\s*\('
+    variant: SHA-1
+
+  - id: PY-SHA256-001
+    language: python
+    algorithm: SHA-256
+    role: hash
+    evidence_type: api-call
+    regex: '\b(?:hashlib\.sha256|SHA256\.new)\s*\('
+    variant: SHA-256
+
+  # -------------------------------------------------------------------- Java
+  # Java sets key size / curve in later statements (initialize(2048)), which
+  # regex cannot link back to the generator reliably. Those findings stay
+  # MEDIUM with no variant; AST analysis is the proper fix.
+  - id: JV-RSA-001
+    language: java
+    algorithm: RSA
+    evidence_type: api-call
+    regex: 'KeyPairGenerator\.getInstance\s*\(\s*"RSA"\s*\)'
+    needs: size
+
+  - id: JV-RSA-002
+    language: java
+    algorithm: RSA
+    role: key-establishment
+    evidence_type: api-call
+    regex: 'Cipher\.getInstance\s*\(\s*"RSA[^"]*"\s*\)'
+    needs: size
+
+  - id: JV-RSA-003
+    language: java
+    algorithm: RSA
+    role: signature
+    evidence_type: api-call
+    regex: 'Signature\.getInstance\s*\(\s*"[A-Za-z0-9]+withRSA[^"]*"\s*\)'
+    needs: size
+
+  - id: JV-ECDSA-001
+    language: java
+    algorithm: ECDSA
+    role: signature
+    evidence_type: api-call
+    regex: 'Signature\.getInstance\s*\(\s*"[A-Za-z0-9]+withECDSA[^"]*"\s*\)'
+    variant: ECDSA
+
+  - id: JV-EC-001
+    language: java
+    algorithm: EC
+    evidence_type: api-call
+    regex: 'KeyPairGenerator\.getInstance\s*\(\s*"EC"\s*\)'
+    needs: curve
+
+  - id: JV-EC-002
+    language: java
+    algorithm: EC
+    # This identifies a configured curve name, but regex cannot prove the
+    # parameter is attached to a key-generation operation. Keep it potential.
+    evidence_type: curve-parameter
+    regex: 'ECGenParameterSpec\s*\(\s*"[^"]+"\s*\)'
+    curve_regex: '"([^"]+)"'
+
+  - id: JV-ECDH-001
+    language: java
+    algorithm: ECDH
+    role: key-establishment
+    evidence_type: api-call
+    regex: 'KeyAgreement\.getInstance\s*\(\s*"ECDH"\s*\)'
+    variant: ECDH
+
+  - id: JV-DH-001
+    language: java
+    algorithm: DH
+    role: key-establishment
+    evidence_type: api-call
+    regex: '(?:KeyAgreement|KeyPairGenerator)\.getInstance\s*\(\s*"(?:DH|DiffieHellman)"\s*\)'
+    needs: size
+
+  - id: JV-AES-001
+    language: java
+    algorithm: AES
+    role: symmetric-encryption
+    evidence_type: api-call
+    regex: 'Cipher\.getInstance\s*\(\s*"AES[^"]*"\s*\)'
+    size_regex: 'AES[-_]?(128|192|256)'
+    needs: size
+
+  - id: JV-AES-002
+    language: java
+    algorithm: AES
+    role: symmetric-encryption
+    evidence_type: api-call
+    regex: 'KeyGenerator\.getInstance\s*\(\s*"AES"\s*\)'
+    needs: size
+
+  - id: JV-MD5-001
+    language: java
+    algorithm: MD5
+    role: hash
+    evidence_type: api-call
+    regex: 'MessageDigest\.getInstance\s*\(\s*"MD5"\s*\)'
+    variant: MD5
+
+  - id: JV-SHA1-001
+    language: java
+    algorithm: SHA-1
+    role: hash
+    evidence_type: api-call
+    regex: 'MessageDigest\.getInstance\s*\(\s*"SHA-?1"\s*\)'
+    variant: SHA-1
+
+  - id: JV-SHA256-001
+    language: java
+    algorithm: SHA-256
+    role: hash
+    evidence_type: api-call
+    regex: 'MessageDigest\.getInstance\s*\(\s*"SHA-?256"\s*\)'
+    variant: SHA-256
+
+  # ------------------------------------------------- Keywords (any language)
+  # Weak evidence: the name appears, but nothing shows it being used. These
+  # are dropped from a file that already has an api-call finding for the same
+  # algorithm.
+  - id: KW-RSA-001
+    language: any
+    algorithm: RSA
+    evidence_type: keyword
+    regex: '\bRSA\b'
+
+  - id: KW-ECDSA-001
+    language: any
+    algorithm: ECDSA
+    role: signature
+    evidence_type: keyword
+    regex: '\bECDSA\b'
+
+  - id: KW-ECDH-001
+    language: any
+    algorithm: ECDH
+    role: key-establishment
+    evidence_type: keyword
+    regex: '\bECDH\b'
+
+  - id: KW-DH-001
+    language: any
+    algorithm: DH
+    role: key-establishment
+    evidence_type: keyword
+    regex: '\bDiffie-?Hellman\b'
+
+  - id: KW-AES-001
+    language: any
+    algorithm: AES
+    role: symmetric-encryption
+    evidence_type: keyword
+    regex: '\bAES(?:[-_]?(?:128|192|256))?\b'
+    size_regex: 'AES[-_]?(128|192|256)'
+
+  - id: KW-MD5-001
+    language: any
+    algorithm: MD5
+    role: hash
+    evidence_type: keyword
+    regex: '\bMD5\b'
+    variant: MD5
+
+  - id: KW-SHA1-001
+    language: any
+    algorithm: SHA-1
+    role: hash
+    evidence_type: keyword
+    regex: '\bSHA-?1\b'
+    variant: SHA-1
+
+  - id: KW-EC-001
+    language: any
+    algorithm: EC
+    evidence_type: keyword
+    ignorecase: true
+    regex: '\b(?:secp256r1|prime256v1|P-256|secp384r1|P-384|secp521r1|P-521|secp256k1)\b'
+    curve_regex: '(.+)'

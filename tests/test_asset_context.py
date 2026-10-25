@@ -2,7 +2,7 @@
 
 import pytest
 
-from common.models import (
+from quantumshield.common.models import (
     AssetContext,
     Confidence,
     CryptoFinding,
@@ -14,7 +14,7 @@ from common.models import (
     ProjectContext,
     RiskKind,
 )
-from scoring.hndl_engine import assess_finding
+from quantumshield.scoring.hndl_engine import assess_finding
 
 
 def make_finding(
@@ -437,16 +437,303 @@ def test_explanation_mentions_asset_context_usage():
         exposure=2,
         system_criticality=2,
     )
-    
+
     asset = AssetContext(
         asset_id="CRYPTO-001",
         data_sensitivity=5,
     )
     project.asset_contexts = [asset]
-    
+
     finding = make_finding("RSA", finding_id="CRYPTO-001")
     result = assess_finding(finding, project, assessment_year=2026)
-    
+
     # Explanation should mention asset-specific context
     explanation_text = " ".join(result.explanation)
     assert "asset-specific context" in explanation_text.lower()
+
+
+def test_asset_context_glob_pattern_single_star():
+    """Asset context should match using single-star glob pattern."""
+    project = ProjectContext(
+        project_name="test-project",
+        data_sensitivity=1,
+        exposure=1,
+        system_criticality=1,
+    )
+
+    # Match all Python files in src/
+    asset = AssetContext(
+        asset_id="src/*.py",
+        data_sensitivity=5,
+        system_criticality=5,
+    )
+    project.asset_contexts = [asset]
+
+    finding = make_finding(
+        "RSA",
+        role=CryptoRole.KEY_ESTABLISHMENT,
+        file_path="src/payment.py",
+        finding_id="CRYPTO-001"
+    )
+    result = assess_finding(finding, project, assessment_year=2026)
+
+    data_sens_factor = next(f for f in result.factors if f.factor == "data_sensitivity")
+    assert data_sens_factor.score == 5.0
+    assert data_sens_factor.context_source == "asset_context"
+
+    crit_factor = next(f for f in result.factors if f.factor == "system_criticality")
+    assert crit_factor.score == 5.0
+    assert crit_factor.context_source == "asset_context"
+
+
+def test_asset_context_glob_pattern_double_star():
+    """Asset context should match using double-star glob pattern for recursive directories."""
+    project = ProjectContext(
+        project_name="test-project",
+        data_sensitivity=1,
+        exposure=1,
+        system_criticality=1,
+    )
+
+    # Match all files recursively under src/critical/
+    asset = AssetContext(
+        asset_id="src/critical/**",
+        data_sensitivity=5,
+        system_criticality=5,
+    )
+    project.asset_contexts = [asset]
+
+    # Test file deep in the directory structure
+    finding = make_finding(
+        "RSA",
+        role=CryptoRole.KEY_ESTABLISHMENT,
+        file_path="src/critical/payment/processing.py",
+        finding_id="CRYPTO-001"
+    )
+    result = assess_finding(finding, project, assessment_year=2026)
+
+    data_sens_factor = next(f for f in result.factors if f.factor == "data_sensitivity")
+    assert data_sens_factor.score == 5.0
+    assert data_sens_factor.context_source == "asset_context"
+
+    # Should NOT match files outside the pattern
+    finding_outside = make_finding(
+        "RSA",
+        role=CryptoRole.KEY_ESTABLISHMENT,
+        file_path="src/other.py",
+        finding_id="CRYPTO-002"
+    )
+    result_outside = assess_finding(finding_outside, project, assessment_year=2026)
+
+    data_sens_factor_outside = next(f for f in result_outside.factors if f.factor == "data_sensitivity")
+    assert data_sens_factor_outside.score == 1.0  # project default
+    assert data_sens_factor_outside.context_source == "project_context"
+
+
+def test_asset_context_glob_question_mark():
+    """Asset context should match using question-mark glob pattern for single character."""
+    project = ProjectContext(
+        project_name="test-project",
+        data_sensitivity=1,
+        exposure=1,
+        system_criticality=1,
+    )
+
+    # Match files like test_a.py, test_b.py, etc.
+    asset = AssetContext(
+        asset_id="tests/test_?.py",
+        data_sensitivity=4,
+    )
+    project.asset_contexts = [asset]
+
+    # Should match
+    finding_match = make_finding(
+        "RSA",
+        role=CryptoRole.KEY_ESTABLISHMENT,
+        file_path="tests/test_a.py",
+        finding_id="CRYPTO-001"
+    )
+    result_match = assess_finding(finding_match, project, assessment_year=2026)
+
+    data_sens_factor = next(f for f in result_match.factors if f.factor == "data_sensitivity")
+    assert data_sens_factor.score == 4.0
+    assert data_sens_factor.context_source == "asset_context"
+
+    # Should NOT match (two characters)
+    finding_no_match = make_finding(
+        "RSA",
+        role=CryptoRole.KEY_ESTABLISHMENT,
+        file_path="tests/test_ab.py",
+        finding_id="CRYPTO-002"
+    )
+    result_no_match = assess_finding(finding_no_match, project, assessment_year=2026)
+
+    data_sens_factor_no_match = next(f for f in result_no_match.factors if f.factor == "data_sensitivity")
+    assert data_sens_factor_no_match.score == 1.0
+    assert data_sens_factor_no_match.context_source == "project_context"
+
+
+def test_asset_context_most_specific_glob_wins():
+    """When multiple globs match, most specific (longest literal prefix) should win."""
+    project = ProjectContext(
+        project_name="test-project",
+        data_sensitivity=1,
+        exposure=1,
+        system_criticality=1,
+    )
+
+    # General pattern: all src files
+    general_asset = AssetContext(
+        asset_id="src/**",
+        data_sensitivity=2,
+        system_criticality=2,
+    )
+
+    # More specific pattern: src/critical/**
+    specific_asset = AssetContext(
+        asset_id="src/critical/**",
+        data_sensitivity=5,
+        system_criticality=5,
+    )
+
+    project.asset_contexts = [general_asset, specific_asset]
+
+    # Should match the more specific pattern
+    finding = make_finding(
+        "RSA",
+        role=CryptoRole.KEY_ESTABLISHMENT,
+        file_path="src/critical/payment.py",
+        finding_id="CRYPTO-001"
+    )
+    result = assess_finding(finding, project, assessment_year=2026)
+
+    data_sens_factor = next(f for f in result.factors if f.factor == "data_sensitivity")
+    assert data_sens_factor.score == 5.0  # from specific_asset
+    assert data_sens_factor.context_source == "asset_context"
+
+    crit_factor = next(f for f in result.factors if f.factor == "system_criticality")
+    assert crit_factor.score == 5.0  # from specific_asset
+
+
+def test_asset_context_exact_path_vs_glob():
+    """Exact path match should be more specific than glob."""
+    project = ProjectContext(
+        project_name="test-project",
+        data_sensitivity=1,
+        exposure=1,
+        system_criticality=1,
+    )
+
+    # Exact file path
+    exact_asset = AssetContext(
+        asset_id="src/special.py",
+        data_sensitivity=5,
+    )
+
+    # Glob pattern that also matches
+    glob_asset = AssetContext(
+        asset_id="src/*.py",
+        data_sensitivity=3,
+    )
+
+    project.asset_contexts = [exact_asset, glob_asset]
+
+    finding = make_finding(
+        "RSA",
+        role=CryptoRole.KEY_ESTABLISHMENT,
+        file_path="src/special.py",
+        finding_id="CRYPTO-001"
+    )
+    result = assess_finding(finding, project, assessment_year=2026)
+
+    # Exact match should win (2 path segments vs 1 for glob)
+    data_sens_factor = next(f for f in result.factors if f.factor == "data_sensitivity")
+    assert data_sens_factor.score == 5.0
+    assert data_sens_factor.context_source == "asset_context"
+
+
+def test_asset_context_a_py_not_match_data_py():
+    """Test that a.py does NOT match data.py (substring bug fix)."""
+    project = ProjectContext(
+        project_name="test-project",
+        data_sensitivity=1,
+        exposure=1,
+        system_criticality=1,
+    )
+
+    # Pattern that would incorrectly match "data.py" with substring matching
+    asset = AssetContext(
+        asset_id="a.py",
+        data_sensitivity=5,
+    )
+    project.asset_contexts = [asset]
+
+    # This should NOT match a.py pattern
+    finding = make_finding(
+        "RSA",
+        role=CryptoRole.KEY_ESTABLISHMENT,
+        file_path="data.py",
+        finding_id="CRYPTO-001"
+    )
+    result = assess_finding(finding, project, assessment_year=2026)
+
+    data_sens_factor = next(f for f in result.factors if f.factor == "data_sensitivity")
+    assert data_sens_factor.score == 1.0  # project default, not asset
+    assert data_sens_factor.context_source == "project_context"
+
+
+def test_asset_context_tests_not_match_latest():
+    """Test that tests/ does NOT match latest/x.py (substring bug fix)."""
+    project = ProjectContext(
+        project_name="test-project",
+        data_sensitivity=1,
+        exposure=1,
+        system_criticality=1,
+    )
+
+    asset = AssetContext(
+        asset_id="tests",
+        data_sensitivity=5,
+    )
+    project.asset_contexts = [asset]
+
+    # This should NOT match "tests" with old substring logic
+    finding = make_finding(
+        "RSA",
+        role=CryptoRole.KEY_ESTABLISHMENT,
+        file_path="latest/x.py",
+        finding_id="CRYPTO-001"
+    )
+    result = assess_finding(finding, project, assessment_year=2026)
+
+    data_sens_factor = next(f for f in result.factors if f.factor == "data_sensitivity")
+    assert data_sens_factor.score == 1.0  # project default
+    assert data_sens_factor.context_source == "project_context"
+
+
+def test_asset_context_finding_id_warning_emitted():
+    """Test that warning is emitted when matching by finding_id."""
+    import warnings
+
+    project = ProjectContext(
+        project_name="test-project",
+        data_sensitivity=1,
+    )
+
+    asset = AssetContext(
+        asset_id="CRYPTO-001",
+        data_sensitivity=5,
+    )
+    project.asset_contexts = [asset]
+
+    finding = make_finding("RSA", finding_id="CRYPTO-001")
+
+    # Should emit UserWarning
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        project.get_asset_context(finding)
+
+        assert len(w) == 1
+        assert issubclass(w[0].category, UserWarning)
+        assert "finding_id" in str(w[0].message)
+        assert "unstable across scans" in str(w[0].message)

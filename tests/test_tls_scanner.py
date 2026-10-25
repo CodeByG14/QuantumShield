@@ -1,57 +1,74 @@
 """Tests for TLS endpoint scanner with local test server.
 
 These tests use a local test server and do NOT contact public endpoints.
+All certificates are generated on-the-fly via the `certs` fixture.
 """
 
 import socket
 import ssl
+import tempfile
 import threading
 import time
 from pathlib import Path
 
 import pytest
 
-from discovery.tls_scanner import scan_tls_endpoint, TLSEndpointResult
+from quantumshield.discovery.tls_scanner import scan_tls_endpoint, TLSEndpointResult
 
 
-@pytest.fixture
-def test_cert_path():
-    """Path to test certificates in samples/test-repo."""
-    return Path(__file__).parent.parent / "samples" / "test-repo"
-
-
-def create_test_tls_server(port: int, cert_file: str, key_file: str, duration: float = 2.0):
+def create_test_tls_server(port: int, cert_pem: bytes, key_pem: bytes, duration: float = 2.0):
     """Create a simple TLS test server that accepts one connection.
 
     Args:
         port: Port to listen on
-        cert_file: Path to certificate file
-        key_file: Path to private key file
+        cert_pem: Certificate in PEM format
+        key_pem: Private key in PEM format
         duration: How long to keep server alive (seconds)
     """
     def run_server():
-        context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        # Write cert and key to temp files
+        import os
+        cert_path = None
+        key_path = None
         try:
-            context.load_cert_chain(cert_file, key_file)
+            with tempfile.NamedTemporaryFile(mode='wb', suffix='.pem', delete=False) as cert_f:
+                cert_f.write(cert_pem)
+                cert_path = cert_f.name
+            with tempfile.NamedTemporaryFile(mode='wb', suffix='.key', delete=False) as key_f:
+                key_f.write(key_pem)
+                key_path = key_f.name
+
+            context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+            context.load_cert_chain(cert_path, key_path)
+
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                sock.bind(("127.0.0.1", port))
+                sock.listen(1)
+                sock.settimeout(duration)
+
+                try:
+                    conn, addr = sock.accept()
+                    with context.wrap_socket(conn, server_side=True) as ssock:
+                        # Keep connection alive briefly
+                        time.sleep(0.1)
+                except socket.timeout:
+                    pass
+                except Exception:
+                    pass
         except Exception as e:
             print(f"Failed to load cert chain: {e}")
-            return
-
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            sock.bind(("127.0.0.1", port))
-            sock.listen(1)
-            sock.settimeout(duration)
-
-            try:
-                conn, addr = sock.accept()
-                with context.wrap_socket(conn, server_side=True) as ssock:
-                    # Keep connection alive briefly
-                    time.sleep(0.1)
-            except socket.timeout:
-                pass
-            except Exception:
-                pass
+        finally:
+            if cert_path:
+                try:
+                    os.unlink(cert_path)
+                except Exception:
+                    pass
+            if key_path:
+                try:
+                    os.unlink(key_path)
+                except Exception:
+                    pass
 
     thread = threading.Thread(target=run_server, daemon=True)
     thread.start()
@@ -59,16 +76,13 @@ def create_test_tls_server(port: int, cert_file: str, key_file: str, duration: f
     return thread
 
 
-def test_successful_tls_connection(test_cert_path):
+def test_successful_tls_connection(certs):
     """Test successful TLS handshake with local server."""
-    cert_file = test_cert_path / "rsa_test.pem"
-    key_file = test_cert_path / "rsa_test.key"
-
-    if not cert_file.exists() or not key_file.exists():
-        pytest.skip("Test certificates not available")
+    cert_pem = certs.pem(certs.rsa_cert_sign)
+    key_pem = certs.rsa_priv_pem
 
     port = 54321  # Use high port to avoid permission issues
-    server = create_test_tls_server(port, str(cert_file), str(key_file))
+    server = create_test_tls_server(port, cert_pem, key_pem)
 
     # Scan with certificate verification disabled (self-signed test cert)
     result = scan_tls_endpoint("127.0.0.1", port, timeout=2.0, verify_cert=False)
@@ -102,10 +116,13 @@ def test_connection_refused():
     assert len(result.findings) == 0
 
 
-def test_connection_timeout():
-    """Test handling of connection timeout."""
-    # Use a non-routable IP to trigger timeout
-    result = scan_tls_endpoint("192.0.2.1", 443, timeout=0.5)
+def test_connection_timeout(monkeypatch):
+    """Timeout handling is deterministic and does not depend on external routing."""
+    def raise_timeout(*args, **kwargs):
+        raise socket.timeout("simulated timeout")
+
+    monkeypatch.setattr(socket, "create_connection", raise_timeout)
+    result = scan_tls_endpoint("example.invalid", 443, timeout=0.01)
 
     assert result.connected is False
     assert result.handshake_successful is False
@@ -123,16 +140,13 @@ def test_invalid_hostname():
     # Should be address resolution error
 
 
-def test_certificate_verification_bypass_flag():
+def test_certificate_verification_bypass_flag(certs):
     """Test that certificate verification bypass is explicitly tracked."""
-    cert_file = Path(__file__).parent.parent / "samples" / "test-repo" / "rsa_test.pem"
-    key_file = Path(__file__).parent.parent / "samples" / "test-repo" / "rsa_test.key"
-
-    if not cert_file.exists():
-        pytest.skip("Test certificates not available")
+    cert_pem = certs.pem(certs.rsa_cert_sign)
+    key_pem = certs.rsa_priv_pem
 
     port = 54322
-    server = create_test_tls_server(port, str(cert_file), str(key_file))
+    server = create_test_tls_server(port, cert_pem, key_pem)
 
     # With verify_cert=False
     result_unverified = scan_tls_endpoint("127.0.0.1", port, timeout=2.0, verify_cert=False)
@@ -144,23 +158,20 @@ def test_certificate_verification_bypass_flag():
 
     # With verify_cert=True (will fail for self-signed cert, but flag should be set)
     port2 = 54323
-    server2 = create_test_tls_server(port2, str(cert_file), str(key_file))
+    server2 = create_test_tls_server(port2, cert_pem, key_pem)
     result_verify_attempted = scan_tls_endpoint("127.0.0.1", port2, timeout=2.0, verify_cert=True)
 
     # For self-signed cert, handshake will fail, but verification_bypassed should be False
     assert result_verify_attempted.verification_bypassed is False
 
 
-def test_key_exchange_group_not_inferred():
+def test_key_exchange_group_not_inferred(certs):
     """Test that key exchange group is not inferred from cipher suite."""
-    cert_file = Path(__file__).parent.parent / "samples" / "test-repo" / "ec_test.pem"
-    key_file = Path(__file__).parent.parent / "samples" / "test-repo" / "ec_test.key"
-
-    if not cert_file.exists():
-        pytest.skip("Test certificates not available")
+    cert_pem = certs.pem(certs.ec_cert)
+    key_pem = certs.ec_priv_der
 
     port = 54324
-    server = create_test_tls_server(port, str(cert_file), str(key_file))
+    server = create_test_tls_server(port, cert_pem, key_pem)
 
     result = scan_tls_endpoint("127.0.0.1", port, timeout=2.0, verify_cert=False)
 
@@ -170,16 +181,13 @@ def test_key_exchange_group_not_inferred():
         # Should NOT have a value based on cipher suite name parsing
 
 
-def test_ec_certificate_extraction(test_cert_path):
+def test_ec_certificate_extraction(certs):
     """Test extraction of EC certificate details."""
-    cert_file = test_cert_path / "ec_test.pem"
-    key_file = test_cert_path / "ec_test.key"
-
-    if not cert_file.exists() or not key_file.exists():
-        pytest.skip("EC test certificates not available")
+    cert_pem = certs.pem(certs.ec_cert)
+    key_pem = certs.ec_priv_der
 
     port = 54325
-    server = create_test_tls_server(port, str(cert_file), str(key_file))
+    server = create_test_tls_server(port, cert_pem, key_pem)
 
     result = scan_tls_endpoint("127.0.0.1", port, timeout=2.0, verify_cert=False)
 
