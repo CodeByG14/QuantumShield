@@ -30,6 +30,8 @@ from quantumshield.discovery.scanner import LANGUAGE_BY_SUFFIX, scan_source
 from quantumshield.discovery.stage import StageOutput
 from quantumshield.discovery.tls_scanner import scan_tls_endpoints, TLSEndpointResult
 from quantumshield.discovery.x509_scanner import scan_x509
+from quantumshield.discovery.config_scanner import is_config_candidate, scan_config
+from quantumshield.discovery.rootfs_scanner import scan_rootfs
 
 DEFAULT_RULES = Path(__file__).with_name("patterns.yaml")
 MAX_FILE_BYTES = 2_000_000
@@ -49,6 +51,8 @@ def _stages_for(name: str) -> list[str]:
         return ["manifest"]
     if suffix in X509_SUFFIXES:
         return ["x509"]
+    if is_config_candidate(name):
+        return ["config"]
     return []
 
 
@@ -67,6 +71,8 @@ def _run_stage(stage: str, data: bytes, rel: str, name: str, rules: list[Compile
         return StageOutput(ok=False, reason=error)
     if stage == "source":
         return scan_source(text, rel, LANGUAGE_BY_SUFFIX[PurePosixPath(name.lower()).suffix], rules)
+    if stage == "config":
+        return scan_config(text, rel)
     return scan_manifest(text, rel, name.lower())
 
 
@@ -106,6 +112,7 @@ def run_scan(
     rules_path: str | Path = DEFAULT_RULES,
     max_file_bytes: int = MAX_FILE_BYTES,
     tls_endpoints: list[tuple[str, int]] | None = None,
+    rootfs: str | Path | None = None,
 ) -> ScanResult:
     root = Path(target)
     if not root.is_dir():
@@ -114,6 +121,7 @@ def run_scan(
 
     records: list[FileRecord] = []
     findings: list[CryptoFinding] = []
+    rootfs_coverage: CoverageReport | None = None
 
     for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
         dirnames.sort()
@@ -141,6 +149,15 @@ def run_scan(
             records.append(record)
             findings.extend(file_findings)
 
+    # Rootfs inventory is a separate coverage scope. It only examines an
+    # explicitly supplied, already-extracted directory and never scans live OS
+    # paths or follows symlinks.
+    if rootfs is not None:
+        rootfs_findings, rootfs_coverage = scan_rootfs(
+            rootfs, max_metadata_bytes=max_file_bytes
+        )
+        findings.extend(rootfs_findings)
+
     # TLS endpoint scanning
     if tls_endpoints:
         tls_results: list[TLSEndpointResult] = scan_tls_endpoints(tls_endpoints)
@@ -161,4 +178,8 @@ def run_scan(
                 ))
 
     records.sort(key=lambda r: r.path)
-    return ScanResult(findings=assign_ids(findings), coverage=CoverageReport.from_records(records))
+    return ScanResult(
+        findings=assign_ids(findings),
+        coverage=CoverageReport.from_records(records),
+        rootfs_coverage=rootfs_coverage,
+    )

@@ -101,6 +101,18 @@ def _limitations(
         )
 
     coverage = scan_result.coverage
+    if scan_result.rootfs_coverage is not None:
+        limitations.append(
+            "An extracted-rootfs library inventory was requested. Its capability labels describe sourced upstream version/API availability, "
+            "not proof that the installed build, provider, policy, or application actually enables or uses post-quantum algorithms."
+        )
+        rootfs_coverage = scan_result.rootfs_coverage
+        if rootfs_coverage.files_partial or rootfs_coverage.files_failed or rootfs_coverage.files_unsupported or rootfs_coverage.files_skipped:
+            limitations.append(
+                "The extracted-rootfs inventory has incomplete coverage: "
+                f"{rootfs_coverage.files_partial} partial, {rootfs_coverage.files_failed} failed, "
+                f"{rootfs_coverage.files_unsupported} unsupported, and {rootfs_coverage.files_skipped} skipped entry/entries."
+            )
     if coverage.files_partial or coverage.files_failed or coverage.files_unsupported or coverage.files_skipped:
         limitations.append(
             "The assessment has incomplete file coverage: "
@@ -144,6 +156,7 @@ def build_assessment(
         project_context=context,
         coverage=scan_result.coverage,
         findings=scan_result.findings,
+        rootfs_coverage=scan_result.rootfs_coverage,
         risks=risks,
         limitations=_limitations(scan_result, context, context_loaded=context_loaded),
         agility=agility,

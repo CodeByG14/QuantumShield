@@ -5,6 +5,10 @@
 
 project_name: your-project-name
 
+# Optional compliance context. Category alone does not confirm CNSA/NSS scope.
+system_category: null       # web, networking, os, firmware-signing, other
+cnsa_scope_confirmed: null  # set true only when scope is confirmed by the system owner
+
 # Project-level context (applies to all findings by default)
 data_sensitivity: null       # 0 = low, 5 = highest sensitivity
 confidentiality_years: null  # years data must remain confidential
@@ -20,6 +24,9 @@ threat_horizon_year: null    # policy assumes 2035 when missing
 asset_contexts:
   # Example 1: Override by finding ID (most specific)
   - asset_id: "CRYPTO-001"
+    # Optional per-asset compliance context
+    system_category: null
+    cnsa_scope_confirmed: null
     data_sensitivity: 5
     confidentiality_years: 20
     exposure: 5

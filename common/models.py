@@ -13,6 +13,7 @@ Serialise with ``model.model_dump(mode="json")`` so enums become strings.
 from collections import Counter
 from datetime import datetime
 from enum import Enum
+from typing import Literal
 from pathlib import PurePosixPath
 import fnmatch
 import warnings
@@ -407,6 +408,8 @@ class ScanResult(_Strict):
 
     findings: list[CryptoFinding]
     coverage: CoverageReport
+    # Separate inventory coverage for an explicitly extracted root filesystem.
+    rootfs_coverage: CoverageReport | None = None
 
 
 # --------------------------------------------------------------------------
@@ -435,6 +438,9 @@ class AssetContext(_Strict):
     system_criticality: int | None = Field(default=None, ge=0, le=5)
     migration_years: float | None = Field(default=None, ge=0)
     threat_horizon_year: int | None = Field(default=None, ge=2000, le=2100)
+    # Optional compliance context; CNSA rules only apply when scope is affirmatively confirmed.
+    system_category: Literal["web", "networking", "os", "firmware-signing", "other"] | None = None
+    cnsa_scope_confirmed: bool | None = None
 
 
 class ProjectContext(_Strict):
@@ -446,6 +452,9 @@ class ProjectContext(_Strict):
     # Mosca inputs; the policy supplies documented defaults when these are unset.
     migration_years: float | None = Field(default=None, ge=0)
     threat_horizon_year: int | None = Field(default=None, ge=2000, le=2100)
+    # Optional compliance context; CNSA rules only apply when scope is affirmatively confirmed.
+    system_category: Literal["web", "networking", "os", "firmware-signing", "other"] | None = None
+    cnsa_scope_confirmed: bool | None = None
     # Asset-level context overrides with explicit precedence
     asset_contexts: list[AssetContext] = Field(default_factory=list)
 
@@ -605,6 +614,8 @@ class AssessmentResult(_Strict):
     findings: list[CryptoFinding]
     risks: list[RiskAssessment] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
+    # Separate inventory coverage for an explicitly extracted root filesystem.
+    rootfs_coverage: CoverageReport | None = None
 
     @model_validator(mode="after")
     def _references_resolve(self):

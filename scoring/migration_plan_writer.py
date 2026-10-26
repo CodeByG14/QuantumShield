@@ -20,6 +20,47 @@ from scoring.migration_engine import (
 )
 
 
+def _rootfs_inventory(assessment: AssessmentResult) -> list[dict[str, Any]]:
+    """Extract rootfs library facts without inferring application linkage."""
+    inventory: list[dict[str, Any]] = []
+    for finding in assessment.findings:
+        if not finding.algorithm.lower().startswith("library:"):
+            continue
+        rootfs_evidence = [e for e in finding.evidence if e.metadata.get("inventory_source") == "rootfs"]
+        if not rootfs_evidence:
+            continue
+        metadata = rootfs_evidence[0].metadata
+        inventory.append({
+            "library": metadata.get("library_name", finding.algorithm.split(":", 1)[1]),
+            "version": metadata.get("library_version", "unknown"),
+            "pqc_capability": metadata.get("pqc_capability", "unknown"),
+            "capability_reason": metadata.get("pqc_capability_reason", "No capability rationale supplied."),
+            "capability_source": metadata.get("pqc_capability_source", ""),
+            "evidence_paths": sorted({e.file_path for e in rootfs_evidence}),
+        })
+    return sorted(inventory, key=lambda item: (item["library"], item["version"], item["evidence_paths"]))
+
+
+def _rootfs_prerequisite(item: dict[str, Any]) -> str:
+    library = item["library"].replace("_", " ")
+    version = item["version"] or "unknown version"
+    capability = item["pqc_capability"]
+    if capability == "yes":
+        return (
+            f"Verify that the application uses the inventoried {library} {version} build and that the required PQC algorithms, providers, "
+            "and protocol settings are enabled; version-level capability does not prove application use."
+        )
+    if capability == "no":
+        return (
+            f"Assess upgrading or replacing the inventoried {library} {version} before integrating PQC APIs, because the sourced upstream "
+            "capability table does not identify standardized PQC support for this version."
+        )
+    return (
+        f"Verify PQC API and provider support for the inventoried {library} {version} in the deployed build before selecting migration "
+        "targets; available rootfs metadata is inconclusive."
+    )
+
+
 def build_migration_plan(
     assessment: AssessmentResult,
     *,
@@ -41,6 +82,10 @@ def build_migration_plan(
 
     # Generate tasks
     tasks = generate_migration_tasks(assessment.findings, registry=registry)
+    rootfs_libraries = _rootfs_inventory(assessment) if assessment.rootfs_coverage is not None else []
+    rootfs_prerequisites = [_rootfs_prerequisite(item) for item in rootfs_libraries]
+    for task in tasks:
+        task.prerequisites = list(dict.fromkeys([*task.prerequisites, *rootfs_prerequisites]))
 
     # Build plan structure
     plan = {
@@ -74,6 +119,23 @@ def build_migration_plan(
             "specific environment. Do not apply changes automatically without review."
         ),
     }
+
+    if assessment.rootfs_coverage is not None:
+        capability_summary = {"yes": 0, "no": 0, "unknown": 0}
+        for item in rootfs_libraries:
+            status = item["pqc_capability"]
+            capability_summary[status if status in capability_summary else "unknown"] += 1
+        plan["metadata"]["rootfs_inventory"] = {
+            "scanned": True,
+            "files_discovered": assessment.rootfs_coverage.files_discovered,
+            "files_analyzed": assessment.rootfs_coverage.files_analyzed,
+            "files_failed": assessment.rootfs_coverage.files_failed,
+            "files_skipped": assessment.rootfs_coverage.files_skipped,
+            "file_coverage_percent": assessment.rootfs_coverage.file_coverage_percent,
+            "library_findings": rootfs_libraries,
+            "pqc_capability_counts": capability_summary,
+            "scope_note": "Filename/package-metadata inventory only; does not establish which libraries applications load or whether PQC is enabled.",
+        }
 
     return plan
 

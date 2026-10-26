@@ -41,6 +41,14 @@ def scan_command(args: argparse.Namespace) -> int:
         print(f"Error: target is not a directory: {target}", file=sys.stderr)
         return 1
 
+    rootfs = Path(args.rootfs) if getattr(args, "rootfs", None) else None
+    if rootfs is not None and not rootfs.is_dir():
+        print(f"Error: --rootfs is not a directory: {rootfs}", file=sys.stderr)
+        return 1
+    if rootfs is not None and rootfs.resolve() == target.resolve():
+        print("Error: --rootfs must refer to a separately extracted filesystem directory, not the project target itself", file=sys.stderr)
+        return 1
+
     context, context_loaded = load_project_context(args.context, target_name=target.name)
 
     # Parse TLS endpoints from host:port strings to (host, port) tuples
@@ -54,7 +62,11 @@ def scan_command(args: argparse.Namespace) -> int:
                 print(f"Error: invalid TLS endpoint {ep!r}: {exc}", file=sys.stderr)
                 return 1
 
-    scan_result = run_scan(target, tls_endpoints=tls_endpoints)
+    try:
+        scan_result = run_scan(target, tls_endpoints=tls_endpoints, rootfs=rootfs)
+    except (OSError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
 
     report = build_assessment(
         scan_result,
@@ -151,39 +163,53 @@ def diff_command(args: argparse.Namespace) -> int:
     with open(args.current) as f:
         current = json.load(f)
 
-    from quantumshield.common.models import AssessmentResult
-    baseline_assessment = AssessmentResult.model_validate(baseline)
-    current_assessment = AssessmentResult.model_validate(current)
-
-    diff = diff_assessments(baseline_assessment, current_assessment)
+    # The diff engine validates and consumes JSON mappings. Passing Pydantic
+    # AssessmentResult instances violates that interface: the engine's
+    # validation intentionally requires a JSON object/dict.
+    diff = diff_assessments(baseline, current)
 
     if args.output:
         with open(args.output, "w") as f:
-            json.dump(diff.model_dump(mode="json"), f, indent=2)
+            json.dump(diff, f, indent=2)
     else:
-        print(json.dumps(diff.model_dump(mode="json"), indent=2))
+        print(json.dumps(diff, indent=2))
     return 0
 
 
 def compliance_command(args: argparse.Namespace) -> int:
-    """Check compliance against NIST IR 8547 / CNSA 2.0."""
-    from quantumshield.compliance.checker import check_compliance
+    """Evaluate findings against sourced NIST IR 8547 and CNSA 2.0 rules."""
     import json
+    from quantumshield.compliance.checker import ComplianceAssessmentError, check_compliance
+    from quantumshield.compliance.report import write_reports
+    from quantumshield.compliance.rules import ComplianceRulesError
 
-    with open(args.assessment) as f:
-        assessment_data = json.load(f)
+    try:
+        with open(args.assessment, encoding="utf-8") as handle:
+            assessment_data = json.load(handle)
+        plan_data = None
+        if args.plan:
+            with open(args.plan, encoding="utf-8") as handle:
+                plan_data = json.load(handle)
+        elif Path("migration_plan.json").is_file():
+            with open("migration_plan.json", encoding="utf-8") as handle:
+                plan_data = json.load(handle)
 
-    from quantumshield.common.models import AssessmentResult
-    assessment = AssessmentResult.model_validate(assessment_data)
-
-    report = check_compliance(assessment, as_of=args.as_of)
-
-    if args.output:
-        with open(args.output, "w") as f:
-            json.dump(report.model_dump(mode="json"), f, indent=2)
-    else:
-        print(json.dumps(report.model_dump(mode="json"), indent=2))
-    return 0
+        report = check_compliance(
+            assessment_data,
+            migration_plan=plan_data,
+            as_of=args.as_of,
+            rules_path=args.rules,
+        )
+        json_path, markdown_path = write_reports(report, args.output, args.markdown_output)
+        print(
+            f"Compliance assessment: {report['summary']['findings']} findings, "
+            f"{report['summary']['results']} rule results"
+        )
+        print(f"Wrote {json_path} and {markdown_path}")
+        return 0
+    except (OSError, json.JSONDecodeError, ValueError, ComplianceAssessmentError, ComplianceRulesError) as exc:
+        print(f"Compliance error: {exc}", file=sys.stderr)
+        return 2
 
 
 def benchmark_command(args: argparse.Namespace) -> int:
@@ -238,6 +264,7 @@ def main() -> int:
     scan_parser.add_argument("--assessment-id", help="Custom assessment ID")
     scan_parser.add_argument("--assessment-year", type=int, help="Assessment year for policy")
     scan_parser.add_argument("--tls", action="append", help="TLS endpoint to scan (host:port), repeatable")
+    scan_parser.add_argument("--rootfs", help="Already-extracted root filesystem directory to inventory (never scans a live host)")
     scan_parser.set_defaults(func=scan_command)
 
     # assess command (alias)
@@ -248,6 +275,7 @@ def main() -> int:
     assess_parser.add_argument("--assessment-id", help="Custom assessment ID")
     assess_parser.add_argument("--assessment-year", type=int, help="Assessment year for policy")
     assess_parser.add_argument("--tls", action="append", help="TLS endpoint to scan (host:port), repeatable")
+    assess_parser.add_argument("--rootfs", help="Already-extracted root filesystem directory to inventory (never scans a live host)")
     assess_parser.set_defaults(func=assess_command)
 
     # plan command
@@ -272,11 +300,16 @@ def main() -> int:
     diff_parser.set_defaults(func=diff_command)
 
     # compliance command
-    compliance_parser = subparsers.add_parser("compliance", help="Generate a preliminary migration-readiness advisory (not a compliance certification)")
+    compliance_parser = subparsers.add_parser("compliance", help="Assess sourced NIST IR 8547 / CNSA 2.0 guidance")
     compliance_parser.add_argument("assessment", help="Assessment JSON file")
-    compliance_parser.add_argument("-o", "--output", help="Output compliance JSON")
-    compliance_parser.add_argument("--as-of", help="Compliance as-of date (YYYY-MM-DD), default today")
+    compliance_parser.add_argument("-o", "--output", default="compliance_report.json", help="Output compliance JSON")
+    compliance_parser.add_argument("--markdown-output", default="compliance_report.md", help="Output Markdown report")
+    compliance_parser.add_argument("--plan", help="Migration plan JSON; defaults to migration_plan.json when present")
+    compliance_parser.add_argument("--rules", help="Optional rules YAML path; defaults to packaged rules.yaml")
+    compliance_parser.add_argument("--as-of", help="Evaluation date (YYYY-MM-DD), default today")
     compliance_parser.set_defaults(func=compliance_command)
+
+
 
     # benchmark command
     bench_parser = subparsers.add_parser("benchmark", help="Run PQC benchmarks")

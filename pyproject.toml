@@ -22,6 +22,9 @@ quantumshield = "quantumshield.__main__:main"
 requires = ["uv_build>=0.12.17,<0.13.0"]
 build-backend = "uv_build"
 
+[tool.uv.build-backend]
+# Ship the core package and the prescribed top-level `monitor` CLI namespace.
+module-name = ["quantumshield", "monitor", "compliance"]
 [dependency-groups]
 dev = [
     "jsonschema>=4.26.0",
@@ -29,5 +32,5 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = [".", "src"]
 testpaths = ["tests"]

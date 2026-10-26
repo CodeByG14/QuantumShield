@@ -1,0 +1,89 @@
+schema_version: 1
+
+# Ground truth is based on behaviors already asserted in regression tests, not
+# generated from QuantumShield output. The corpus is a controlled conformance
+# suite, not a statistical sample of real repositories.
+corpus:
+  target: corpus/synthetic_project
+  rootfs: corpus/rootfs
+
+cases:
+  - path: keystore.p12
+    label: positive
+    expected_findings:
+      - algorithm: unknown
+        status: potential
+        rationale: Existing pipeline regression test confirms unsupported PKCS#12 extensions produce a potential unknown-algorithm finding.
+
+  - path: clean.py
+    label: negative
+    expected_findings: []
+
+  - path: crypto_usage.py
+    label: positive
+    expected_findings:
+      - algorithm: RSA
+        variant: RSA-2048
+        status: confirmed
+      - algorithm: MD5
+        variant: MD5
+        status: confirmed
+      - algorithm: SHA-1
+        variant: SHA-1
+        status: confirmed
+
+  - path: LegacyCrypto.java
+    label: positive
+    expected_findings:
+      - algorithm: SHA-1
+        variant: SHA-1
+        status: confirmed
+      - algorithm: ECDH
+        variant: ECDH
+        status: confirmed
+
+  - path: nginx.conf
+    label: positive
+    expected_findings:
+      - algorithm: TLS
+        variant: TLSv1.2
+        status: potential
+      - algorithm: TLS
+        variant: TLSv1.3
+        status: potential
+
+  - path: comment_mention.py
+    label: conservative-triage
+    expected_findings:
+      - algorithm: RSA
+        variant: RSA-2048
+        status: potential
+
+  - path: README.txt
+    label: negative
+    expected_findings: []
+
+  - path: server.pem
+    label: positive
+    expected_findings:
+      - algorithm: RSA
+        variant: RSA-2048
+        status: confirmed
+
+rootfs_cases:
+  - path: rootfs/usr/lib/libssl.so.3
+    label: rootfs-positive
+    expected_findings:
+      - algorithm: library:openssl
+        status: potential
+
+  - path: rootfs/usr/lib/libnss3.so
+    label: rootfs-positive
+    expected_findings:
+      - algorithm: library:nss
+        status: potential
+
+acceptance:
+  min_precision: 1.0
+  min_recall: 1.0
+  min_f1: 1.0

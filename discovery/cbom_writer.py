@@ -74,6 +74,13 @@ def _component(f: CryptoFinding) -> dict:
     if f.evidence:
         base["evidence"] = _occurrences(f)
 
+    if f.algorithm.lower().startswith("library:") and any(
+        e.metadata.get("inventory_source") == "rootfs" for e in f.evidence
+    ):
+        # System libraries are not PyPI packages; use the generic package type.
+        pkg = f.algorithm.split(":", 1)[1].lower()
+        return {"type": "library", "name": pkg, "purl": f"pkg:generic/{pkg}", **base}
+
     if first and first.evidence_type == EvidenceType.DEPENDENCY:
         pkg = f.algorithm.removeprefix("library:")
         return {"type": "library", "name": pkg, "purl": f"pkg:pypi/{pkg}", **base}
