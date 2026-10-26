@@ -93,3 +93,29 @@ def test_diff_requires_assessment_models(tmp_path):
         InvalidAssessmentError, match="baseline must be an AssessmentResult"
     ):
         diff({}, assessment)  # type: ignore[arg-type]
+
+
+def test_diff_matches_same_project_across_temporary_workspaces(tmp_path):
+    first_root = tmp_path / "first" / "project"
+    second_root = tmp_path / "second" / "project"
+
+    first_root.mkdir(parents=True)
+    second_root.mkdir(parents=True)
+
+    source = "RSA.generate(2048)\n"
+    (first_root / "crypto.py").write_text(source)
+    (second_root / "crypto.py").write_text(source)
+
+    baseline = scan(first_root)
+    current = scan(second_root)
+
+    assert baseline.target != current.target
+    assert baseline.findings
+    assert current.findings
+
+    result = diff(baseline, current)
+
+    assert result["summary"]["added"] == 0
+    assert result["summary"]["removed"] == 0
+    assert result["summary"]["changed"] == 0
+    assert result["summary"]["unchanged"] > 0
