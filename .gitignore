@@ -23,3 +23,5 @@ diff.json
 
 # Test fixtures / samples
 samples/
+# Generated Phase 7 validation reports
+/validation/out/
