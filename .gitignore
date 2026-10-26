@@ -25,3 +25,6 @@ diff.json
 samples/
 # Generated Phase 7 validation reports
 /validation/out/
+
+# Local PostgreSQL credentials
+.env
