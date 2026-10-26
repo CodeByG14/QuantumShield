@@ -1,0 +1,1 @@
+This is a small fictional sample application used only for exercising a static cryptographic inventory scanner. The source files contain a mixture of intentional legacy algorithm references, a non-executable comment mention, clean code with no crypto, a TLS protocol setting, and a placeholder keystore file. Nothing here is intended for real deployment or production use.

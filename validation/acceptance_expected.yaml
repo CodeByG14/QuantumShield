@@ -1,0 +1,96 @@
+schema_version: 1
+
+corpus:
+  target: acceptance_project
+  rootfs: acceptance_rootfs
+
+cases:
+  - path: src/legacy_crypto.py
+    label: positive
+    expected_findings:
+      - algorithm: RSA
+        variant: RSA-2048
+        status: confirmed
+        rationale: Explicit RSA key-generation call.
+      - algorithm: MD5
+        variant: MD5
+        status: confirmed
+        rationale: Explicit hashlib.md5 API call.
+      - algorithm: SHA-1
+        variant: SHA-1
+        status: confirmed
+        rationale: Explicit hashlib.sha1 API call.
+
+  - path: src/key_exchange.java
+    label: positive
+    expected_findings:
+      - algorithm: SHA-1
+        variant: SHA-1
+        status: confirmed
+        rationale: Java MessageDigest SHA-1 API call.
+      - algorithm: ECDH
+        variant: ECDH
+        status: confirmed
+        rationale: Java ECDH key-agreement API call.
+
+  - path: src/comment_mention.py
+    label: positive
+    expected_findings:
+      - algorithm: RSA
+        variant: RSA-2048
+        status: potential
+        rationale: RSA API text occurs only in a comment.
+
+  - path: config/nginx.conf
+    label: positive
+    expected_findings:
+      - algorithm: TLS
+        variant: TLSv1.2
+        status: potential
+        rationale: TLS protocol appears in a configuration directive.
+      - algorithm: TLS
+        variant: TLSv1.3
+        status: potential
+        rationale: TLS protocol appears in a configuration directive.
+
+  - path: data/keystore.p12
+    label: positive
+    expected_findings:
+      - algorithm: unknown
+        status: potential
+        rationale: File-extension indicator only; fixture is not a real keystore.
+
+  - path: certs/server.pem
+    label: positive
+    expected_findings:
+      - algorithm: RSA
+        variant: RSA-2048
+        status: confirmed
+        rationale: Existing synthetic RSA-2048 certificate fixture.
+
+  - path: src/clean.py
+    label: negative
+    expected_findings: []
+
+  - path: README.txt
+    label: negative
+    expected_findings: []
+
+  - path: rootfs/usr/lib/libssl.so.3
+    label: positive
+    expected_findings:
+      - algorithm: library:openssl
+        status: potential
+        rationale: Extracted-filesystem library filename indicator.
+
+  - path: rootfs/usr/lib/libnss3.so
+    label: positive
+    expected_findings:
+      - algorithm: library:nss
+        status: potential
+        rationale: Extracted-filesystem library filename indicator.
+
+acceptance:
+  min_precision: 1.0
+  min_recall: 1.0
+  min_f1: 1.0

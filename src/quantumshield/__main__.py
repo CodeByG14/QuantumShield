@@ -163,17 +163,16 @@ def diff_command(args: argparse.Namespace) -> int:
     with open(args.current) as f:
         current = json.load(f)
 
-    from quantumshield.common.models import AssessmentResult
-    baseline_assessment = AssessmentResult.model_validate(baseline)
-    current_assessment = AssessmentResult.model_validate(current)
-
-    diff = diff_assessments(baseline_assessment, current_assessment)
+    # The diff engine validates and consumes JSON mappings. Passing Pydantic
+    # AssessmentResult instances violates that interface: the engine's
+    # validation intentionally requires a JSON object/dict.
+    diff = diff_assessments(baseline, current)
 
     if args.output:
         with open(args.output, "w") as f:
-            json.dump(diff.model_dump(mode="json"), f, indent=2)
+            json.dump(diff, f, indent=2)
     else:
-        print(json.dumps(diff.model_dump(mode="json"), indent=2))
+        print(json.dumps(diff, indent=2))
     return 0
 
 
