@@ -41,6 +41,14 @@ def scan_command(args: argparse.Namespace) -> int:
         print(f"Error: target is not a directory: {target}", file=sys.stderr)
         return 1
 
+    rootfs = Path(args.rootfs) if getattr(args, "rootfs", None) else None
+    if rootfs is not None and not rootfs.is_dir():
+        print(f"Error: --rootfs is not a directory: {rootfs}", file=sys.stderr)
+        return 1
+    if rootfs is not None and rootfs.resolve() == target.resolve():
+        print("Error: --rootfs must refer to a separately extracted filesystem directory, not the project target itself", file=sys.stderr)
+        return 1
+
     context, context_loaded = load_project_context(args.context, target_name=target.name)
 
     # Parse TLS endpoints from host:port strings to (host, port) tuples
@@ -54,7 +62,11 @@ def scan_command(args: argparse.Namespace) -> int:
                 print(f"Error: invalid TLS endpoint {ep!r}: {exc}", file=sys.stderr)
                 return 1
 
-    scan_result = run_scan(target, tls_endpoints=tls_endpoints)
+    try:
+        scan_result = run_scan(target, tls_endpoints=tls_endpoints, rootfs=rootfs)
+    except (OSError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
 
     report = build_assessment(
         scan_result,
@@ -253,6 +265,7 @@ def main() -> int:
     scan_parser.add_argument("--assessment-id", help="Custom assessment ID")
     scan_parser.add_argument("--assessment-year", type=int, help="Assessment year for policy")
     scan_parser.add_argument("--tls", action="append", help="TLS endpoint to scan (host:port), repeatable")
+    scan_parser.add_argument("--rootfs", help="Already-extracted root filesystem directory to inventory (never scans a live host)")
     scan_parser.set_defaults(func=scan_command)
 
     # assess command (alias)
@@ -263,6 +276,7 @@ def main() -> int:
     assess_parser.add_argument("--assessment-id", help="Custom assessment ID")
     assess_parser.add_argument("--assessment-year", type=int, help="Assessment year for policy")
     assess_parser.add_argument("--tls", action="append", help="TLS endpoint to scan (host:port), repeatable")
+    assess_parser.add_argument("--rootfs", help="Already-extracted root filesystem directory to inventory (never scans a live host)")
     assess_parser.set_defaults(func=assess_command)
 
     # plan command

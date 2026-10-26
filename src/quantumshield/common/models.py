@@ -410,6 +410,8 @@ class ScanResult(_Strict):
 
     findings: list[CryptoFinding]
     coverage: CoverageReport
+    # Separate inventory coverage for an explicitly extracted root filesystem.
+    rootfs_coverage: CoverageReport | None = None
 
 
 # --------------------------------------------------------------------------
@@ -639,6 +641,8 @@ class AssessmentResult(_Strict):
     findings: list[CryptoFinding]
     risks: list[RiskAssessment] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
+    # Separate inventory coverage for an explicitly extracted root filesystem.
+    rootfs_coverage: CoverageReport | None = None
     # Additive Phase 4 section; keeps existing CBOM and risk fields unchanged.
     agility: dict = Field(default_factory=dict)
 
