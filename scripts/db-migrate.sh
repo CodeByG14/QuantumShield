@@ -12,7 +12,7 @@ if ! docker compose ps --status running --services | grep -Fxq db; then
   exit 1
 fi
 
-psql_base=(docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U postgres -d quantumshielf_db)
+psql_base=(docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U postgres -d quantumshield_db)
 "${psql_base[@]}" -c "CREATE TABLE IF NOT EXISTS schema_migrations (
     version VARCHAR(20) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,

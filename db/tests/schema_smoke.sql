@@ -4,7 +4,7 @@ DO $$
 DECLARE
     required_table TEXT;
     required_tables TEXT[] := ARRAY[
-        'schema_migrations', 'projects', 'scan_runs', 'assessments',
+        'schema_migrations', 'local_sessions', 'projects', 'scan_runs', 'assessments',
         'assessment_findings', 'migration_plans', 'compliance_reports', 'scan_diffs'
     ];
 BEGIN
@@ -19,13 +19,18 @@ END $$;
 -- without leaving sample project data in the developer database.
 BEGIN;
 
-INSERT INTO projects (project_id, project_name, description)
-VALUES ('10000000-0000-0000-0000-000000000001', 'database-smoke-test', 'Rolled back by smoke test');
+INSERT INTO local_sessions (session_id, token_hash, display_name)
+VALUES ('90000000-0000-0000-0000-000000000001', repeat('a', 64), 'database-smoke-test');
 
-INSERT INTO scan_runs (scan_run_id, project_id, input_kind, input_name, status)
+INSERT INTO projects (project_id, session_id, project_name, description)
+VALUES ('10000000-0000-0000-0000-000000000001', '90000000-0000-0000-0000-000000000001', 'database-smoke-test', 'Rolled back by smoke test');
+
+INSERT INTO scan_runs (
+    scan_run_id, project_id, workspace_id, input_kind, input_name, source_reference, status
+)
 VALUES
-    ('20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'local_directory', 'smoke-a', 'completed'),
-    ('20000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', 'zip_archive', 'smoke-b.zip', 'completed');
+    ('20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', '80000000-0000-0000-0000-000000000001', 'local_directory', 'smoke-a', NULL, 'completed'),
+    ('20000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', '80000000-0000-0000-0000-000000000002', 'zip_archive', 'smoke-b.zip', NULL, 'completed');
 
 INSERT INTO assessments (assessment_id, scan_run_id, policy_version, assessment_schema_version, assessment_json, summary_json)
 VALUES

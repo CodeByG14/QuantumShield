@@ -3,7 +3,7 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: quantumshielf_db
+      POSTGRES_DB: ${POSTGRES_DB:-quantumshield_db}
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run scripts/db-init-env.sh before starting PostgreSQL}
     ports:

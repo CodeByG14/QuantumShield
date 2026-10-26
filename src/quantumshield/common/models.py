@@ -632,6 +632,7 @@ class RiskAssessment(_Strict):
 class AssessmentResult(_Strict):
     """Top-level report: coverage + findings + risk, tied to a policy version."""
 
+    schema_version: str = "1.0"
     assessment_id: str
     scan_timestamp: datetime
     target: str

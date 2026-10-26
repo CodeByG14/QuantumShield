@@ -119,3 +119,39 @@ def test_diff_matches_same_project_across_temporary_workspaces(tmp_path):
     assert result["summary"]["removed"] == 0
     assert result["summary"]["changed"] == 0
     assert result["summary"]["unchanged"] > 0
+
+
+def test_scan_uses_durable_project_name_and_context_provenance(tmp_path):
+    workspace = tmp_path / "temporary-random-workspace-id"
+    workspace.mkdir()
+
+    assessment = scan(
+        workspace,
+        project_name="stable-project-name",
+        context_loaded=False,
+    )
+
+    assert assessment.schema_version == "1.0"
+    assert assessment.project_context.project_name == "stable-project-name"
+    assert assessment.target == str(workspace.resolve())
+    assert any(
+        "No project-context YAML was loaded" in limitation
+        for limitation in assessment.limitations
+    )
+
+
+def test_scan_project_name_overrides_context_name_but_preserves_context_fields(
+    tmp_path,
+):
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    context = {
+        "project_name": "temporary-folder-name",
+        "asset_contexts": [],
+        "data_sensitivity": 5,
+    }
+
+    assessment = scan(workspace, project_name="stored-project-name", context=context)
+
+    assert assessment.project_context.project_name == "stored-project-name"
+    assert assessment.project_context.data_sensitivity == 5

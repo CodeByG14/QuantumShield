@@ -11,7 +11,7 @@ fi
 umask 077
 password="$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')"
 cat > .env <<EOF
-POSTGRES_DB=quantumshielf_db
+POSTGRES_DB=quantumshield_db
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=${password}
 POSTGRES_PORT=5433

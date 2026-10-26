@@ -66,28 +66,40 @@ def _require_directory(value: str | Path, label: str) -> Path:
 def _resolve_context(
     context: ProjectContext | Mapping[str, Any] | None,
     target: Path,
+    project_name: str | None = None,
 ) -> tuple[ProjectContext, bool]:
+    if project_name is not None:
+        if not isinstance(project_name, str) or not project_name.strip():
+            raise InvalidContextError("project_name must be a non-empty string.")
+        project_name = project_name.strip()
+
     if context is None:
-        # A no-context scan remains usable, but the assessment records that no
-        # explicit project context was supplied.
+        # The durable project name must not be inferred from a random temporary
+        # workspace directory. No risk context was supplied in this branch.
         return (
             ProjectContext(
-                project_name=target.name or "unnamed-project",
+                project_name=project_name or target.name or "unnamed-project",
                 asset_contexts=[],
             ),
             False,
         )
 
-    if isinstance(context, ProjectContext):
-        return context, True
-
     try:
-        return ProjectContext.model_validate(context), True
+        if isinstance(context, ProjectContext):
+            resolved_context = context
+        else:
+            resolved_context = ProjectContext.model_validate(context)
+        if project_name is not None:
+            # The persistent project record is authoritative for display name;
+            # context fields still supply the risk/context overrides.
+            resolved_context = resolved_context.model_copy(
+                update={"project_name": project_name}
+            )
+        return resolved_context, True
     except (ValidationError, TypeError, ValueError) as exc:
         raise InvalidContextError(
             "Project context is invalid; check its fields and values."
         ) from exc
-
 
 def _require_assessment(value: AssessmentResult, argument: str = "assessment") -> AssessmentResult:
     if not isinstance(value, AssessmentResult):
@@ -100,6 +112,8 @@ def scan(
     *,
     rootfs: str | Path | None = None,
     context: ProjectContext | Mapping[str, Any] | None = None,
+    project_name: str | None = None,
+    context_loaded: bool | None = None,
 ) -> AssessmentResult:
     """Scan an absolute project directory and return its risk assessment.
 
@@ -107,12 +121,24 @@ def scan(
     directory. Live TLS endpoint scanning is intentionally not part of this
     minimal public interface.
 
+    ``project_name`` is the durable display name and must not be derived from a
+    random temporary workspace folder. ``context_loaded`` can explicitly tell
+    the report whether user risk context was supplied; pass False when only a
+    database-owned project name was injected into an otherwise empty context.
+
     The function performs no output-file writes. Relative paths are rejected
     so callers, including future backend workers, must resolve paths explicitly.
     """
     target_path = _require_directory(target, "target")
     rootfs_path = _require_directory(rootfs, "rootfs") if rootfs is not None else None
-    project_context, context_loaded = _resolve_context(context, target_path)
+    project_context, inferred_context_loaded = _resolve_context(
+        context, target_path, project_name=project_name
+    )
+    if context_loaded is not None and not isinstance(context_loaded, bool):
+        raise InvalidContextError("context_loaded must be a boolean or None.")
+    effective_context_loaded = (
+        inferred_context_loaded if context_loaded is None else context_loaded
+    )
 
     try:
         scan_result = run_scan(target_path, rootfs=rootfs_path)
@@ -120,7 +146,7 @@ def scan(
             scan_result,
             target=target_path,
             context=project_context,
-            context_loaded=context_loaded,
+            context_loaded=effective_context_loaded,
         )
     except OSError as exc:
         raise EngineError(

@@ -9,10 +9,14 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "cryptography>=50.0.2",
+    "fastapi>=0.115",
     "jsonschema>=4.26.0",
+    "psycopg[binary,pool]>=3.2",
     "pydantic>=2.14.0",
+    "python-multipart>=0.0.9",
     "pyyaml>=6.0.3",
     "tabulate>=0.10.0",
+    "uvicorn[standard]>=0.30",
 ]
 
 [project.scripts]
