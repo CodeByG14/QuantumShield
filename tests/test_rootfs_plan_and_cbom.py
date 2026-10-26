@@ -2,13 +2,13 @@
 
 from datetime import datetime, timezone
 
-from common.models import (
+from quantumshield.common.models import (
     Confidence, CoverageReport, CryptoFinding, CryptoRole, DetectionMethod,
     Evidence, EvidenceType, FileOutcome, FileRecord, FindingStatus,
     ProjectContext, ScanResult, AssessmentResult,
 )
-from discovery.cbom_writer import scan_result_to_cbom
-from scoring.migration_plan_writer import build_migration_plan
+from quantumshield.discovery.cbom_writer import scan_result_to_cbom
+from quantumshield.scoring.migration_plan_writer import build_migration_plan
 
 
 def coverage(path="rootfs/usr/lib/libssl.so.3"):
