@@ -1,0 +1,27 @@
+{
+  "openGraph": {},
+  "twitter": {},
+  "description": null,
+  "canonical": null,
+  "themeColor": null,
+  "viewport": "width=device-width, initial-scale=1.0",
+  "favicons": [
+    {
+      "rel": "icon",
+      "href": "https://mosaic.cruip.com/assets/favicon-C49brna2.svg",
+      "sizes": "",
+      "type": "image/svg+xml"
+    }
+  ],
+  "manifest": null,
+  "structuredData": [],
+  "score": {
+    "hasOg": false,
+    "hasTwitter": false,
+    "hasDescription": false,
+    "hasCanonical": false,
+    "hasStructuredData": false,
+    "hasFavicon": true,
+    "hasThemeColor": false
+  }
+}

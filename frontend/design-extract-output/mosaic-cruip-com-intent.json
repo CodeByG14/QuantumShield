@@ -1,0 +1,435 @@
+{
+  "pageIntent": {
+    "type": "landing",
+    "confidence": 0.31,
+    "path": "/",
+    "title": "Vite App",
+    "description": "",
+    "signals": [
+      {
+        "kind": "dom",
+        "type": "blog-post",
+        "weight": 0.35,
+        "detail": "byline|min-read"
+      },
+      {
+        "kind": "url",
+        "type": "landing",
+        "weight": 0.45,
+        "detail": "root-path"
+      }
+    ],
+    "alternates": [
+      {
+        "type": "blog-post",
+        "score": 0.35
+      }
+    ],
+    "needsSmart": true
+  },
+  "sectionRoles": {
+    "sections": [
+      {
+        "index": 0,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": null,
+        "bounds": {
+          "x": 80,
+          "y": 0,
+          "w": 1200,
+          "h": 64
+        },
+        "buttonCount": 6,
+        "cardCount": 38,
+        "slots": {
+          "ctaCount": 6,
+          "lede": "Search\nNotifications\nNeed help?\nSwitch to light / dark version\nAcme Inc."
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 1,
+        "tag": "main",
+        "role": "comparison",
+        "subrole": null,
+        "confidence": 0.7,
+        "heading": "Dashboard",
+        "bounds": {
+          "x": 80,
+          "y": 64,
+          "w": 1200,
+          "h": 2496
+        },
+        "buttonCount": 22,
+        "cardCount": 84,
+        "slots": {
+          "heading": "Dashboard",
+          "subheadings": [
+            "Acme Plus",
+            "Acme Advanced",
+            "Acme Professional",
+            "Direct VS Indirect"
+          ],
+          "ctaCount": 22,
+          "lede": "Dashboard\nFilter\nJan 20, 2022 - Feb 09, 2022\nAdd View\nAcme Plus\nMenu\nSALES\n$24,780\n+49%\nAcme Advanced\nMenu\nSALES\n$17,489\n-14%\nAcme Professional\nMenu\nSALES\n$9,962\n+49%\nDirect VS Indirect\n$8.25K\nDirect\n$27.7K\nIndirect\nReal Time Value\n$49.52\n+3.49%\nTop Countries\nUnited States\nItaly\nOther\nTop Channels\nSOURCE\n\t\nVISITORS\n\t\nREVENUES\n\t\nSALES\n\t\nCONVERSION"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 2,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Acme Plus",
+        "bounds": {
+          "x": 132,
+          "y": 188,
+          "w": 322.65625,
+          "h": 35
+        },
+        "buttonCount": 1,
+        "cardCount": 3,
+        "slots": {
+          "heading": "Acme Plus",
+          "ctaCount": 1,
+          "lede": "Acme Plus\nMenu"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 3,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Acme Advanced",
+        "bounds": {
+          "x": 518.65625,
+          "y": 188,
+          "w": 322.671875,
+          "h": 35
+        },
+        "buttonCount": 1,
+        "cardCount": 3,
+        "slots": {
+          "heading": "Acme Advanced",
+          "ctaCount": 1,
+          "lede": "Acme Advanced\nMenu"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 4,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Acme Professional",
+        "bounds": {
+          "x": 905.328125,
+          "y": 188,
+          "w": 322.65625,
+          "h": 35
+        },
+        "buttonCount": 1,
+        "cardCount": 3,
+        "slots": {
+          "heading": "Acme Professional",
+          "ctaCount": 1,
+          "lede": "Acme Professional\nMenu"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 5,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Direct VS Indirect",
+        "bounds": {
+          "x": 112,
+          "y": 445,
+          "w": 555.984375,
+          "h": 57
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Direct VS Indirect"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 6,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Real Time Value",
+        "bounds": {
+          "x": 691.984375,
+          "y": 445,
+          "w": 556,
+          "h": 57
+        },
+        "buttonCount": 1,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Real Time Value",
+          "ctaCount": 1
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 7,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Top Countries",
+        "bounds": {
+          "x": 112,
+          "y": 874,
+          "w": 362.65625,
+          "h": 57
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Top Countries"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 8,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Top Channels",
+        "bounds": {
+          "x": 498.65625,
+          "y": 874,
+          "w": 749.328125,
+          "h": 57
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Top Channels"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 9,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Sales Over Time (all stores)",
+        "bounds": {
+          "x": 112,
+          "y": 1277,
+          "w": 555.984375,
+          "h": 57
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Sales Over Time (all stores)"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 10,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Sales VS Refunds",
+        "bounds": {
+          "x": 691.984375,
+          "y": 1277,
+          "w": 556,
+          "h": 57
+        },
+        "buttonCount": 1,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Sales VS Refunds",
+          "ctaCount": 1
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 11,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Customers",
+        "bounds": {
+          "x": 112,
+          "y": 1670,
+          "w": 555.984375,
+          "h": 57
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Customers"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 12,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Reason for Refunds",
+        "bounds": {
+          "x": 691.984375,
+          "y": 1670,
+          "w": 556,
+          "h": 57
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Reason for Refunds"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 13,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Recent Activity",
+        "bounds": {
+          "x": 112,
+          "y": 2093,
+          "w": 555.984375,
+          "h": 57
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Recent Activity"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 14,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": null,
+        "bounds": {
+          "x": 124,
+          "y": 2162,
+          "w": 531.984375,
+          "h": 34
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "lede": "TODAY"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 15,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": null,
+        "bounds": {
+          "x": 124,
+          "y": 2360,
+          "w": 531.984375,
+          "h": 34
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "lede": "YESTERDAY"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 16,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Income/Expenses",
+        "bounds": {
+          "x": 691.984375,
+          "y": 2093,
+          "w": 556,
+          "h": 57
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Income/Expenses"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 17,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": null,
+        "bounds": {
+          "x": 703.984375,
+          "y": 2162,
+          "w": 532,
+          "h": 34
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "lede": "TODAY"
+        },
+        "needsSmart": true
+      }
+    ],
+    "counts": {
+      "nav": 17,
+      "comparison": 1
+    },
+    "readingOrder": [
+      "nav",
+      "comparison",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav"
+    ]
+  }
+}

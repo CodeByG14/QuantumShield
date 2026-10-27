@@ -1,0 +1,19 @@
+/* shadcn/ui Theme — extracted from https://mosaic.cruip.com/ */
+/* Paste into your globals.css */
+
+@layer base {
+  :root {
+    --background: 220 14% 96%;
+    --foreground: 0 0% 0%;
+    --primary: 0 100% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 248 100% 72%;
+    --secondary-foreground: 0 0% 100%;
+    --accent: 221 97% 54%;
+    --accent-foreground: 0 0% 100%;
+    --muted: 219 12% 78%;
+    --muted-foreground: 220 13% 91%;
+    --border: 220 14% 96%;
+    --radius: 8px;
+  }
+}

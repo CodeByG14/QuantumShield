@@ -1,0 +1,202 @@
+{
+  "library": "unknown",
+  "confidence": 0,
+  "alternates": [],
+  "stats": {
+    "count": 57,
+    "strokeOnly": 0,
+    "fillOnly": 57,
+    "mixed": 0,
+    "avgStrokeWidth": 0,
+    "gridDistribution": {
+      "16": 25,
+      "32": 3
+    },
+    "roundedCapsFraction": 0
+  },
+  "signals": [
+    "fillDominant"
+  ],
+  "icons": [
+    {
+      "class": "fill-violet-500",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-violet-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 rotate-180",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 false",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 false",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 false",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 false",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 false",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 false",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 false",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 undefined",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 undefined",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 false",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "shrink-0 fill-current text-gray-400 dark:text-gray-500 sidebar-expanded:rotate-1",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "fill-current text-gray-500/80 dark:text-gray-400/80",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "fill-current text-gray-500/80 dark:text-gray-400/80",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    }
+  ]
+}

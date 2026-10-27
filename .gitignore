@@ -28,3 +28,25 @@ samples/
 
 # Local PostgreSQL credentials
 .env
+
+# Ignore all markdown files strictly inside the frontend directory
+frontend/**/*.md
+
+# Ignore all environment variable files (secrets) anywhere in the project
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.text
+
+# Alternative wildcard to catch any custom env files
+.env*
+!.env.example
+
+# Standard React/Frontend ignores
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.eslintcache
+frontend/coverage/

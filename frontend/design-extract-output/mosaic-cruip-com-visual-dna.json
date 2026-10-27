@@ -1,0 +1,58 @@
+{
+  "materialLanguage": {
+    "label": "flat",
+    "confidence": 0,
+    "signals": [],
+    "metrics": {
+      "saturation": 0.5,
+      "shadowProfile": "soft",
+      "avgShadowBlur": 0,
+      "maxShadowBlur": 0,
+      "insetShadows": 0,
+      "avgRadius": 9.5,
+      "maxRadius": 16,
+      "hasPill": false,
+      "hasBackdropBlur": false,
+      "gradientCount": 1
+    },
+    "alternates": []
+  },
+  "imageryStyle": {
+    "label": "mixed",
+    "confidence": 0,
+    "counts": {
+      "total": 6,
+      "svg": 0,
+      "icon": 1,
+      "hero": 0,
+      "screenshot": 0,
+      "photoLike": 0
+    },
+    "dominantAspect": "square-ish",
+    "radiusProfile": "full",
+    "alternates": [],
+    "signals": []
+  },
+  "backgroundPatterns": {
+    "labels": [
+      "svg-pattern"
+    ],
+    "counts": {
+      "noise": 0,
+      "dotGrid": 0,
+      "lineGrid": 0,
+      "meshCount": 0,
+      "svgPattern": 1
+    },
+    "gradientTotals": {
+      "radial": 0,
+      "linear": 1
+    },
+    "samples": [
+      {
+        "tag": "svg-pattern",
+        "value": "url(\"data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4"
+      }
+    ]
+  }
+}

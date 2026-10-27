@@ -1,0 +1,22 @@
+{
+  "library": "tailwindcss",
+  "confidence": 0.813,
+  "evidence": [
+    "tailwind-like class density 78%"
+  ],
+  "alternates": [
+    {
+      "id": "tailwind-ui",
+      "score": 0.54,
+      "evidence": [
+        "tailwind density=0.78, pattern hits=2"
+      ]
+    }
+  ],
+  "signals": {
+    "tailwindLike": 0.778,
+    "radixAttrCount": 0,
+    "classSampleSize": 440
+  },
+  "needsSmart": false
+}

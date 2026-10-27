@@ -1,0 +1,126 @@
+{
+  "tone": "neutral",
+  "pronoun": "third-person",
+  "headingStyle": "Title Case",
+  "headingLengthClass": "tight",
+  "ctaVerbs": [
+    {
+      "value": "menu",
+      "count": 3
+    },
+    {
+      "value": "k",
+      "count": 2
+    },
+    {
+      "value": "other",
+      "count": 2
+    },
+    {
+      "value": "expand",
+      "count": 1
+    },
+    {
+      "value": "search",
+      "count": 1
+    },
+    {
+      "value": "notifications",
+      "count": 1
+    },
+    {
+      "value": "need",
+      "count": 1
+    },
+    {
+      "value": "acme",
+      "count": 1
+    },
+    {
+      "value": "filter",
+      "count": 1
+    },
+    {
+      "value": "jan",
+      "count": 1
+    }
+  ],
+  "buttonPatterns": [
+    {
+      "value": "menu",
+      "count": 3
+    },
+    {
+      "value": "other",
+      "count": 2
+    },
+    {
+      "value": "expand / collapse sidebar",
+      "count": 1
+    },
+    {
+      "value": "search",
+      "count": 1
+    },
+    {
+      "value": "notifications",
+      "count": 1
+    },
+    {
+      "value": "need help?",
+      "count": 1
+    },
+    {
+      "value": "acme inc.",
+      "count": 1
+    },
+    {
+      "value": "filter",
+      "count": 1
+    },
+    {
+      "value": "jan 20, 2022 - feb 09, 2022",
+      "count": 1
+    },
+    {
+      "value": "add view",
+      "count": 1
+    },
+    {
+      "value": "$8.25k\ndirect",
+      "count": 1
+    },
+    {
+      "value": "$27.7k\nindirect",
+      "count": 1
+    },
+    {
+      "value": "united states",
+      "count": 1
+    },
+    {
+      "value": "italy",
+      "count": 1
+    },
+    {
+      "value": "current",
+      "count": 1
+    }
+  ],
+  "sampleHeadings": [
+    "Dashboard",
+    "Acme Plus",
+    "Acme Advanced",
+    "Acme Professional",
+    "Direct VS Indirect",
+    "Acme Plus",
+    "Acme Advanced",
+    "Acme Professional",
+    "Direct VS Indirect",
+    "Real Time Value"
+  ],
+  "stats": {
+    "buttons": 24,
+    "headings": 18
+  }
+}

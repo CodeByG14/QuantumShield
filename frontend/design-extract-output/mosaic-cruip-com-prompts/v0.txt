@@ -1,0 +1,26 @@
+Build a landing page with this exact visual language.
+COLORS:
+  #e5e7eb
+  #4b5563
+  #1f2937
+  #9ca3af
+  #ffffff
+  #f3f4f6
+  #8470ff
+  #6b7280
+  #3ec972
+  #000000
+  #67bfff
+  #ff5656
+  #bfc4cd
+  #e63939
+FONTS: [object Object]
+SPACING: 2, 32, 40
+RADIUS: 2, 8, 12, 16
+SHADOWS: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px | rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.08) 0px 1px 2px 0px | rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px
+MATERIAL LANGUAGE: flat
+VOICE: Tone: neutral · Headings: Title Case · CTA verbs: [object Object], [object Object], [object Object], [object Object], [object Object], [object Object]
+LIBRARY: Use plain Tailwind CSS without a component library.
+SECTIONS (in order):
+- comparison — heading: "Dashboard"
+Use Tailwind. Match these tokens exactly. Keep the material language consistent.
