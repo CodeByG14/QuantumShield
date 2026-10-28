@@ -87,6 +87,16 @@ class ScanListOut(BaseModel):
     count: int
 
 
+class DashboardSummaryOut(BaseModel):
+    project_count: int
+    scan_count: int
+    scans_by_status: dict[str, int]
+    active_scan_count: int
+    latest_assessment_count: int
+    latest_assessment_risk_levels: dict[str, int]
+    high_priority_risk_count: int
+
+
 class AssessmentSummaryOut(BaseModel):
     assessment_id: str
     scan_run_id: UUID

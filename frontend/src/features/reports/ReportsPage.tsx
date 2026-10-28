@@ -30,14 +30,14 @@ export function ReportsPage() {
   }
 
   async function generateComplianceReport() {
-    if (!assessmentId) return
+    if (!assessmentId || !complianceDate) return
 
     try {
       setGenerating('compliance')
       setError(null)
       const report = await api.createCompliance({
         assessment_id: assessmentId,
-        as_of: complianceDate || undefined,
+        as_of: complianceDate,
       })
       navigate(`/compliance/${report.report_id}`)
     } catch (err) {
@@ -52,11 +52,16 @@ export function ReportsPage() {
       <PageHeader
         title="Generate Reports"
         description={`Create reports for assessment ${assessmentId}`}
+        backAction={
+          <Button variant="ghost" onClick={() => navigate(-1)}>
+            ← Back
+          </Button>
+        }
       />
 
       <div className="space-y-6 max-w-4xl">
         {error && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-md text-sm text-red-800">
+          <div className="p-4 bg-red-900 bg-opacity-20 border border-brand-primary rounded-md text-sm text-brand-primary" role="alert">
             {error}
           </div>
         )}
@@ -89,18 +94,26 @@ export function ReportsPage() {
               Generate compliance report for post-quantum standards.
             </p>
             <div className="space-y-4">
+              <label
+                htmlFor="compliance-as-of-date"
+                className="block text-sm font-medium text-text-0 mb-1"
+              >
+                As-of Date <span className="text-brand-primary">*</span>
+              </label>
               <Input
+                id="compliance-as-of-date"
                 type="date"
-                label="As-of Date (Optional)"
+                className="[color-scheme:dark]"
+                required
                 value={complianceDate}
                 onChange={(e) => setComplianceDate(e.target.value)}
-                helperText="Leave empty for current date"
+                helperText="Required to generate the compliance report."
               />
               <Button
                 variant="primary"
                 onClick={generateComplianceReport}
                 isLoading={generating === 'compliance'}
-                disabled={generating !== null}
+                disabled={generating !== null || !complianceDate}
               >
                 Generate Compliance Report
               </Button>
@@ -108,11 +121,6 @@ export function ReportsPage() {
           </CardBody>
         </Card>
 
-        <div>
-          <Button variant="ghost" onClick={() => navigate(-1)}>
-            ← Back
-          </Button>
-        </div>
       </div>
     </div>
   )

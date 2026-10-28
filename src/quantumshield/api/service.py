@@ -54,6 +54,69 @@ def assessment_summary(snapshot: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def load_dashboard_summary(pool: Any, session_id: UUID) -> dict[str, Any]:
+    with pool.connection() as conn:
+        project_count = conn.execute(
+            """SELECT count(*) AS count FROM projects
+               WHERE session_id = %s AND archived = FALSE""",
+            (session_id,),
+        ).fetchone()["count"]
+        status_rows = conn.execute(
+            """SELECT sr.status, count(*) AS count
+               FROM scan_runs sr
+               JOIN projects p ON p.project_id = sr.project_id
+               WHERE p.session_id = %s AND p.archived = FALSE
+               GROUP BY sr.status""",
+            (session_id,),
+        ).fetchall()
+        latest_assessments = conn.execute(
+            """SELECT latest.summary_json
+               FROM (
+                   SELECT a.summary_json,
+                          row_number() OVER (
+                              PARTITION BY p.project_id
+                              ORDER BY sr.completed_at DESC, sr.started_at DESC, a.created_at DESC
+                          ) AS assessment_rank
+                   FROM projects p
+                   JOIN scan_runs sr ON sr.project_id = p.project_id
+                   JOIN assessments a ON a.scan_run_id = sr.scan_run_id
+                   WHERE p.session_id = %s AND p.archived = FALSE
+                     AND sr.status = 'completed'
+               ) AS latest
+               WHERE latest.assessment_rank = 1""",
+            (session_id,),
+        ).fetchall()
+
+    scans_by_status = {
+        row["status"]: row["count"]
+        for row in status_rows
+    }
+    risk_levels: Counter[str] = Counter()
+    for row in latest_assessments:
+        summary = row["summary_json"]
+        if not isinstance(summary, dict) or not isinstance(summary.get("risk_levels"), dict):
+            raise ValueError("Stored assessment summary is missing its risk-level counts.")
+        for level, count in summary["risk_levels"].items():
+            if not isinstance(level, str) or isinstance(count, bool) or not isinstance(count, int) or count < 0:
+                raise ValueError("Stored assessment summary contains invalid risk-level counts.")
+            risk_levels[level] += count
+
+    high_priority_risk_count = sum(
+        risk_levels.get(level, 0)
+        for level in ("high", "very-high", "critical")
+    )
+    active_scan_count = scans_by_status.get("queued", 0) + scans_by_status.get("running", 0)
+    return {
+        "project_count": project_count,
+        "scan_count": sum(scans_by_status.values()),
+        "scans_by_status": scans_by_status,
+        "active_scan_count": active_scan_count,
+        "latest_assessment_count": len(latest_assessments),
+        "latest_assessment_risk_levels": dict(sorted(risk_levels.items())),
+        "high_priority_risk_count": high_priority_risk_count,
+    }
+
+
 def _jsonb(value: Any) -> Any:
     from psycopg.types.json import Jsonb
 

@@ -11,11 +11,13 @@ import { Loading } from '@/components/ui/Loading'
 import { ErrorMessage } from '@/components/ui/ErrorMessage'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { StatusBadge } from '@/components/ui/Badge'
+import type { DashboardSummary } from '@/types/api'
 
 export function DashboardPage() {
   const navigate = useNavigate()
   const [projects, setProjects] = useState<ProjectOut[]>([])
   const [recentScans, setRecentScans] = useState<ScanStatusOut[]>([])
+  const [summary, setSummary] = useState<DashboardSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -28,22 +30,20 @@ export function DashboardPage() {
       setLoading(true)
       setError(null)
 
-      // Load projects
-      const projectsData = await api.listProjects()
+      const [projectsData, summaryData] = await Promise.all([
+        api.listProjects(),
+        api.getDashboardSummary(),
+      ])
       setProjects(projectsData)
+      setSummary(summaryData)
 
-      // Load recent scans from all projects
-      const allScans: ScanStatusOut[] = []
-      for (const project of projectsData.slice(0, 5)) {
-        try {
-          const scanList = await api.listProjectScans(project.project_id, 5, 0)
-          allScans.push(...scanList.items)
-        } catch {
-          // Skip projects that fail to load scans
-        }
-      }
+      const scanLists = await Promise.all(
+        projectsData.slice(0, 5).map((project) =>
+          api.listProjectScans(project.project_id, 5, 0)
+        )
+      )
+      const allScans = scanLists.flatMap((scanList) => scanList.items)
 
-      // Sort by started_at descending and take top 5
       const sortedScans = allScans.sort(
         (a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
       )
@@ -59,11 +59,11 @@ export function DashboardPage() {
     return <Loading fullScreen text="Loading dashboard..." />
   }
 
-  if (error) {
+  if (error || !summary) {
     return (
       <ErrorMessage
         title="Failed to Load Dashboard"
-        message={error}
+        message={error || 'The dashboard summary was unavailable.'}
         onRetry={loadDashboardData}
         fullScreen
       />
@@ -72,6 +72,13 @@ export function DashboardPage() {
 
   const hasProjects = projects.length > 0
   const hasScans = recentScans.length > 0
+  const queuedScans = summary.scans_by_status.queued ?? 0
+  const runningScans = summary.scans_by_status.running ?? 0
+  const completedScans = summary.scans_by_status.completed ?? 0
+  const failedScans = summary.scans_by_status.failed ?? 0
+  const highRiskItems = summary.latest_assessment_risk_levels.high ?? 0
+  const veryHighRiskItems = summary.latest_assessment_risk_levels['very-high'] ?? 0
+  const criticalRiskItems = summary.latest_assessment_risk_levels.critical ?? 0
 
   return (
     <div>
@@ -88,56 +95,47 @@ export function DashboardPage() {
         }
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
         <Card>
           <CardBody>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-2 mb-1">Total Projects</p>
-                <p className="text-3xl font-bold text-text-0">{projects.length}</p>
-              </div>
-              <div className="w-12 h-12 bg-brand-secondary bg-opacity-10 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-brand-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                </svg>
-              </div>
-            </div>
+            <p className="text-sm text-text-2 mb-2">Projects</p>
+            <p className="text-3xl font-bold text-text-0">{summary.project_count}</p>
+            <p className="text-xs text-text-3 mt-2">In this local session</p>
           </CardBody>
         </Card>
-
         <Card>
           <CardBody>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-2 mb-1">Total Scans</p>
-                <p className="text-3xl font-bold text-text-0">{recentScans.length}</p>
-                <p className="text-xs text-text-3 mt-1">Recent activity</p>
-              </div>
-              <div className="w-12 h-12 bg-brand-accent bg-opacity-10 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-            </div>
+            <p className="text-sm text-text-2 mb-2">All-Time Scans</p>
+            <p className="text-3xl font-bold text-text-0">{summary.scan_count}</p>
+            <p className="text-xs text-text-3 mt-2">
+              {completedScans} completed · {failedScans} failed
+            </p>
           </CardBody>
         </Card>
-
-        <Card hover onClick={() => navigate('/scans/new')}>
+        <Card>
           <CardBody>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-text-2 mb-1">Start New Scan</p>
-                <p className="text-sm text-brand-accent font-medium">Upload or connect source →</p>
-              </div>
-              <div className="w-12 h-12 bg-brand-primary bg-opacity-10 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </div>
-            </div>
+            <p className="text-sm text-text-2 mb-2">Active Scans</p>
+            <p className="text-3xl font-bold text-text-0">{summary.active_scan_count}</p>
+            <p className="text-xs text-text-3 mt-2">
+              {queuedScans} queued · {runningScans} running
+            </p>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <p className="text-sm text-text-2 mb-2">High-Priority Risk Items</p>
+            <p className="text-3xl font-bold text-text-0">{summary.high_priority_risk_count}</p>
+            <p className="text-xs text-text-3 mt-2">
+              {highRiskItems} high · {veryHighRiskItems} very high · {criticalRiskItems} critical
+            </p>
           </CardBody>
         </Card>
       </div>
+      <p className="text-xs text-text-3 mb-8">
+        Risk figures use each project’s latest completed assessment ({summary.latest_assessment_count} included),
+        may include potential or provisional findings, and indicate migration priority—not proof of exploitability
+        or security. Imported SBOM/CBOM results do not represent a source-code rescan.
+      </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Projects */}
@@ -165,7 +163,7 @@ export function DashboardPage() {
                 {projects.slice(0, 5).map((project) => (
                   <div
                     key={project.project_id}
-                    className="px-6 py-4 hover:bg-neutral-500 cursor-pointer transition-colors"
+                    className="px-6 py-4 hover:bg-dark-tertiary cursor-pointer transition-colors"
                     onClick={() => navigate(`/projects/${project.project_id}`)}
                   >
                     <h3 className="font-medium text-text-0">{project.project_name}</h3>
@@ -202,7 +200,7 @@ export function DashboardPage() {
                 {recentScans.map((scan) => (
                   <div
                     key={scan.scan_run_id}
-                    className="px-6 py-4 hover:bg-neutral-500 cursor-pointer transition-colors"
+                    className="px-6 py-4 hover:bg-dark-tertiary cursor-pointer transition-colors"
                     onClick={() => navigate(`/scans/${scan.scan_run_id}`)}
                   >
                     <div className="flex items-start justify-between mb-2">

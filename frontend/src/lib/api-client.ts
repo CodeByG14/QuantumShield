@@ -7,6 +7,7 @@ import type {
   ScanAccepted,
   ScanStatusOut,
   ScanListOut,
+  DashboardSummary,
   FindingsOut,
   PlanRequest,
   PlanOut,
@@ -117,6 +118,7 @@ async function patch<T>(endpoint: string, data: unknown): Promise<T> {
 export const api = {
   // --- System ---
   health: () => get<HealthResponse>('/health'),
+  getDashboardSummary: () => get<DashboardSummary>('/dashboard/summary'),
 
   // --- Session ---
   getSession: () => get<SessionOut>('/session'),

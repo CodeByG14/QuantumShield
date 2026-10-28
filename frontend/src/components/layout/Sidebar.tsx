@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import goldLogo from '@/assets/lockup-gold.svg'
 
 interface NavItem {
   label: string
@@ -44,18 +45,16 @@ export function Sidebar() {
       <div className="h-full flex flex-col">
         {/* Logo/Brand */}
         <div className="px-6 py-4 border-b border-dark-tertiary">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-brand-secondary to-brand-accent rounded-md flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-text-0 group-hover:text-brand-accent transition-colors">
-                QuantumShield
-              </h1>
-              <p className="text-xs text-text-3">PQ Migration</p>
-            </div>
+          <Link to="/" className="flex items-center justify-center gap-3">
+            <svg
+              className="w-12 h-[52px] flex-shrink-0"
+              viewBox="82 10 84 100"
+              role="img"
+              aria-label="QuantumShield logo"
+            >
+              <image href={goldLogo} width="240" height="170" />
+            </svg>
+            <h1 className="text-lg font-bold text-text-0">QuantumShield</h1>
           </Link>
         </div>
 
@@ -88,8 +87,8 @@ export function Sidebar() {
         </nav>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-dark-tertiary text-xs text-text-3">
-          <p>v0.1.0 &middot; Dark Theme</p>
+        <div className="px-6 py-4 border-t border-dark-tertiary text-xs text-text-3 text-center">
+          &copy; {new Date().getFullYear()} QuantumShield.<br/>All rights reserved.    
         </div>
       </div>
     </aside>

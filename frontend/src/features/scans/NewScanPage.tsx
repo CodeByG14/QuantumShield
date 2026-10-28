@@ -175,11 +175,11 @@ export function NewScanPage() {
 
       <form onSubmit={handleSubmit}>
         <div className="space-y-6 max-w-4xl">
-          {/* Project Information (Optional) */}
+          {/* Project Information */}
           <Card>
             <CardBody>
               <h3 className="text-lg font-semibold text-text-0 mb-4">
-                Project Information (Optional)
+                Project Information
               </h3>
               <div className="space-y-4">
                 <Input
@@ -213,6 +213,7 @@ export function NewScanPage() {
                   <button
                     key={type.value}
                     type="button"
+                    aria-pressed={formState.sourceType === type.value}
                     onClick={() => {
                       updateField('sourceType', type.value)
                       // Clear source-specific fields
@@ -222,10 +223,11 @@ export function NewScanPage() {
                     }}
                     className={`
                       text-left p-4 rounded-lg border-2 transition-all duration-150
+                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent
                       ${
                         formState.sourceType === type.value
-                          ? 'border-brand-accent bg-blue-50'
-                          : 'border-neutral-200 hover:border-neutral-400'
+                          ? 'border-brand-accent bg-dark-tertiary text-text-0'
+                          : 'border-dark-tertiary bg-dark-secondary text-text-0 hover:border-text-3'
                       }
                     `}
                   >
@@ -236,7 +238,7 @@ export function NewScanPage() {
                           ${
                             formState.sourceType === type.value
                               ? 'border-brand-accent'
-                              : 'border-neutral-300'
+                              : 'border-text-3'
                           }
                         `}
                       >
@@ -254,7 +256,7 @@ export function NewScanPage() {
               </div>
 
               {/* Source-Specific Input */}
-              <div className="mt-6 p-6 bg-neutral-500 rounded-lg border border-neutral-200">
+              <div className="mt-6 p-6 bg-dark-primary rounded-lg border border-dark-tertiary">
                 {formState.sourceType === 'github_repository' && (
                   <div>
                     <Input
@@ -310,7 +312,7 @@ export function NewScanPage() {
 
           {/* General Error */}
           {generalError && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+            <div className="p-4 bg-red-900 bg-opacity-20 border border-brand-primary rounded-md">
               <InlineError message={generalError} />
             </div>
           )}

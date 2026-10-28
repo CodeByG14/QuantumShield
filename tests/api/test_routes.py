@@ -6,6 +6,7 @@ def test_root_level_api_routes_are_present_without_version_prefix():
     paths = set(schema["paths"])
     expected = {
         "/health",
+        "/dashboard/summary",
         "/session",
         "/projects",
         "/projects/{project_id}",
@@ -24,6 +25,21 @@ def test_root_level_api_routes_are_present_without_version_prefix():
     }
     assert expected <= paths
     assert not any(path.startswith("/api/v1/") for path in paths)
+
+    summary_response = (
+        schema["paths"]["/dashboard/summary"]["get"]["responses"]["200"]
+        ["content"]["application/json"]["schema"]["$ref"]
+    )
+    response_schema = schema["components"]["schemas"][summary_response.rsplit("/", 1)[-1]]
+    assert {
+        "project_count",
+        "scan_count",
+        "scans_by_status",
+        "active_scan_count",
+        "latest_assessment_count",
+        "latest_assessment_risk_levels",
+        "high_priority_risk_count",
+    } <= set(response_schema["properties"])
 
 
 def test_public_scan_schema_exposes_only_four_supported_input_kinds():

@@ -17,7 +17,7 @@ export default {
         brand: {
           primary: '#ff1818',    // Keep red for errors/delete
           secondary: '#8470ff',
-          accent: '#155dfc',
+          accent: '#E3DAC0',
         },
         neutral: {
           100: '#e5e7eb',

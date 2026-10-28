@@ -65,6 +65,11 @@ export function MigrationPlanPage() {
       <PageHeader
         title="Migration Plan"
         description={`Plan for assessment ${plan.assessment_id}`}
+        backAction={
+          <Button variant="ghost" onClick={() => navigate(-1)}>
+            ← Back
+          </Button>
+        }
         action={
           <Button
             variant="outline"
@@ -114,7 +119,7 @@ export function MigrationPlanPage() {
               <h2 className="text-lg font-semibold text-text-0">Summary</h2>
             </CardHeader>
             <CardBody>
-              <pre className="text-sm text-text-1 bg-neutral-500 p-4 rounded overflow-x-auto">
+              <pre className="text-sm text-text-1 bg-dark-primary p-4 rounded overflow-x-auto border border-dark-tertiary">
                 {JSON.stringify(plan.summary, null, 2)}
               </pre>
             </CardBody>
@@ -129,7 +134,7 @@ export function MigrationPlanPage() {
               </h2>
             </CardHeader>
             <CardBody className="p-0">
-              <div className="divide-y divide-neutral-100">
+              <div className="divide-y divide-dark-tertiary">
                 {tasks.map((task: any, index: number) => (
                   <div key={index} className="p-6">
                     <div className="flex items-start justify-between mb-3">
@@ -167,17 +172,12 @@ export function MigrationPlanPage() {
             <h2 className="text-lg font-semibold text-text-0">Complete Plan</h2>
           </CardHeader>
           <CardBody>
-            <pre className="text-xs text-text-1 bg-neutral-500 p-4 rounded overflow-x-auto max-h-[400px]">
+            <pre className="text-xs text-text-1 bg-dark-primary p-4 rounded overflow-x-auto max-h-[400px] border border-dark-tertiary">
               {JSON.stringify(plan.plan, null, 2)}
             </pre>
           </CardBody>
         </Card>
 
-        <div>
-          <Button variant="ghost" onClick={() => navigate(-1)}>
-            ← Back
-          </Button>
-        </div>
       </div>
     </div>
   )

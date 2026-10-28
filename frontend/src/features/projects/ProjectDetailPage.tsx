@@ -72,23 +72,22 @@ export function ProjectDetailPage() {
       <PageHeader
         title={project.project_name}
         description={project.description || 'No description provided'}
+        backAction={
+          <Button variant="ghost" onClick={() => navigate('/projects')}>
+            ← Back to Projects
+          </Button>
+        }
         action={
           <div className="flex gap-3">
             <Button
               variant="outline"
               onClick={() => setShowDeleteModal(true)}
-              className="text-brand-primary hover:bg-red-50 border-brand-primary"
+              className="text-brand-primary hover:bg-red-900 hover:bg-opacity-20 border-brand-primary"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
               Delete Project
-            </Button>
-            <Button variant="primary" onClick={() => navigate('/scans/new')}>
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              New Scan
             </Button>
           </div>
         }
@@ -123,121 +122,92 @@ export function ProjectDetailPage() {
         </Card>
 
         {/* Scans List */}
-        <Card>
+        <Card className="overflow-hidden">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-text-0">Scans</h2>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/scans/new')}>
-                Add Scan +
-              </Button>
-            </div>
+            <h2 className="text-lg font-semibold text-text-0">Scans</h2>
           </CardHeader>
           {scans.length === 0 ? (
             <CardBody>
               <EmptyState
                 title="No Scans Yet"
-                description="Start your first scan to analyze cryptographic usage"
-                action={{
-                  label: 'New Scan',
-                  onClick: () => navigate('/scans/new'),
-                }}
+                description="No scans have been run for this project yet."
               />
             </CardBody>
           ) : (
             <CardBody className="p-0">
               <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-neutral-500 border-b border-neutral-100">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-2 uppercase tracking-wider">
-                        Source
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-2 uppercase tracking-wider">
-                        Type
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-2 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-2 uppercase tracking-wider">
-                        Started
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-2 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-100">
-                    {scans.map((scan) => (
-                      <tr
-                        key={scan.scan_run_id}
-                        className="hover:bg-neutral-500 cursor-pointer"
-                        onClick={() => navigate(`/scans/${scan.scan_run_id}`)}
+                <div className="min-w-[760px] space-y-2 p-2" role="table" aria-label="Project scans">
+                  <div
+                    className="grid grid-cols-[2fr_1fr_1fr_1fr_1.5fr] gap-4 rounded-lg border border-dark-tertiary bg-dark-primary px-6 py-3 text-xs font-medium uppercase tracking-wider text-text-2"
+                    role="row"
+                  >
+                    <span role="columnheader">Source</span>
+                    <span role="columnheader">Type</span>
+                    <span role="columnheader">Status</span>
+                    <span role="columnheader">Started</span>
+                    <span role="columnheader">Actions</span>
+                  </div>
+                  {scans.map((scan) => (
+                    <div
+                      key={scan.scan_run_id}
+                      className="grid cursor-pointer grid-cols-[2fr_1fr_1fr_1fr_1.5fr] items-center gap-4 rounded-lg border border-dark-tertiary bg-dark-secondary px-6 py-4 transition-colors hover:bg-dark-tertiary"
+                      role="row"
+                      onClick={() => navigate(`/scans/${scan.scan_run_id}`)}
+                    >
+                      <div role="cell">
+                        <div className="max-w-xs truncate text-sm font-medium text-text-0">
+                          {scan.input_name || 'Unnamed'}
+                        </div>
+                        {scan.source_revision && (
+                          <div className="mt-1 font-mono text-xs text-text-3">
+                            {scan.source_revision.substring(0, 8)}
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-sm text-text-1" role="cell">{scan.input_kind}</span>
+                      <div role="cell"><StatusBadge status={scan.status} /></div>
+                      <span
+                        className="text-sm text-text-2"
+                        title={formatDateTime(scan.started_at)}
+                        role="cell"
                       >
-                        <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-text-0 truncate max-w-xs">
-                            {scan.input_name || 'Unnamed'}
-                          </div>
-                          {scan.source_revision && (
-                            <div className="text-xs font-mono text-text-3 mt-1">
-                              {scan.source_revision.substring(0, 8)}
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm text-text-1">{scan.input_kind}</span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <StatusBadge status={scan.status} />
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm text-text-2" title={formatDateTime(scan.started_at)}>
-                            {formatRelativeTime(scan.started_at)}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            {scan.status === 'completed' && scan.assessment_id && (
-                              <>
-                                <Link
-                                  to={`/scans/${scan.scan_run_id}/results`}
-                                  className="text-sm text-brand-accent hover:underline"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  Results
-                                </Link>
-                                <span className="text-text-3">·</span>
-                                <Link
-                                  to={`/assessments/${scan.assessment_id}/findings`}
-                                  className="text-sm text-brand-accent hover:underline"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  Findings
-                                </Link>
-                              </>
-                            )}
-                            {scan.status === 'failed' && (
-                              <span className="text-sm text-brand-primary">Failed</span>
-                            )}
-                            {(scan.status === 'queued' || scan.status === 'running') && (
-                              <span className="text-sm text-text-3">In Progress</span>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        {formatRelativeTime(scan.started_at)}
+                      </span>
+                      <div className="flex items-center gap-2" role="cell">
+                        {scan.status === 'completed' && scan.assessment_id && (
+                          <>
+                            <Link
+                              to={`/scans/${scan.scan_run_id}/results`}
+                              className="text-sm text-brand-accent hover:underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Results
+                            </Link>
+                            <span className="text-text-3">·</span>
+                            <Link
+                              to={`/assessments/${scan.assessment_id}/findings`}
+                              className="text-sm text-brand-accent hover:underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Findings
+                            </Link>
+                          </>
+                        )}
+                        {scan.status === 'failed' && (
+                          <span className="text-sm text-brand-primary">Failed</span>
+                        )}
+                        {(scan.status === 'queued' || scan.status === 'running') && (
+                          <span className="text-sm text-text-3">In Progress</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </CardBody>
           )}
         </Card>
 
-        {/* Back Navigation */}
-        <div>
-          <Button variant="ghost" onClick={() => navigate('/projects')}>
-            ← Back to Projects
-          </Button>
-        </div>
       </div>
 
       {/* Delete Confirmation Modal */}
@@ -246,7 +216,7 @@ export function ProjectDetailPage() {
           <Card className="max-w-md w-full">
             <CardBody>
               <div className="flex items-start gap-3 mb-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 bg-red-900 bg-opacity-30 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>

@@ -22,15 +22,17 @@ export function NotFoundPage() {
             />
           </svg>
         </div>
+        <div className="mb-4">
+          <Button variant="ghost" onClick={() => navigate(-1)}>
+            ← Go Back
+          </Button>
+        </div>
         <h1 className="text-6xl font-bold text-text-0 mb-4">404</h1>
         <h2 className="text-2xl font-semibold text-text-1 mb-4">Page Not Found</h2>
         <p className="text-text-3 mb-8">
           The page you're looking for doesn't exist or has been moved.
         </p>
         <div className="flex gap-3 justify-center">
-          <Button variant="outline" onClick={() => navigate(-1)}>
-            ← Go Back
-          </Button>
           <Button variant="primary" onClick={() => navigate('/')}>
             Go to Dashboard
           </Button>

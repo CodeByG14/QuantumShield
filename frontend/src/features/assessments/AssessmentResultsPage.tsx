@@ -62,6 +62,11 @@ export function AssessmentResultsPage() {
       <PageHeader
         title="Assessment Results"
         description={`Full assessment data for scan ${scanId}`}
+        backAction={
+          <Button variant="ghost" onClick={() => navigate(-1)}>
+            ← Back
+          </Button>
+        }
         action={
           <div className="flex gap-3">
             <Button
@@ -183,12 +188,6 @@ export function AssessmentResultsPage() {
           </CardBody>
         </Card>
 
-        {/* Back Navigation */}
-        <div>
-          <Button variant="ghost" onClick={() => navigate(-1)}>
-            ← Back
-          </Button>
-        </div>
       </div>
     </div>
   )

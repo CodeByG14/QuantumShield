@@ -34,6 +34,7 @@ from quantumshield.api.db import get_pool, open_pool
 from quantumshield.api.schemas import (
     ComplianceOut,
     ComplianceRequest,
+    DashboardSummaryOut,
     DiffOut,
     DiffRequest,
     FindingsOut,
@@ -50,6 +51,7 @@ from quantumshield.api.schemas import (
 from quantumshield.api.service import (
     assessment_summary,
     compliance_summary,
+    load_dashboard_summary,
     load_assessment_for_session,
     plan_summary,
     run_scan_job,
@@ -122,6 +124,13 @@ def create_app(*, pool_factory=None) -> FastAPI:
         except Exception as exc:
             raise HTTPException(status_code=503, detail="Database is unavailable.") from exc
         return {"status": "ok", "database": "ok"}
+
+    @app.get("/dashboard/summary", response_model=DashboardSummaryOut, tags=["dashboard"])
+    def get_dashboard_summary(
+        pool: Any = Depends(get_pool),
+        session: dict[str, Any] = Depends(get_local_session),
+    ) -> dict[str, Any]:
+        return load_dashboard_summary(pool, session["session_id"])
 
     @app.get("/session", response_model=SessionOut, tags=["session"])
     def get_session(session: dict[str, Any] = Depends(get_local_session)) -> dict[str, Any]:

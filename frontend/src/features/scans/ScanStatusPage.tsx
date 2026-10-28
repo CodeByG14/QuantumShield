@@ -103,6 +103,11 @@ export function ScanStatusPage() {
       <PageHeader
         title="Scan Status"
         description={`Tracking scan: ${scan.input_name || scan.scan_run_id}`}
+        backAction={
+          <Button variant="ghost" onClick={() => navigate(-1)}>
+            ← Back
+          </Button>
+        }
         action={
           <div className="flex gap-3">
             <Button
@@ -253,7 +258,7 @@ export function ScanStatusPage() {
               <h2 className="text-lg font-semibold text-text-0">Assessment Summary</h2>
             </CardHeader>
             <CardBody>
-              <pre className="text-sm text-text-1 bg-neutral-500 p-4 rounded overflow-x-auto">
+              <pre className="text-sm text-text-1 bg-dark-primary p-4 rounded overflow-x-auto border border-dark-tertiary">
                 {JSON.stringify(scan.assessment_summary, null, 2)}
               </pre>
             </CardBody>
@@ -290,12 +295,6 @@ export function ScanStatusPage() {
           </Card>
         )}
 
-        {/* Back Navigation */}
-        <div>
-          <Button variant="ghost" onClick={() => navigate(-1)}>
-            ← Back
-          </Button>
-        </div>
       </div>
     </div>
   )

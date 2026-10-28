@@ -60,6 +60,16 @@ export interface ScanListOut {
   count: number
 }
 
+export interface DashboardSummary {
+  project_count: number
+  scan_count: number
+  scans_by_status: Record<string, number>
+  active_scan_count: number
+  latest_assessment_count: number
+  latest_assessment_risk_levels: Record<string, number>
+  high_priority_risk_count: number
+}
+
 export interface AssessmentSummaryOut {
   assessment_id: string
   scan_run_id: string

@@ -49,6 +49,7 @@ uv run pytest -q tests/api
 | Method | Route | Purpose |
 |---|---|---|
 | `GET` | `/health` | API/database check |
+| `GET` | `/dashboard/summary` | Session-scoped project/scan totals and latest-assessment risk summary |
 | `GET`, `PATCH` | `/session` | Create/read or label the anonymous local workspace session |
 | `GET`, `POST` | `/projects` | List or create session-owned projects |
 | `GET` | `/projects/{project_id}` | Get one owned project |

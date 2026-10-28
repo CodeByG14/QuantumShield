@@ -62,6 +62,11 @@ export function CompliancePage() {
       <PageHeader
         title="Compliance Report"
         description={`Post-quantum cryptography compliance for ${report.assessment_id}`}
+        backAction={
+          <Button variant="ghost" onClick={() => navigate(-1)}>
+            ← Back
+          </Button>
+        }
         action={
           <Button
             variant="outline"
@@ -117,7 +122,7 @@ export function CompliancePage() {
               <h2 className="text-lg font-semibold text-text-0">Summary</h2>
             </CardHeader>
             <CardBody>
-              <pre className="text-sm text-text-1 bg-neutral-500 p-4 rounded overflow-x-auto">
+              <pre className="text-sm text-text-1 bg-dark-primary p-4 rounded overflow-x-auto border border-dark-tertiary">
                 {JSON.stringify(report.summary, null, 2)}
               </pre>
             </CardBody>
@@ -129,17 +134,12 @@ export function CompliancePage() {
             <h2 className="text-lg font-semibold text-text-0">Complete Report</h2>
           </CardHeader>
           <CardBody>
-            <pre className="text-xs text-text-1 bg-neutral-500 p-4 rounded overflow-x-auto max-h-[600px]">
+            <pre className="text-xs text-text-1 bg-dark-primary p-4 rounded overflow-x-auto max-h-[600px] border border-dark-tertiary">
               {JSON.stringify(report.report, null, 2)}
             </pre>
           </CardBody>
         </Card>
 
-        <div>
-          <Button variant="ghost" onClick={() => navigate(-1)}>
-            ← Back
-          </Button>
-        </div>
       </div>
     </div>
   )

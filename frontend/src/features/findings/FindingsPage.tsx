@@ -101,6 +101,11 @@ export function FindingsPage() {
       <PageHeader
         title="Findings"
         description={`${findings.count} finding${findings.count !== 1 ? 's' : ''} in assessment ${assessmentId}`}
+        backAction={
+          <Button variant="ghost" onClick={() => navigate(-1)}>
+            ← Back
+          </Button>
+        }
         action={
           <Link to={`/assessments/${assessmentId}/reports`}>
             <Button variant="primary">Generate Reports</Button>
@@ -234,7 +239,7 @@ export function FindingsPage() {
                   </div>
 
                   {finding.location && (
-                    <div className="text-xs font-mono text-text-3 bg-neutral-500 p-2 rounded mb-2">
+                    <div className="text-xs font-mono text-text-1 bg-dark-primary p-2 rounded mb-2 border border-dark-tertiary">
                       {finding.location}
                     </div>
                   )}
@@ -244,7 +249,7 @@ export function FindingsPage() {
                       <summary className="text-sm font-medium text-text-2 cursor-pointer hover:text-text-0">
                         Evidence ({finding.evidence.length})
                       </summary>
-                      <div className="mt-2 pl-4 border-l-2 border-neutral-200 space-y-1">
+                      <div className="mt-2 pl-4 border-l-2 border-dark-tertiary space-y-1">
                         {finding.evidence.map((ev: any, i: number) => (
                           <div key={i} className="text-xs text-text-3">
                             {typeof ev === 'string' ? ev : JSON.stringify(ev)}
@@ -259,7 +264,7 @@ export function FindingsPage() {
                       <summary className="text-sm font-medium text-text-2 cursor-pointer hover:text-text-0">
                         Risk Details
                       </summary>
-                      <pre className="mt-2 text-xs text-text-1 bg-neutral-500 p-2 rounded overflow-x-auto">
+                      <pre className="mt-2 text-xs text-text-1 bg-dark-primary p-2 rounded overflow-x-auto border border-dark-tertiary">
                         {JSON.stringify(finding.risk, null, 2)}
                       </pre>
                     </details>
@@ -306,12 +311,6 @@ export function FindingsPage() {
           </Card>
         )}
 
-        {/* Back Navigation */}
-        <div>
-          <Button variant="ghost" onClick={() => navigate(-1)}>
-            ← Back
-          </Button>
-        </div>
       </div>
     </div>
   )
