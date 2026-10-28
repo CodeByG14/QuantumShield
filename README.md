@@ -45,6 +45,15 @@ uv run quantumshield diff baseline.json assessment.json -o diff.json
 # Produce a preliminary migration-readiness advisory; this is not compliance certification
 uv run quantumshield compliance assessment.json -o compliance_advisory.json
 
+# Assess a supplied CycloneDX/SPDX SBOM explicitly without treating arbitrary JSON as a project scan
+uv run quantumshield sbom ./path/to/sbom.json --context project-context.yaml -o assessment-sbom.json
+
+# Build a migration plan from that assessment
+uv run quantumshield plan assessment-sbom.json -o plan-sbom.json
+
+# Evaluate compliance with the generated plan (generate it before compliance)
+uv run quantumshield compliance assessment-sbom.json --plan plan-sbom.json -o compliance-sbom.json --markdown-output compliance-sbom.md
+
 # Benchmark real backend if available; fake is useful for tests but not performance claims
 uv run quantumshield benchmark --backend auto --iterations 100 --warmup 10 -o benchmark_results.json
 uv run quantumshield benchmark --backend fake --iterations 2 --warmup 0 -o simulated_benchmark.json

@@ -17,6 +17,7 @@ from quantumshield.common.models import (
     Confidence,
     CryptoFinding,
     CryptoRole,
+    FindingStatus,
 )
 
 
@@ -213,38 +214,35 @@ def generate_migration_recommendation(
 ) -> MigrationRecommendation | None:
     """Generate a migration recommendation for a single finding.
 
-    Args:
-        finding: The cryptographic finding to assess
-        registry: Optional registry (loads default if not provided)
-
-    Returns:
-        MigrationRecommendation or None if no recommendation available
+    Library/package-only findings are treated as investigation tasks when the
+    role remains undetermined. Unsupported or malformed inputs are rejected at
+    parse time, so this path is only used for real findings that have already
+    passed validation.
     """
     if registry is None:
         registry = MigrationRecommendationRegistry()
 
-    # Skip library findings - not direct usage
-    if finding.algorithm.upper().startswith("LIBRARY:"):
-        return None
-
-    # Skip unable-to-analyze findings
-    if finding.status.value == "unable-to-analyze":
-        return None
-
     rec = registry.find_recommendation(finding.algorithm, finding.role)
 
-    if rec:
-        rec.finding_id = finding.finding_id
-        # Detection uncertainty must constrain the action. Do not turn a
-        # potential/low-evidence finding into an automatic migration task.
-        if finding.status.value == "potential" or finding.confidence in (Confidence.LOW, Confidence.UNKNOWN):
-            rec.confidence = "low"
-            if rec.action_type != "no-action-needed":
-                rec.action_type = "manual-review"
-            rec.rationale = (
-                rec.rationale.rstrip()
-                + " Evidence confidence is limited; validate the finding before changing production cryptography."
-            )
+    if rec is None and (
+        finding.status == FindingStatus.UNABLE_TO_ANALYZE
+        or finding.role == CryptoRole.UNDETERMINED
+        or finding.algorithm.upper().startswith("LIBRARY:")
+    ):
+        rec = registry.find_recommendation("*", CryptoRole.UNDETERMINED)
+
+    if rec is None:
+        return None
+
+    rec.finding_id = finding.finding_id
+    if finding.status.value == "potential" or finding.confidence in (Confidence.LOW, Confidence.UNKNOWN):
+        rec.confidence = "low"
+        if rec.action_type != "no-action-needed":
+            rec.action_type = "manual-review"
+        rec.rationale = (
+            rec.rationale.rstrip()
+            + " Evidence confidence is limited; validate the finding before changing production cryptography."
+        )
 
     return rec
 

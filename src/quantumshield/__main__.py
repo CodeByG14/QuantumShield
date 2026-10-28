@@ -87,6 +87,37 @@ def assess_command(args: argparse.Namespace) -> int:
     return scan_command(args)
 
 
+def sbom_command(args: argparse.Namespace) -> int:
+    """Generate an assessment from an explicit SBOM JSON file."""
+    from datetime import datetime, timezone
+    from quantumshield.engine import sbom
+    from quantumshield.scoring.assessment_writer import load_project_context
+
+    target = Path(args.sbom)
+    if not target.is_file():
+        print(f"Error: SBOM file not found: {target}", file=sys.stderr)
+        return 1
+
+    try:
+        context, context_loaded = load_project_context(args.context, target_name=target.stem)
+        report = sbom(
+            target,
+            context=context,
+            project_name=target.stem,
+            context_loaded=context_loaded,
+            assessment_id=args.assessment_id,
+            scan_timestamp=datetime.now(timezone.utc),
+            assessment_year=args.assessment_year,
+        )
+    except (OSError, ValueError, TypeError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+
+    from quantumshield.scoring.assessment_writer import write_assessment
+    write_assessment(report, args.output)
+    return 0
+
+
 def plan_command(args: argparse.Namespace) -> int:
     """Generate migration plan from assessment."""
     from quantumshield.scoring.migration_plan_writer import write_migration_plan, build_migration_plan
@@ -277,6 +308,15 @@ def main() -> int:
     assess_parser.add_argument("--tls", action="append", help="TLS endpoint to scan (host:port), repeatable")
     assess_parser.add_argument("--rootfs", help="Already-extracted root filesystem directory to inventory (never scans a live host)")
     assess_parser.set_defaults(func=assess_command)
+
+    # sbom command
+    sbom_parser = subparsers.add_parser("sbom", help="Assess an explicit SBOM JSON file")
+    sbom_parser.add_argument("sbom", help="SBOM JSON file")
+    sbom_parser.add_argument("--context", default="project-context.yaml", help="Project context YAML")
+    sbom_parser.add_argument("-o", "--output", default="assessment-sbom.json", help="Output assessment file")
+    sbom_parser.add_argument("--assessment-id", help="Custom assessment ID")
+    sbom_parser.add_argument("--assessment-year", type=int, help="Assessment year for policy")
+    sbom_parser.set_defaults(func=sbom_command)
 
     # plan command
     plan_parser = subparsers.add_parser("plan", help="Generate migration plan from assessment")

@@ -162,16 +162,21 @@ def test_undetermined_role_requires_manual_review():
     assert "manual review" in rec.rationale.lower() or "undetermined" in rec.rationale.lower()
 
 
-def test_library_findings_not_scored():
-    """Test that library findings don't get recommendations."""
+def test_library_findings_require_manual_review_investigation():
+    """Library-only evidence is investigation-worthy, not an auto-migration."""
     finding = make_finding("library:cryptography", CryptoRole.UNDETERMINED)
     rec = generate_migration_recommendation(finding)
 
-    assert rec is None
+    assert rec is not None
+    assert rec.recommendation_id == "REC-099"
+    assert rec.action_type == "manual-review"
+    assert rec.category == "INVESTIGATION"
+    assert rec.target_algorithm is None
+    assert rec.target_standard is None
 
 
-def test_unable_to_analyze_not_scored():
-    """Test that unable-to-analyze findings don't get recommendations."""
+def test_unable_to_analyze_findings_require_manual_review():
+    """Unanalyzed findings stay honest and request investigation rather than a fabricated migration."""
     finding = make_finding(
         "UNKNOWN",
         CryptoRole.UNDETERMINED,
@@ -179,7 +184,10 @@ def test_unable_to_analyze_not_scored():
     )
     rec = generate_migration_recommendation(finding)
 
-    assert rec is None
+    assert rec is not None
+    assert rec.recommendation_id == "REC-099"
+    assert rec.action_type == "manual-review"
+    assert rec.target_algorithm is None
 
 
 def test_ml_kem_not_recommended_for_signatures():

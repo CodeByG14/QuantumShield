@@ -382,7 +382,7 @@ def parse_bom_scan_result(
             finding_evidence = Evidence(
                 file_path=input_name,
                 evidence_type=EvidenceType.CERTIFICATE if asset_type == "certificate" else EvidenceType.KEY_FILE if asset_type == "related-crypto-material" else EvidenceType.KEYWORD,
-                detection_method=DetectionMethod.MANIFEST,
+                detection_method=DetectionMethod.SBOM,
                 rule_id=(props.get("quantumshield:rules", "").split(",")[0].strip() or "IMPORT-CBOM-ASSET"),
                 excerpt=f"Imported from CBOM: {display_name}",
                 confidence=confidence,
@@ -425,12 +425,13 @@ def parse_bom_scan_result(
                     evidence=[Evidence(
                         file_path=input_name,
                         evidence_type=EvidenceType.DEPENDENCY,
-                        detection_method=DetectionMethod.MANIFEST,
+                        detection_method=DetectionMethod.SBOM,
                         rule_id="IMPORT-SBOM-CRYPTO-LIBRARY",
                         excerpt=f"Crypto-library package listed in SBOM: {label}",
                         confidence=Confidence.MEDIUM,
                         metadata={"import_source": "sbom", **({"purl": purl[:2048]} if purl else {})},
                     )],
+                    evidence_gap_reason="SBOM package declaration is not proof of active application use, specific algorithm invocation, or cryptographic role.",
                     assumptions=["Package presence does not prove the library is used by a running application."],
                 ))
         elif isinstance(payload.get("spdxVersion"), str) and payload["spdxVersion"].startswith("SPDX-2."):
@@ -452,12 +453,13 @@ def parse_bom_scan_result(
                     evidence=[Evidence(
                         file_path=input_name,
                         evidence_type=EvidenceType.DEPENDENCY,
-                        detection_method=DetectionMethod.MANIFEST,
+                        detection_method=DetectionMethod.SBOM,
                         rule_id="IMPORT-SBOM-CRYPTO-LIBRARY",
                         excerpt=f"Crypto-library package listed in SBOM: {label}",
                         confidence=Confidence.MEDIUM,
                         metadata={"import_source": "sbom", **({"purl": purl[:2048]} if purl else {})},
                     )],
+                    evidence_gap_reason="SBOM package declaration is not proof of active application use, specific algorithm invocation, or cryptographic role.",
                     assumptions=["Package presence does not prove the library is used by a running application."],
                 ))
         else:

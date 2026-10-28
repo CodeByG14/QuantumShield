@@ -21,6 +21,7 @@ from quantumshield.compliance.checker import (
 )
 from quantumshield.compliance.rules import ComplianceRulesError
 from quantumshield.discovery.pipeline import run_scan
+from quantumshield.discovery.sbom_scanner import parse_sbom_file
 from quantumshield.monitor.diff import diff_assessments
 from quantumshield.scoring.assessment_writer import build_assessment
 from quantumshield.scoring.migration_plan_writer import build_migration_plan
@@ -154,6 +155,51 @@ def scan(
         ) from exc
 
 
+def sbom(
+    target: str | Path,
+    *,
+    context: ProjectContext | Mapping[str, Any] | None = None,
+    project_name: str | None = None,
+    context_loaded: bool | None = None,
+    assessment_id: str | None = None,
+    scan_timestamp: date | Any | None = None,
+    assessment_year: int | None = None,
+) -> AssessmentResult:
+    """Assess an explicit SBOM JSON file without treating arbitrary JSON as a scan target."""
+    try:
+        path = Path(target).expanduser()
+    except (TypeError, ValueError) as exc:
+        raise BadTargetError("target must be a valid filesystem path.") from exc
+
+    if not path.is_absolute():
+        raise BadTargetError("target must be an absolute path.")
+    if not path.is_file():
+        raise BadTargetError("target must refer to an existing SBOM file.")
+
+    project_context, inferred_context_loaded = _resolve_context(
+        context, path.parent, project_name=project_name or path.stem
+    )
+    if context_loaded is not None and not isinstance(context_loaded, bool):
+        raise InvalidContextError("context_loaded must be a boolean or None.")
+    effective_context_loaded = (
+        inferred_context_loaded if context_loaded is None else context_loaded
+    )
+
+    try:
+        scan_result = parse_sbom_file(path)
+        return build_assessment(
+            scan_result,
+            target=path,
+            context=project_context,
+            context_loaded=effective_context_loaded,
+            assessment_id=assessment_id,
+            scan_timestamp=scan_timestamp,
+            assessment_year=assessment_year,
+        )
+    except (OSError, ValueError, TypeError) as exc:
+        raise EngineError(f"The SBOM could not be parsed or assessed: {exc}") from exc
+
+
 def plan(assessment: AssessmentResult) -> dict[str, Any]:
     """Build a migration plan from a validated assessment model."""
     assessment = _require_assessment(assessment)
@@ -212,4 +258,5 @@ __all__ = [
     "diff",
     "plan",
     "scan",
+    "sbom",
 ]

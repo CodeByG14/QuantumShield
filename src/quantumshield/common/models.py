@@ -52,6 +52,7 @@ class DetectionMethod(str, Enum):
     MANIFEST = "manifest"
     FILE_EXTENSION = "file-extension"
     X509 = "x509"
+    SBOM = "sbom"
 
 
 class EvidenceType(str, Enum):
