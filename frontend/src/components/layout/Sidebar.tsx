@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import goldLogo from '@/assets/lockup-gold.svg'
 
@@ -39,27 +40,50 @@ const navItems: NavItem[] = [
 
 export function Sidebar() {
   const location = useLocation()
+  const [collapsed, setCollapsed] = useState(false)
 
   return (
-    <aside className="w-64 bg-dark-secondary border-r border-dark-tertiary flex-shrink-0">
+    <aside
+      className={`${
+        collapsed ? 'w-20' : 'w-64'
+      } bg-dark-secondary border-r border-dark-tertiary flex-shrink-0 transition-[width] duration-300 ease-in-out`}
+    >
       <div className="h-full flex flex-col">
         {/* Logo/Brand */}
-        <div className="px-6 py-4 border-b border-dark-tertiary">
-          <Link to="/" className="flex items-center justify-center gap-3">
+        <div
+          className={`items-center border-b border-dark-tertiary py-4 ${
+            collapsed
+              ? 'grid grid-cols-[1fr_auto_1fr] px-2'
+              : 'flex justify-between px-3'
+          }`}
+        >
+          {collapsed && <span aria-hidden="true" />}
+          <Link
+            to="/"
+            className={`flex min-w-0 items-center justify-center ${
+              collapsed ? 'gap-0' : 'flex-1 gap-2'
+            }`}
+          >
             <svg
-              className="w-12 h-[52px] flex-shrink-0"
+              className={`flex-shrink-0 transition-all duration-300 ${collapsed ? 'h-12 w-10' : 'h-[52px] w-12'}`}
               viewBox="82 10 84 100"
               role="img"
               aria-label="QuantumShield logo"
             >
               <image href={goldLogo} width="240" height="170" />
             </svg>
-            <h1 className="text-lg font-bold text-text-0">QuantumShield</h1>
+            <h1
+              className={`flex-none overflow-hidden whitespace-nowrap text-lg font-bold text-text-0 transition-[width,opacity] duration-300 ${
+                collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'
+              }`}
+            >
+              QuantumShield
+            </h1>
           </Link>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 overflow-y-auto">
+        <nav className={`flex-1 overflow-y-auto py-4 ${collapsed ? 'px-2' : 'px-3'}`} aria-label="Main navigation">
           <ul className="space-y-1">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path
@@ -67,9 +91,12 @@ export function Sidebar() {
                 <li key={item.path}>
                   <Link
                     to={item.path}
+                    title={collapsed ? item.label : undefined}
+                    aria-current={isActive ? 'page' : undefined}
                     className={`
-                      flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium
+                      flex items-center rounded-md py-2 text-sm font-medium
                       transition-colors duration-150
+                      ${collapsed ? 'justify-center px-3' : 'gap-3 px-3'}
                       ${
                         isActive
                           ? 'bg-dark-accent text-dark-primary'
@@ -77,8 +104,14 @@ export function Sidebar() {
                       }
                     `}
                   >
-                    {item.icon}
-                    {item.label}
+                    <span className="flex-shrink-0">{item.icon}</span>
+                    <span
+                      className={`flex-none overflow-hidden whitespace-nowrap transition-[width,opacity] duration-300 ${
+                        collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'
+                      }`}
+                    >
+                      {item.label}
+                    </span>
                   </Link>
                 </li>
               )
@@ -86,9 +119,35 @@ export function Sidebar() {
           </ul>
         </nav>
 
+        <div className={`flex py-2 ${collapsed ? 'justify-center' : 'justify-end px-4'}`}>
+          <button
+            type="button"
+            onClick={() => setCollapsed((current) => !current)}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-text-2 transition-colors hover:bg-dark-tertiary hover:text-text-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
+            aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+            aria-expanded={!collapsed}
+            title={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d={collapsed ? 'M9 5l7 7-7 7' : 'M15 5l-7 7 7 7'}
+              />
+            </svg>
+          </button>
+        </div>
+
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-dark-tertiary text-xs text-text-3 text-center">
-          &copy; {new Date().getFullYear()} QuantumShield.<br/>All rights reserved.    
+        <div className={`border-t border-dark-tertiary py-4 text-center text-xs text-text-3 ${collapsed ? 'px-2' : 'px-4'}`}>
+          {collapsed ? (
+            <span title="QuantumShield. All rights reserved.">&copy;</span>
+          ) : (
+            <>
+              &copy; {new Date().getFullYear()} QuantumShield.<br />All rights reserved.
+            </>
+          )}
         </div>
       </div>
     </aside>

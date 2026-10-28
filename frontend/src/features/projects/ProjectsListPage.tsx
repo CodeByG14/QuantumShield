@@ -20,6 +20,8 @@ export function ProjectsListPage() {
   const [error, setError] = useState<string | null>(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [projectToDelete, setProjectToDelete] = useState<ProjectOut | null>(null)
+  const [deletingProject, setDeletingProject] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     loadProjects()
@@ -40,22 +42,32 @@ export function ProjectsListPage() {
 
   function handleDeleteClick(project: ProjectOut, e: React.MouseEvent) {
     e.stopPropagation() // Prevent navigation to project detail
+    setDeleteError(null)
     setProjectToDelete(project)
   }
 
-  function handleDeleteConfirm() {
+  async function handleDeleteConfirm() {
     if (!projectToDelete) return
-    
-    // Remove from UI (frontend-only delete)
-    setProjects(projects.filter(p => p.project_id !== projectToDelete.project_id))
-    setProjectToDelete(null)
-    
-    // Note: Backend doesn't have DELETE endpoint, so we only remove from UI
-    // Database cleanup will be done manually later
+
+    try {
+      setDeletingProject(true)
+      setDeleteError(null)
+      await api.deleteProject(projectToDelete.project_id)
+      setProjects((currentProjects) =>
+        currentProjects.filter((project) => project.project_id !== projectToDelete.project_id)
+      )
+      setProjectToDelete(null)
+    } catch (err) {
+      setDeleteError(getErrorMessage(err))
+    } finally {
+      setDeletingProject(false)
+    }
   }
 
   function handleDeleteCancel() {
+    if (deletingProject) return
     setProjectToDelete(null)
+    setDeleteError(null)
   }
 
   if (loading) {
@@ -123,16 +135,22 @@ export function ProjectsListPage() {
                     Are you sure you want to delete <span className="font-semibold">"{projectToDelete.project_name}"</span>?
                   </p>
                   <p className="text-sm text-text-3">
-                    This will remove the project from your view. All associated scans and data will remain in the database.
+                    This permanently deletes the project and all its scans, assessments, reports, and related data.
                   </p>
                 </div>
               </div>
+
+              {deleteError && (
+                <p className="mb-4 text-sm text-brand-primary" role="alert">
+                  {deleteError}
+                </p>
+              )}
               
               <div className="flex gap-3 justify-end">
-                <Button variant="outline" onClick={handleDeleteCancel}>
+                <Button variant="outline" onClick={handleDeleteCancel} disabled={deletingProject}>
                   Cancel
                 </Button>
-                <Button variant="danger" onClick={handleDeleteConfirm}>
+                <Button variant="danger" onClick={handleDeleteConfirm} isLoading={deletingProject}>
                   Delete Project
                 </Button>
               </div>

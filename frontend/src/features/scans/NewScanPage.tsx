@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '@/lib/api-client'
 import { getErrorMessage, isValidationError } from '@/lib/api-errors'
-import type { ScanFormData, ScanInputKind } from '@/types/api'
+import type { ProjectOut, ScanFormData, ScanInputKind } from '@/types/api'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Button } from '@/components/ui/Button'
 import { Card, CardBody } from '@/components/ui/Card'
@@ -25,6 +25,11 @@ interface ScanFormState {
 
 export function NewScanPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const projectId = searchParams.get('projectId')
+  const [linkedProject, setLinkedProject] = useState<ProjectOut | null>(null)
+  const [loadingProject, setLoadingProject] = useState(Boolean(projectId))
+  const [projectLoadError, setProjectLoadError] = useState<string | null>(null)
   const [formState, setFormState] = useState<ScanFormState>({
     sourceType: 'github_repository',
     projectName: '',
@@ -35,6 +40,35 @@ export function NewScanPage() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
   const [generalError, setGeneralError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!projectId) {
+      setLinkedProject(null)
+      setLoadingProject(false)
+      setProjectLoadError(null)
+      return
+    }
+
+    let cancelled = false
+    setLinkedProject(null)
+    setLoadingProject(true)
+    setProjectLoadError(null)
+
+    api.getProject(projectId)
+      .then((project) => {
+        if (!cancelled) setLinkedProject(project)
+      })
+      .catch((err) => {
+        if (!cancelled) setProjectLoadError(getErrorMessage(err))
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingProject(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [projectId])
 
   function updateField<K extends keyof ScanFormState>(
     field: K,
@@ -109,6 +143,11 @@ export function NewScanPage() {
     e.preventDefault()
     setGeneralError(null)
 
+    if (projectId && !linkedProject) {
+      setGeneralError('Could not load the selected project. Return to the project page and try again.')
+      return
+    }
+
     if (!validateForm()) {
       return
     }
@@ -118,6 +157,7 @@ export function NewScanPage() {
 
       const scanData: ScanFormData = {
         source_type: formState.sourceType,
+        project_id: linkedProject?.project_id,
         project_name: formState.projectName.trim() || undefined,
         description: formState.description.trim() || undefined,
       }
@@ -181,23 +221,41 @@ export function NewScanPage() {
               <h3 className="text-lg font-semibold text-text-0 mb-4">
                 Project Information
               </h3>
-              <div className="space-y-4">
-                <Input
-                  label="Project Name"
-                  value={formState.projectName}
-                  onChange={(e) => updateField('projectName', e.target.value)}
-                  error={errors.projectName}
-                  placeholder="Leave empty to create from source name"
-                  maxLength={255}
-                />
-                <Textarea
-                  label="Description"
-                  value={formState.description}
-                  onChange={(e) => updateField('description', e.target.value)}
-                  placeholder="Optional project description..."
-                  maxLength={5000}
-                />
-              </div>
+              {linkedProject ? (
+                <div className="rounded-md border border-dark-tertiary bg-dark-primary p-4">
+                  <p className="font-medium text-text-0">{linkedProject.project_name}</p>
+                  <p className="mt-1 text-sm text-text-2">
+                    {linkedProject.description || 'No description provided'}
+                  </p>
+                  <p className="mt-3 text-xs text-text-3">
+                    This scan will be added to this project.
+                  </p>
+                </div>
+              ) : projectId ? (
+                <div className="text-sm text-text-2" role={projectLoadError ? 'alert' : undefined}>
+                  {projectLoadError
+                    ? `Unable to load project: ${projectLoadError}`
+                    : 'Loading project...'}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Input
+                    label="Project Name"
+                    value={formState.projectName}
+                    onChange={(e) => updateField('projectName', e.target.value)}
+                    error={errors.projectName}
+                    placeholder="Leave empty to create from source name"
+                    maxLength={255}
+                  />
+                  <Textarea
+                    label="Description"
+                    value={formState.description}
+                    onChange={(e) => updateField('description', e.target.value)}
+                    placeholder="Optional project description..."
+                    maxLength={5000}
+                  />
+                </div>
+              )}
             </CardBody>
           </Card>
 
@@ -327,7 +385,12 @@ export function NewScanPage() {
             >
               Cancel
             </Button>
-            <Button type="submit" variant="primary" isLoading={submitting}>
+            <Button
+              type="submit"
+              variant="primary"
+              isLoading={submitting}
+              disabled={loadingProject || Boolean(projectId && !linkedProject)}
+            >
               {submitting ? 'Starting Scan...' : 'Start Scan'}
             </Button>
           </div>

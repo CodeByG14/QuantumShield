@@ -20,6 +20,8 @@ export function ProjectDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deletingProject, setDeletingProject] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!projectId) {
@@ -49,6 +51,21 @@ export function ProjectDetailPage() {
       setError(getErrorMessage(err))
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleDeleteProject() {
+    if (!projectId) return
+
+    try {
+      setDeletingProject(true)
+      setDeleteError(null)
+      await api.deleteProject(projectId)
+      navigate('/projects')
+    } catch (err) {
+      setDeleteError(getErrorMessage(err))
+    } finally {
+      setDeletingProject(false)
     }
   }
 
@@ -131,6 +148,10 @@ export function ProjectDetailPage() {
               <EmptyState
                 title="No Scans Yet"
                 description="No scans have been run for this project yet."
+                action={{
+                  label: 'Add First Scan',
+                  onClick: () => navigate(`/scans/new?projectId=${project.project_id}`),
+                }}
               />
             </CardBody>
           ) : (
@@ -232,21 +253,34 @@ export function ProjectDetailPage() {
                     This project has {scans.length} scan{scans.length !== 1 ? 's' : ''}.
                   </p>
                   <p className="text-sm text-text-3">
-                    This will navigate back to projects list. All data will remain in the database.
+                    This permanently deletes the project and all its scans, assessments, reports, and related data.
                   </p>
                 </div>
               </div>
+
+              {deleteError && (
+                <p className="mb-4 text-sm text-brand-primary" role="alert">
+                  {deleteError}
+                </p>
+              )}
               
               <div className="flex gap-3 justify-end">
-                <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    if (!deletingProject) {
+                      setShowDeleteModal(false)
+                      setDeleteError(null)
+                    }
+                  }}
+                  disabled={deletingProject}
+                >
                   Cancel
                 </Button>
                 <Button
                   variant="danger"
-                  onClick={() => {
-                    setShowDeleteModal(false)
-                    navigate('/projects')
-                  }}
+                  onClick={handleDeleteProject}
+                  isLoading={deletingProject}
                 >
                   Delete Project
                 </Button>

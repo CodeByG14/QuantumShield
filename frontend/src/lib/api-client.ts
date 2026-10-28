@@ -111,6 +111,13 @@ async function patch<T>(endpoint: string, data: unknown): Promise<T> {
   })
 }
 
+/**
+ * DELETE request helper
+ */
+async function del(endpoint: string): Promise<void> {
+  return apiFetch<void>(endpoint, { method: 'DELETE' })
+}
+
 // ============================================================================
 // API Endpoints
 // ============================================================================
@@ -128,6 +135,7 @@ export const api = {
   listProjects: () => get<ProjectOut[]>('/projects'),
   createProject: (data: ProjectCreate) => post<ProjectOut>('/projects', data),
   getProject: (projectId: string) => get<ProjectOut>(`/projects/${projectId}`),
+  deleteProject: (projectId: string) => del(`/projects/${projectId}`),
   listProjectScans: (projectId: string, limit = 50, offset = 0) =>
     get<ScanListOut>(`/projects/${projectId}/scans?limit=${limit}&offset=${offset}`),
 

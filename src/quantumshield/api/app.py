@@ -112,7 +112,7 @@ def create_app(*, pool_factory=None) -> FastAPI:
         CORSMiddleware,
         allow_origins=cors_origins,
         allow_credentials=True,
-        allow_methods=["GET", "POST", "PATCH"],
+        allow_methods=["GET", "POST", "PATCH", "DELETE"],
         allow_headers=["Content-Type"],
     )
 
@@ -197,6 +197,44 @@ def create_app(*, pool_factory=None) -> FastAPI:
         if row is None:
             raise HTTPException(status_code=404, detail="Project was not found in this local session.")
         return row
+
+    @app.delete(
+        "/projects/{project_id}",
+        status_code=status.HTTP_204_NO_CONTENT,
+        tags=["projects"],
+    )
+    def delete_project(
+        project_id: UUID,
+        pool: Any = Depends(get_pool),
+        session: dict[str, Any] = Depends(get_local_session),
+    ) -> None:
+        with pool.connection() as conn:
+            project = conn.execute(
+                """SELECT project_id FROM projects
+                   WHERE project_id = %s AND session_id = %s AND archived = FALSE
+                   FOR UPDATE""",
+                (project_id, session["session_id"]),
+            ).fetchone()
+            if project is None:
+                raise HTTPException(status_code=404, detail="Project was not found in this local session.")
+
+            active_scan = conn.execute(
+                """SELECT EXISTS (
+                       SELECT 1 FROM scan_runs
+                       WHERE project_id = %s AND status IN ('queued', 'running')
+                   ) AS exists""",
+                (project_id,),
+            ).fetchone()["exists"]
+            if active_scan:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="A project with queued or running scans cannot be deleted.",
+                )
+
+            conn.execute(
+                "DELETE FROM projects WHERE project_id = %s AND session_id = %s",
+                (project_id, session["session_id"]),
+            )
 
     @app.post("/scan", response_model=ScanAccepted, status_code=status.HTTP_202_ACCEPTED, tags=["scans"])
     async def start_scan(

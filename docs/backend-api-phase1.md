@@ -52,7 +52,7 @@ uv run pytest -q tests/api
 | `GET` | `/dashboard/summary` | Session-scoped project/scan totals and latest-assessment risk summary |
 | `GET`, `PATCH` | `/session` | Create/read or label the anonymous local workspace session |
 | `GET`, `POST` | `/projects` | List or create session-owned projects |
-| `GET` | `/projects/{project_id}` | Get one owned project |
+| `GET`, `DELETE` | `/projects/{project_id}` | Get or permanently delete one owned project and its related scan data |
 | `POST` | `/scan` | Queue one of four supported source types |
 | `GET` | `/projects/{project_id}/scans` | List scan history |
 | `GET` | `/scans/{scan_run_id}` | Check status/error/summary |
